@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Сеть металлобаз</title>
+    <link rel="icon" href="/img/logo.png" type="image/png">
+    <link rel="shortcut icon" href="/img/logo.png" type="image/png">
+    <meta name="description" content="Купить металл и металлопрокат в Москве с доставкой в день заказа. Продажа металлопроката оптом и в розницу.">
+    <link rel="stylesheet" href="/front/CSS/style.css">
+    <link rel="stylesheet" href="/front/CSS/slider.css">
+    <link rel="stylesheet" href="/front/CSS/product-slider.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <script src="https://api-maps.yandex.ru/2.1.79/?lang=ru_RU&apikey=e72e91bf-e966-4ffa-975b-57a5571ab5a8" async></script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container header-container">
+            <div class="logo">
+                <a href="#">
+                    <img src="/img/logo.png" alt="Металл">
+                </a>
+            </div>
+            <nav>
+                <ul class="nav-menu">
+                    <li><a href="#">Каталог</a></li>
+                    <li><a href="#">Акции</a></li>
+                    <li><a href="#">Услуги</a></li>
+                    <li><a href="#">Доставка</a></li>
+                    <li><a href="#">Прайс-лист</a></li>
+                    <li><a href="#">Контакты</a></li>
+                </ul>
+            </nav>
+            <div class="header-actions">
+                <form class="search-form">
+                    <input type="text" placeholder="Поиск...">
+                    <button type="submit"><i class="fas fa-search"></i></button>
+                </form>
+                <div class="phone-number">+7 (495) 414-31-23</div>
+                <a href="#" class="btn">Заказать звонок</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Слайдер -->
+    <section class="slider">
+        <div class="container">
+            <div class="slider-container">
+                <div class="slides">
+                    <div class="slide">
+                        <img src="/img/pic1.jpg" alt="Металлическая арматура">
+                    </div>
+                    <div class="slide">
+                        <img src="/img/pic2.jpg" alt="Стальные трубы">
+                    </div>
+                    <div class="slide">
+                        <img src="/img/pic3.jpg" alt="Листовой металл">
+                    </div>
+                </div>
+                <button class="prev-slide"><i class="fas fa-chevron-left"></i></button>
+                <button class="next-slide"><i class="fas fa-chevron-right"></i></button>
+                <div class="dots">
+                    <span class="dot active"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Слайдер продуктов -->
+    <section class="product-slider">
+        <div class="container">
+            <div class="product-slider-container">
+                <div class="product-slides">
+                    <div class="product-slide">
+                        <div class="product-card">
+                            <img src="/img/example1.jpeg" alt="Арматура А500С" style="margin-bottom: 15px;">
+                            <h4>Арматура А500С</h4>
+                        </div>
+                    </div>
+                    <div class="product-slide">
+                        <div class="product-card">
+                            <img src="/img/example2.jpeg" alt="Труба профильная 40x20" style="margin-bottom: 15px;">
+                            <h4>Труба профильная 40x20</h4>
+                        </div>
+                    </div>
+                    <div class="product-slide">
+                        <div class="product-card">
+                            <img src="/img/example3.jpg" alt="Лист стальной 3мм" style="margin-bottom: 15px;">
+                            <h4>Лист стальной 3мм</h4>
+                        </div>
+                    </div>
+                    <div class="product-slide">
+                        <div class="product-card">
+                            <img src="/img/example4.jpeg" alt="Уголок стальной 50x50" style="margin-bottom: 15px;">
+                            <h4>Уголок стальной 50x50</h4>
+                        </div>
+                    </div>
+                    <div class="product-slide">
+                        <div class="product-card">
+                            <img src="/img/example5.jpeg" alt="Профнастил С8" style="margin-bottom: 15px;">
+                            <h4>Профнастил С8</h4>
+                        </div>
+                    </div>
+                    <div class="product-slide">
+                        <div class="product-card">
+                            <img src="/img/example6.jpeg" alt="Швеллер 12П" style="margin-bottom: 15px;">
+                            <h4>Швеллер 12П</h4>
+                        </div>
+                    </div>
+                    <div class="product-slide">
+                        <div class="product-card">
+                            <img src="/img/example7.jpeg" alt="Балка двутавровая" style="margin-bottom: 15px;">
+                            <h4>Балка двутавровая</h4>
+                        </div>
+                    </div>
+                </div>
+                <button class="prev-product-slide"><i class="fas fa-chevron-left"></i></button>
+                <button class="next-product-slide"><i class="fas fa-chevron-right"></i></button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Best Offers Section -->
+    <section class="best-offers">
+        <div class="container">
+            <h2 class="section-title">Лучшие предложения</h2>
+            <div class="offers-grid">
+                <div class="offer-card">
+                    <img src="/img/iron1.jpg" alt="Арматура А500С">
+                    <span class="availability">Есть в наличии</span>
+                    <h4>Арматура А500С</h4>
+                    <div class="price-container">
+                        <span class="old-price">1000 ₽</span>
+                        <span class="new-price">800 ₽</span>
+                        <span class="savings">Экономия: 200 ₽</span>
+                    </div>
+                </div>
+                <div class="offer-card">
+                    <img src="/img/iron2.jpg" alt="Труба профильная 40x20">
+                    <span class="availability">Есть в наличии</span>
+                    <h4>Труба профильная 40x20</h4>
+                    <div class="price-container">
+                        <span class="old-price">1200 ₽</span>
+                        <span class="new-price">950 ₽</span>
+                        <span class="savings">Экономия: 250 ₽</span>
+                    </div>
+                </div>
+                <div class="offer-card">
+                    <img src="/img/iron3.webp" alt="Лист стальной 3мм">
+                    <span class="availability">Есть в наличии</span>
+                    <h4>Лист стальной 3мм</h4>
+                    <div class="price-container">
+                        <span class="old-price">1500 ₽</span>
+                        <span class="new-price">1300 ₽</span>
+                        <span class="savings">Экономия: 200 ₽</span>
+                    </div>
+                </div>
+                <div class="offer-card">
+                    <img src="/img/iron4.jpg" alt="Уголок стальной 50x50">
+                    <span class="availability">Есть в наличии</span>
+                    <h4>Уголок стальной 50x50</h4>
+                    <div class="price-container">
+                        <span class="old-price">900 ₽</span>
+                        <span class="new-price">700 ₽</span>
+                        <span class="savings">Экономия: 200 ₽</span>
+                    </div>
+                </div>
+                <div class="offer-card">
+                    <img src="/img/iron5.webp" alt="Профнастил С8">
+                    <span class="availability">Есть в наличии</span>
+                    <h4>Профнастил С8</h4>
+                    <div class="price-container">
+                        <span class="old-price">1100 ₽</span>
+                        <span class="new-price">900 ₽</span>
+                        <span class="savings">Экономия: 200 ₽</span>
+                    </div>
+                </div>
+                <div class="offer-card">
+                    <img src="/img/iron6.webp" alt="Швеллер 12П">
+                    <span class="availability">Есть в наличии</span>
+                    <h4>Швеллер 12П</h4>
+                    <div class="price-container">
+                        <span class="old-price">1400 ₽</span>
+                        <span class="new-price">1200 ₽</span>
+                        <span class="savings">Экономия: 200 ₽</span>
+                    </div>
+                </div>
+                <div class="offer-card">
+                    <img src="/img/iron7.jpg" alt="Балка двутавровая">
+                    <span class="availability">Есть в наличии</span>
+                    <h4>Балка двутавровая</h4>
+                    <div class="price-container">
+                        <span class="old-price">2000 ₽</span>
+                        <span class="new-price">1800 ₽</span>
+                        <span class="savings">Экономия: 200 ₽</span>
+                    </div>
+                </div>
+                <div class="offer-card">
+                    <img src="/img/iron8.jpg" alt="Арматура А3">
+                    <span class="availability">Есть в наличии</span>
+                    <h4>Арматура А3</h4>
+                    <div class="price-container">
+                        <span class="old-price">950 ₽</span>
+                        <span class="new-price">750 ₽</span>
+                        <span class="savings">Экономия: 200 ₽</span>
+                    </div>
+                </div>
+                <div class="offer-card hidden">
+                    <img src="/img/iron9.jpg" alt="Труба круглая 50мм">
+                    <span class="availability">Есть в наличии</span>
+                    <h4>Труба круглая 50мм</h4>
+                    <div class="price-container">
+                        <span class="old-price">1300 ₽</span>
+                        <span class="new-price">1100 ₽</span>
+                        <span class="savings">Экономия: 200 ₽</span>
+                    </div>
+                </div>
+                <div class="offer-card hidden">
+                    <img src="/img/iron10.jpg" alt="Лист оцинкованный">
+                    <span class="availability">Есть в наличии</span>
+                    <h4>Лист оцинкованный</h4>
+                    <div class="price-container">
+                        <span class="old-price">1600 ₽</span>
+                        <span class="new-price">1400 ₽</span>
+                        <span class="savings">Экономия: 200 ₽</span>
+                    </div>
+                </div>
+                <div class="offer-card hidden">
+                    <img src="/img/iron11.jpg" alt="Уголок 25x25">
+                    <span class="availability">Есть в наличии</span>
+                    <h4>Уголок 25x25</h4>
+                    <div class="price-container">
+                        <span class="old-price">800 ₽</span>
+                        <span class="new-price">600 ₽</span>
+                        <span class="savings">Экономия: 200 ₽</span>
+                    </div>
+                </div>
+                <div class="offer-card hidden">
+                    <img src="/img/iron12.jpg" alt="Профнастил С20">
+                    <span class="availability">Есть в наличии</span>
+                    <h4>Профнастил С20</h4>
+                    <div class="price-container">
+                        <span class="old-price">1150 ₽</span>
+                        <span class="new-price">950 ₽</span>
+                        <span class="savings">Экономия: 200 ₽</span>
+                    </div>
+                </div>
+                <div class="offer-card hidden">
+                    <img src="/img/iron13.jpg" alt="Швеллер 10П">
+                    <span class="availability">Есть в наличии</span>
+                    <h4>Швеллер 10П</h4>
+                    <div class="price-container">
+                        <span class="old-price">1350 ₽</span>
+                        <span class="new-price">1150 ₽</span>
+                        <span class="savings">Экономия: 200 ₽</span>
+                    </div>
+                </div>
+                <div class="offer-card hidden">
+                    <img src="/img/iron14.jpg" alt="Балка 20Б1">
+                    <span class="availability">Есть в наличии</span>
+                    <h4>Балка 20Б1</h4>
+                    <div class="price-container">
+                        <span class="old-price">2100 ₽</span>
+                        <span class="new-price">1900 ₽</span>
+                        <span class="savings">Экономия: 200 ₽</span>
+                    </div>
+                </div>
+                <div class="offer-card hidden">
+                    <img src="/img/iron4.jpg" alt="Арматура А800">
+                    <span class="availability">Есть в наличии</span>
+                    <h4>Арматура А800</h4>
+                    <div class="price-container">
+                        <span class="old-price">1050 ₽</span>
+                        <span class="new-price">850 ₽</span>
+                        <span class="savings">Экономия: 200 ₽</span>
+                    </div>
+                </div>
+                <div class="offer-card hidden">
+                    <img src="/img/iron6.webp" alt="Труба профильная 60x40">
+                    <span class="availability">Есть в наличии</span>
+                    <h4>Труба профильная 60x40</h4>
+                    <div class="price-container">
+                        <span class="old-price">1250 ₽</span>
+                        <span class="new-price">1050 ₽</span>
+                        <span class="savings">Экономия: 200 ₽</span>
+                    </div>
+                </div>
+            </div>
+            <button class="toggle-btn" data-state="show">Показать ещё</button>
+        </div>
+    </section>
+
+    <!-- Store Addresses Section -->
+    <section class="store-addresses">
+        <div class="container">
+            <h2 class="section-title">Адреса магазинов</h2>
+            <div id="map" class="map-container"></div>
+        </div>
+    </section>
+
+    <!-- Advantages Section -->
+    <section class="advantages">
+        <div class="container">
+            <h2 class="section-title">Наши преимущества</h2>
+            <div class="advantages-grid">
+                <div class="advantage-item">
+                    <i class="fas fa-truck"></i>
+                    <h3>Быстрая доставка</h3>
+                    <p>Доставляем по всей Москве и Московской области</p>
+                </div>
+                <div class="advantage-item">
+                    <i class="fas fa-headset"></i>
+                    <h3>Клиентский сервис</h3>
+                    <p>Отвечаем на вопросы покупателей в течение 10 минут</p>
+                </div>
+                <div class="advantage-item">
+                    <i class="fas fa-percent"></i>
+                    <h3>Акции и скидки</h3>
+                    <p>Много выгодных предложений</p>
+                </div>
+                <div class="advantage-item">
+                    <i class="fas fa-shield-alt"></i>
+                    <h3>Гарантия качества</h3>
+                    <p>Соответствуем требованиям и стандартам качества</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-column">
+                    <h3>Каталог</h3>
+                    <ul>
+                        <li><a href="#">Арматура</a></li>
+                        <li><a href="#">Труба профильная</a></li>
+                        <li><a href="#">Сортовой прокат</a></li>
+                        <li><a href="#">Листовой прокат</a></li>
+                        <li><a href="#">Профнастил</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Информация</h3>
+                    <ul>
+                        <li><a href="#">Оплата</a></li>
+                        <li><a href="#">Доставка</a></li>
+                        <li><a href="#">ГОСТ и ТУ</a></li>
+                        <li><a href="#">Прайс-лист</a></li>
+                        <li><a href="#">Обмен и возврат</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Компания</h3>
+                    <ul>
+                        <li><a href="#">О компании</a></li>
+                        <li><a href="#">Вакансии</a></li>
+                        <li><a href="#">Новости</a></li>
+                        <li><a href="#">Вопрос-ответ</a></li>
+                        <li><a href="#">Статьи</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Контакты</h3>
+                    <p>+7 (495) 414-31-23</p>
+                    <p>zakaz@metall-dk.ru</p>
+                    <p>info@metall-dk.ru</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-vk"></i></a>
+                        <a href="#"><i class="fab fa-telegram"></i></a>
+                        <a href="#"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2007 - 2025 Сеть металлобаз Металл ДК. Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/front/JS/script.js"></script>
+    <script src="/front/JS/slider.js"></script>
+    <script src="/front/JS/product-slider.js"></script>
+    <script src="/front/JS/offers.js"></script>
+</body>
+</html>
