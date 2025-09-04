@@ -13,6 +13,8 @@
   --transition: all 0.3s ease;
 }
 
+.nav-menu a.active { color: var(--primary-color); }
+
 * {
   margin: 0;
   padding: 0;
@@ -36,7 +38,7 @@ body {
 .header {
   background-color: var(--light-color);
   color: var(--text-color);
-  padding: 28px 0;
+  padding: 15px 0;
   position: sticky;
   top: 0;
   z-index: 1000;
@@ -52,8 +54,8 @@ body {
 }
 
 .logo img {
-  max-height: 58px;
-  min-width: 140px;
+  max-height: 80px;
+  min-width: 130px;
 }
 
 .nav-menu {
@@ -184,6 +186,7 @@ body {
   padding: 18px;
   text-align: center;
   transition: var(--transition);
+  border: #888;
 }
 
 .offer-card:hover {
@@ -225,6 +228,7 @@ body {
   align-items: center;
   gap: 12px;
   font-size: 14px;
+  margin-bottom: 12px;
 }
 
 .old-price {
@@ -245,6 +249,51 @@ body {
 
 .offer-card.hidden {
   display: none;
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.cart-btn {
+  width: 50px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--gray-color);
+  color: var(--text-color);
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-size: 18px;
+  transition: var(--transition);
+}
+
+.cart-btn:hover {
+  background-color: var(--primary-color);
+  color: var(--text-light);
+  transform: translateY(-2px);
+}
+
+.order-btn {
+  flex: 1;
+  padding: 10px;
+  background-color: var(--primary-color);
+  color: var(--text-light);
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  transition: var(--transition);
+}
+
+.order-btn:hover {
+  background-color: #b71c1c;
+  transform: translateY(-2px);
 }
 
 .toggle-btn {
@@ -283,6 +332,7 @@ body {
   text-align: center;
   font-size: 2.33rem;
   color: var(--dark-color);
+  margin-bottom: 20px;
 }
 
 .categories {
@@ -398,7 +448,7 @@ body {
   width: 47px;
   height: 47px;
   background-color: rgba(255, 255, 255, 0.1);
-  border-radius: 50%;
+  border-radius: 20%;
   text-align: center;
   line-height: 47px;
   transition: var(--transition);
