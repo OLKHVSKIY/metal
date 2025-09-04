@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Контакты</title>
+    <link rel="icon" href="/img/logo.png" type="image/png">
+    <link rel="shortcut icon" href="/img/logo.png" type="image/png">
+    <meta name="description" content="Контакты сети металлобаз Металл ДК в Санкт-Петербурге. Телефон, email, график работы, адреса магазинов.">
+    <link rel="stylesheet" href="/front/CSS/style.css">
+    <link rel="stylesheet" href="/front/CSS/contact.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <!-- Яндекс.Карты API -->
+    <script src="https://api-maps.yandex.ru/2.1.79/?lang=ru_RU&apikey=e72e91bf-e966-4ffa-975b-57a5571ab5a8" defer></script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container header-container">
+            <div class="logo">
+                <a href="/front/HTML/main.html">
+                    <img src="/img/logo.png" alt="Металл">
+                </a>
+            </div>
+            <nav>
+                <ul class="nav-menu">
+                    <li><a href="/front/HTML/catalog.html">Каталог</a></li>
+                    <li><a href="#">Акции</a></li>
+                    <li><a href="#">Услуги</a></li>
+                    <li><a href="#">Доставка</a></li>
+                    <li><a href="#">Прайс-лист</a></li>
+                    <li><a href="#" class="active">Контакты</a></li>
+                </ul>
+            </nav>
+            <div class="header-actions">
+                <form class="search-form">
+                    <input type="text" placeholder="Поиск...">
+                    <button type="submit"><i class="fas fa-search"></i></button>
+                </form>
+                <div class="phone-number">+7 (495) 414-31-23</div>
+                <a href="#" class="btn">Заказать звонок</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Contacts Section -->
+    <section class="contacts">
+        <div class="container">
+            <h2 class="section-title">Контакты</h2>
+            <div class="contacts-text">
+                <p>Сеть металлобаз Металл включает в себя 10 точек, расположенных по всему периметру Санкт-Петербурге.</p>
+                <p>За счет больших объемов мы можем держать низкие цены и предложить широкий ассортимент металлопроката в Санкт-Петербурге.</p>
+                <p>Предлагаем купить черный металлопрокат высокого качества с доставкой по Санкт-Петербурге и Московскому району. Оказываем услуги по резке и обработке металла, поможем с выбором, проконсультируем.</p>
+                <p>Обязательно приходите к нам. Проконсультируем по интересующим товарам и поможем подобрать подходящий.</p>
+            </div>
+            <div class="contacts-info">
+                <div class="contact-item">
+                    <i class="fas fa-phone"></i>
+                    <p><strong>Телефон:</strong> +7 (123) 456-78-90</p>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-envelope"></i>
+                    <p><strong>Email:</strong> zakaz@metall.ru, info@metall.ru</p>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-clock"></i>
+                    <p><strong>График работы:</strong> Пн-Пт: 9:00–18:00, Сб: 9:00–14:00, Вс: выходной</p>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-share-alt"></i>
+                    <p><strong>Соцсети:</strong></p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-vk"></i></a>
+                        <a href="#"><i class="fab fa-telegram"></i></a>
+                        <a href="#"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                </div>
+                <button class="feedback-btn">Оставить отзыв</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Feedback Modal -->
+    <div class="modal" id="feedbackModal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h3>Мы хотим стать лучше!</h3>
+            <p>Пожалуйста, оцените наше качество работы</p>
+            <form class="feedback-form">
+                <label for="name">Ваше имя:</label>
+                <input type="text" id="name" name="name" required>
+                <label for="phone">Ваш телефон:</label>
+                <input type="tel" id="phone" name="phone" required>
+                <label for="review">Ваш отзыв:</label>
+                <textarea id="review" name="review" required></textarea>
+                <label for="file">Прикрепить файлы (до 5)</label>
+                <div class="file-upload">
+                    <i class="fas fa-paperclip"></i>
+                    <span class="file-label">Выберите файлы</span>
+                    <input type="file" id="file" name="files" multiple style="display: none;">
+                </div>
+                <div class="file-list"></div>
+                <button type="submit">Отправить отзыв</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Map Section -->
+    <section class="store-addresses">
+        <div class="container">
+            <div class="map-container">
+                <div id="map" style="width: 100%; height: 400px;"></div>
+            </div>
+            <div class="address-grid">
+                <div class="address-card">
+                    <h3>Металлобаза №1</h3>
+                    <p><strong>Адрес:</strong> Санкт-Петербург, ул. Профсоюзная, д. 25</p>
+                    <p><strong>Телефон:</strong> +7 (123) 456-78-90</p>
+                    <p><strong>Email:</strong> shop1@metall.ru</p>
+                </div>
+                <div class="address-card">
+                    <h3>Металлобаза №2</h3>
+                    <p><strong>Адрес:</strong> Санкт-Петербург, пр. Металлистов, д. 10</p>
+                    <p><strong>Телефон:</strong> +7 (123) 456-78-90</p>
+                    <p><strong>Email:</strong> shop2@metall.ru</p>
+                </div>
+                <div class="address-card">
+                    <h3>Металлобаза №3</h3>
+                    <p><strong>Адрес:</strong> Санкт-Петербург, Московское шоссе, д. 50</p>
+                    <p><strong>Телефон:</strong> +7 (123) 456-78-90</p>
+                    <p><strong>Email:</strong> shop3@metall.ru</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Advantages Section -->
+    <section class="advantages">
+        <div class="container">
+            <h2 class="section-title">Наши преимущества</h2>
+            <div class="advantages-grid">
+                <div class="advantage-item">
+                    <i class="fas fa-truck"></i>
+                    <h3>Быстрая доставка</h3>
+                    <p>Доставляем по всей Москве и Московской области</p>
+                </div>
+                <div class="advantage-item">
+                    <i class="fas fa-headset"></i>
+                    <h3>Клиентский сервис</h3>
+                    <p>Отвечаем на вопросы покупателей в течение 10 минут</p>
+                </div>
+                <div class="advantage-item">
+                    <i class="fas fa-percent"></i>
+                    <h3>Акции и скидки</h3>
+                    <p>Много выгодных предложений и <br> скидок</p>
+                </div>
+                <div class="advantage-item">
+                    <i class="fas fa-shield-alt"></i>
+                    <h3>Гарантия качества</h3>
+                    <p>Соответствуем требованиям и стандартам качества</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-column">
+                    <div class="footer-divider"></div>
+                    <h3>Контакты</h3>
+                    <p class="phone-number">+7 (495) 414-31-23</p>
+                    <div class="email-container">
+                        <p>zakaz@metall-dk.ru</p>
+                        <p>info@metall-dk.ru</p>
+                    </div>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-vk"></i></a>
+                        <a href="#"><i class="fab fa-telegram"></i></a>
+                        <a href="#"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2007 - 2025 Сеть металлобаз Металл ДК. Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/front/JS/script.js"></script>
+    <script src="/front/JS/contact.js"></script>
+</body>
+</html>
