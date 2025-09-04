@@ -6,6 +6,15 @@ document.addEventListener('DOMContentLoaded', function() {
   initFormValidation();
   initScrollAnimations();
   replaceEmptyLinks();
+
+  // Инициализация Яндекс.Карты
+  if (typeof ymaps !== 'undefined') {
+    ymaps.ready(initMap).catch(error => {
+      console.error('Ошибка загрузки Яндекс.Карт:', error);
+    });
+  } else {
+    console.error('Библиотека Яндекс.Карт не загрузилась');
+  }
 });
 
 // Мобильное меню
@@ -113,40 +122,18 @@ function submitForm(formData) {
   });
 }
 
-// Карта
+// Инициализация карты
+function initMap() {
+  console.log('Яндекс.Карты инициализированы');
+  const myMap = new ymaps.Map("map", {
+    center: [59.987208, 30.445029], // Координаты: Санкт-Петербург, ул. Коммуны, 67
+    zoom: 15
+  });
 
-document.addEventListener('DOMContentLoaded', () => {
-    // Инициализация Яндекс.Карты
-    ymaps.ready(init);
-    function init() {
-        const myMap = new ymaps.Map("map", {
-            center: [59.987208, 30.445029], // Координаты: Санкт-Петербург, ул. Коммуны, 67
-            zoom: 15
-        });
+  const myPlacemark = new ymaps.Placemark([59.987208, 30.445029], {
+    hintContent: 'Сеть металлобаз Металл ДК',
+    balloonContent: 'Санкт-Петербург, ул. Коммуны, 67'
+  });
 
-        const myPlacemark = new ymaps.Placemark([59.987208, 30.445029], {
-            hintContent: 'Сеть металлобаз Металл ДК',
-            balloonContent: 'Санкт-Петербург, ул. Коммуны, 67'
-        });
-
-        myMap.geoObjects.add(myPlacemark);
-    }
-});
-
-document.addEventListener('DOMContentLoaded', () => {
-    ymaps.ready(init).catch(error => {
-        console.error('Ошибка загрузки Яндекс.Карт:', error);
-    });
-    function init() {
-        console.log('Яндекс.Карты инициализированы');
-        const myMap = new ymaps.Map("map", {
-            center: [59.987208, 30.445029],
-            zoom: 15
-        });
-        const myPlacemark = new ymaps.Placemark([59.987208, 30.445029], {
-            hintContent: 'Сеть металлобаз Металл ДК',
-            balloonContent: 'Санкт-Петербург, ул. Коммуны, 67'
-        });
-        myMap.geoObjects.add(myPlacemark);
-    }
-});
+  myMap.geoObjects.add(myPlacemark);
+}

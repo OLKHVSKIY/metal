@@ -9,11 +9,10 @@
     <meta name="description" content="Купить металл и металлопрокат в Москве с доставкой в день заказа. Продажа металлопроката оптом и в розницу.">
     <link rel="stylesheet" href="/front/CSS/style.css">
     <link rel="stylesheet" href="/front/CSS/slider.css">
-    <link rel="stylesheet" href="/front/CSS/product-slider.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
-    <script src="https://api-maps.yandex.ru/2.1.79/?lang=ru_RU&apikey=e72e91bf-e966-4ffa-975b-57a5571ab5a8" async></script>
+    <!-- Яндекс.Карты API (замените ключ на новый, если текущий недействителен) -->
+    <script src="https://api-maps.yandex.ru/2.1.79/?lang=ru_RU&apikey=e72e91bf-e966-4ffa-975b-57a5571ab5a8" defer></script>
 </head>
 <body>
     <!-- Header -->
@@ -321,7 +320,7 @@
                 <div class="advantage-item">
                     <i class="fas fa-percent"></i>
                     <h3>Акции и скидки</h3>
-                    <p>Много выгодных предложений</p>
+                    <p>Много выгодных предложений и <br> скидок</p>
                 </div>
                 <div class="advantage-item">
                     <i class="fas fa-shield-alt"></i>
@@ -337,40 +336,13 @@
         <div class="container">
             <div class="footer-grid">
                 <div class="footer-column">
-                    <h3>Каталог</h3>
-                    <ul>
-                        <li><a href="#">Арматура</a></li>
-                        <li><a href="#">Труба профильная</a></li>
-                        <li><a href="#">Сортовой прокат</a></li>
-                        <li><a href="#">Листовой прокат</a></li>
-                        <li><a href="#">Профнастил</a></li>
-                    </ul>
-                </div>
-                <div class="footer-column">
-                    <h3>Информация</h3>
-                    <ul>
-                        <li><a href="#">Оплата</a></li>
-                        <li><a href="#">Доставка</a></li>
-                        <li><a href="#">ГОСТ и ТУ</a></li>
-                        <li><a href="#">Прайс-лист</a></li>
-                        <li><a href="#">Обмен и возврат</a></li>
-                    </ul>
-                </div>
-                <div class="footer-column">
-                    <h3>Компания</h3>
-                    <ul>
-                        <li><a href="#">О компании</a></li>
-                        <li><a href="#">Вакансии</a></li>
-                        <li><a href="#">Новости</a></li>
-                        <li><a href="#">Вопрос-ответ</a></li>
-                        <li><a href="#">Статьи</a></li>
-                    </ul>
-                </div>
-                <div class="footer-column">
+                    <div class="footer-divider"></div>
                     <h3>Контакты</h3>
-                    <p>+7 (495) 414-31-23</p>
-                    <p>zakaz@metall-dk.ru</p>
-                    <p>info@metall-dk.ru</p>
+                    <p class="phone-number">+7 (495) 414-31-23</p>
+                    <div class="email-container">
+                        <p>zakaz@metall-dk.ru</p>
+                        <p>info@metall-dk.ru</p>
+                    </div>
                     <div class="social-links">
                         <a href="#"><i class="fab fa-vk"></i></a>
                         <a href="#"><i class="fab fa-telegram"></i></a>
@@ -386,7 +358,6 @@
 
     <script src="/front/JS/script.js"></script>
     <script src="/front/JS/slider.js"></script>
-    <script src="/front/JS/product-slider.js"></script>
     <script src="/front/JS/offers.js"></script>
 </body>
 </html>
