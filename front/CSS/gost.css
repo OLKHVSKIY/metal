@@ -1,0 +1,140 @@
+.gost-section {
+    padding: 58px 0;
+    background-color: #fff;
+}
+
+.gost-description {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #fff;
+    margin-bottom: 35px;
+    font-weight: 400;
+}
+
+.gost-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.gost-category {
+    border-radius: 13px;
+    border: 1px solid #b6b4b4;
+    background-color: #fff;
+    overflow: hidden;
+}
+
+.gost-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--text-color);
+    background-color: #fff;
+    padding: 15px 20px;
+    margin: 0;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.gost-title::after {
+    content: '\f078'; /* Font Awesome chevron-down */
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    color: var(--text-color);
+    font-size: 0.9rem;
+    transition: transform 0.3s ease;
+}
+
+.gost-title.active::after {
+    transform: rotate(180deg);
+}
+
+.gost-sublist {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    background-color: var(--light-color);
+}
+
+.gost-sublist.active {
+    max-height: 300px; /* Увеличено для больших списков */
+}
+
+.gost-sublist li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 20px;
+    border-top: 1px solid #ddd;
+    list-style: none;
+}
+
+.gost-icon {
+    color: var(--primary-color);
+    font-size: 1rem;
+    margin-right: 10px;
+}
+
+.gost-link {
+    color: var(--text-color);
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 400;
+    flex: 1;
+    transition: var(--transition);
+}
+
+.gost-link:hover {
+    color: var(--primary-color);
+    text-decoration: underline;
+}
+
+.gost-download {
+    color: var(--primary-color);
+    font-size: 1rem;
+    margin-left: 10px;
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+.gost-download:hover {
+    color: #b71c1c;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .gost-title {
+        font-size: 1.1rem;
+        padding: 12px 15px;
+    }
+
+    .gost-sublist li {
+        padding: 10px 15px;
+    }
+
+    .gost-icon, .gost-link, .gost-download {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .gost-list {
+        gap: 8px;
+    }
+
+    .gost-title {
+        font-size: 1rem;
+        padding: 10px 12px;
+    }
+
+    .gost-sublist li {
+        padding: 8px 12px;
+    }
+
+    .gost-icon, .gost-link, .gost-download {
+        font-size: 0.85rem;
+    }
+}
