@@ -1,0 +1,368 @@
+.services {
+  padding: 58px 0;
+}
+
+.services-description {
+  max-width: 1300px;
+  margin: 0 0 35px;
+  text-align: left;
+}
+
+.services-description p {
+  font-size: 18px;
+  color: var(--text-color);
+}
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 360px);
+  gap: 10px;
+  justify-content: center;
+}
+
+.service-card {
+  width: 360px;
+  height: 470px;
+  overflow: hidden;
+  border-radius: var(--border-radius);
+  position: relative;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.service-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.service-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  transition: opacity var(--transition);
+}
+
+.service-card:hover {
+  transform: scale(1.02);
+}
+
+.service-card:hover::after {
+  opacity: 1;
+}
+
+/* Modal Styles */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background-color: var(--light-color);
+  width: 90%;
+  max-width: 1200px;
+  height: 90vh;
+  padding: 30px;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  position: relative;
+  overflow-y: auto;
+}
+
+.modal.open {
+  display: flex;
+}
+
+.close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 28px;
+  cursor: pointer;
+  color: var(--text-color);
+  transition: var(--transition);
+}
+
+.close-btn:hover {
+  color: var(--primary-color);
+}
+
+.service-details {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.service-title {
+  font-size: 28px;
+  color: var(--dark-color);
+  margin-bottom: 10px;
+}
+
+.service-banner {
+  width: 100%;
+  max-width: 1200px;
+  height: 350px;
+  object-fit: cover;
+  border-radius: var(--border-radius);
+  margin-bottom: 15px;
+}
+
+.service-description {
+  font-size: 16px;
+  color: var(--text-color);
+  line-height: 1.6;
+}
+
+.service-description ul {
+  list-style: disc;
+  margin: 15px 0 15px 20px;
+}
+
+.service-description ol {
+  list-style: decimal;
+  margin: 15px 0 15px 20px;
+}
+
+.service-description h4 {
+  font-size: 20px;
+  color: var(--dark-color);
+  margin: 20px 0 10px;
+}
+
+.service-description table {
+  width: 100%;
+  max-width: 600px;
+  border-collapse: collapse;
+  margin: 15px 0;
+}
+
+.service-description table th,
+.service-description table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: left;
+  font-size: 16px;
+}
+
+.service-description table th {
+  background-color: #f8f8f8;
+  font-weight: 500;
+  color: var(--dark-color);
+}
+
+.service-description table td {
+  color: var(--text-color);
+}
+
+.service-advantages {
+  margin: 20px 0;
+}
+
+.service-advantages h4 {
+  font-size: 20px;
+  color: var(--dark-color);
+  margin-bottom: 15px;
+}
+
+.advantages-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+}
+
+.advantage-item {
+  font-size: 16px;
+  color: var(--text-color);
+  padding: 10px;
+  background-color: #f8f8f8;
+  border-radius: var(--border-radius);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  line-height: 1.2;
+}
+
+.advantage-item i {
+  font-size: 20px;
+  color: var(--primary-color);
+  vertical-align: middle;
+  line-height: 1;
+  margin-top: 16px;
+}
+
+.service-form {
+  margin-top: 20px;
+}
+
+.service-form h4 {
+  font-size: 20px;
+  color: var(--dark-color);
+  margin-bottom: 15px;
+}
+
+.request-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.request-form p {
+  font-size: 16px;
+  color: var(--text-color);
+  margin-bottom: 10px;
+}
+
+.request-form input {
+  padding: 12px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: var(--border-radius);
+  outline: none;
+  transition: var(--transition);
+}
+
+.request-form input:focus {
+  border-color: var(--primary-color);
+}
+
+.request-form .order-btn {
+  background-color: var(--primary-color);
+  color: var(--text-light);
+  padding: 12px;
+  border: none;
+  border-radius: var(--border-radius);
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.request-form .order-btn:hover {
+  background-color: #b71c1c;
+}
+
+@media (max-width: 1500px) {
+  .services-grid {
+    grid-template-columns: repeat(3, 360px);
+  }
+}
+
+@media (max-width: 1100px) {
+  .services-grid {
+    grid-template-columns: repeat(2, 360px);
+  }
+}
+
+@media (max-width: 768px) {
+  .services-grid {
+    grid-template-columns: 360px;
+  }
+
+  .modal-content {
+    width: 95%;
+    height: 95vh;
+    padding: 20px;
+  }
+
+  .service-banner {
+    height: 250px;
+  }
+
+  .advantages-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .service-description table {
+    font-size: 14px;
+  }
+
+  .service-description table th,
+  .service-description table td {
+    padding: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .services-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .service-card {
+    width: 100%;
+    height: 400px;
+  }
+
+  .services-description p {
+    font-size: 16px;
+  }
+
+  .modal-content {
+    padding: 15px;
+  }
+
+  .service-title {
+    font-size: 24px;
+  }
+
+  .service-banner {
+    height: 200px;
+  }
+
+  .service-description {
+    font-size: 14px;
+  }
+
+  .service-description h4 {
+    font-size: 18px;
+  }
+
+  .service-description table {
+    font-size: 12px;
+  }
+
+  .service-description table th,
+  .service-description table td {
+    padding: 6px;
+  }
+
+  .service-advantages h4 {
+    font-size: 18px;
+  }
+
+  .advantage-item {
+    font-size: 14px;
+  }
+
+  .advantage-item i {
+    font-size: 18px;
+  }
+
+  .service-form h4 {
+    font-size: 18px;
+  }
+
+  .request-form input {
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  .request-form .order-btn {
+    font-size: 14px;
+    padding: 10px;
+  }
+}

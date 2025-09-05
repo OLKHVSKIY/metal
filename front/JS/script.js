@@ -1,4 +1,3 @@
-// script.js
 document.addEventListener('DOMContentLoaded', function() {
   // Инициализация всех функций после загрузки DOM
   initMobileMenu();
@@ -129,6 +128,8 @@ function initMap() {
     center: [59.987208, 30.445029], // Координаты: Санкт-Петербург, ул. Коммуны, 67
     zoom: 15
   });
+
+  myMap.behaviors.disable('scrollZoom');
 
   const myPlacemark = new ymaps.Placemark([59.987208, 30.445029], {
     hintContent: 'Сеть металлобаз Металл ДК',

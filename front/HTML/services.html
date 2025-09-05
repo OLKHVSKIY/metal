@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Услуги</title>
+    <link rel="icon" href="/img/short-logo.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="/img/short-logo.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/front/CSS/style.css">
+    <link rel="stylesheet" href="/front/CSS/services.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container header-container">
+            <div class="logo">
+                <a href="/front/HTML/main.html">
+                    <img src="/img/logo.png" alt="Металл">
+                </a>
+            </div>
+            <nav>
+                <ul class="nav-menu">
+                    <li><a href="/front/HTML/catalog.html">Каталог</a></li>
+                    <li><a href="#">Акции</a></li>
+                    <li><a href="/front/HTML/services.html" class="active">Услуги</a></li>
+                    <li><a href="#">Доставка</a></li>
+                    <li><a href="#">Прайс-лист</a></li>
+                    <li><a href="/front/HTML/contact.html">Контакты</a></li>
+                </ul>
+            </nav>
+            <div class="header-actions">
+                <form class="search-form">
+                    <input type="text" placeholder="Поиск...">
+                    <button type="submit"><i class="fas fa-search"></i></button>
+                </form>
+                <div class="phone-number">+7 (123) 456-78-90</div>
+                <a href="#" class="btn">Заказать звонок</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Services Section -->
+    <section class="services">
+        <div class="container">
+            <h2 class="section-title">Услуги</h2>
+            <div class="services-description">
+                <p>В нашей компании, расположенной в Санкт-Петербурге, вы можете заказать широкий перечень услуг по металлообработке и транспортировке металлопродукции.</p>
+            </div>
+            <div class="services-grid">
+                <a href="#" class="service-card" data-service="1">
+                    <img src="/img/services/services1.webp" alt="Сверление отверстий">
+                </a>
+                <a href="#" class="service-card" data-service="2">
+                    <img src="/img/services/services2.webp" alt="Токарные работы">
+                </a>
+                <a href="#" class="service-card" data-service="3">
+                    <img src="/img/services/services3.webp" alt="Гибка металла">
+                </a>
+                <a href="#" class="service-card" data-service="4">
+                    <img src="/img/services/services4.jpg" alt="Лазерная резка">
+                </a>
+                <a href="#" class="service-card" data-service="5">
+                    <img src="/img/services/services5.jpg" alt="Резка металла">
+                </a>
+                <a href="#" class="service-card" data-service="6">
+                    <img src="/img/services/services6.jpg" alt="Сварочные услуги">
+                </a>
+                <a href="#" class="service-card" data-service="7">
+                    <img src="/img/services/services7.jpg" alt="Прожиг отверстий">
+                </a>
+                <a href="#" class="service-card" data-service="8">
+                    <img src="/img/services/services8.jpg" alt="Нарезка резьбы">
+                </a>
+            </div>
+            <!-- Service Modal -->
+            <div class="modal" id="serviceModal">
+                <div class="modal-content">
+                    <span class="close-btn">&times;</span>
+                    <div class="service-details">
+                        <h3 class="service-title"></h3>
+                        <img class="service-image" src="" alt="">
+                        <div class="service-description"></div>
+                        <div class="service-advantages">
+                            <h4>Наши преимущества</h4>
+                            <div class="advantages-grid"></div>
+                        </div>
+                        <div class="service-form">
+                            <h4>Заявка на услугу</h4>
+                            <form class="request-form">
+                                <p>Оставьте Ваши данные и мы Вам перезвоним</p>
+                                <input type="text" name="name" placeholder="Имя:" required>
+                                <input type="tel" name="phone" placeholder="Телефон:" required>
+                                <input type="email" name="email" placeholder="E-mail:">
+                                <button type="submit" class="order-btn">Жду звонка</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-column">
+                    <div class="footer-divider"></div>
+                    <h3>Информация</h3>
+                    <div class="info-links">
+                        <a href="#">ГОСТ и ТУ</a>
+                        <a href="#">Новости</a>
+                        <a href="#">Статьи</a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <div class="footer-divider"></div>
+                    <h3>Контакты</h3>
+                    <p class="phone-number">+7 (123) 456-78-90</p>
+                    <div class="email-container">
+                        <p>zakaz@metall.ru</p>
+                        <p>info@metall.ru</p>
+                    </div>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-vk"></i></a>
+                        <a href="#"><i class="fab fa-telegram"></i></a>
+                        <a href="#"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 - 2025 Сеть металлобаз Металл. Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/front/JS/script.js"></script>
+    <script src="/front/JS/services.js"></script>
+</body>
+</html>
