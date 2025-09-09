@@ -331,7 +331,7 @@ body {
 .section-title {
   text-align: center;
   font-size: 2.33rem;
-  color: var(--dark-color);
+  /* color: var(--dark-color); */
   margin-bottom: 20px;
 }
 
