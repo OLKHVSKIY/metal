@@ -15,33 +15,39 @@
 </head>
 <body>
     <!-- Header -->
-    <header class="header">
-        <div class="container header-container">
-            <div class="logo">
-                <a href="#">
-                    <img src="/img/logo.png" alt="Металл">
-                </a>
+        <header class="header">
+            <div class="container header-container">
+                <div class="logo">
+                    <a href="#">
+                        <img src="/img/logo.png" alt="Металл">
+                    </a>
+                </div>
+                <button class="burger-btn">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <nav class="nav-menu">
+                    <div class="nav-menu-inner">
+                        <ul>
+                            <li><a href="/front/HTML/catalog.html">Каталог</a></li>
+                            <li><a href="#">Акции</a></li>
+                            <li><a href="/front/HTML/services.html">Услуги</a></li>
+                            <li><a href="#">Доставка</a></li>
+                            <li><a href="#">Прайс-лист</a></li>
+                            <li><a href="/front/HTML/contact.html">Контакты</a></li>
+                        </ul>
+                        <div class="header-actions mobile-header-actions">
+                            <form class="search-form">
+                                <input type="text" placeholder="Поиск...">
+                                <button type="submit"><i class="fas fa-search"></i></button>
+                            </form>
+                            <div class="phone-number">+7 (123) 456-78-90</div>
+                            <a href="#" class="btn">Заказать звонок</a>
+                        </div>
+                    </div>
+                </nav>
+
             </div>
-            <nav>
-                <ul class="nav-menu">
-                    <li><a href="/front/HTML/catalog.html">Каталог</a></li>
-                    <li><a href="#">Акции</a></li>
-                    <li><a href="/front/HTML/services.html">Услуги</a></li>
-                    <li><a href="#">Доставка</a></li>
-                    <li><a href="#">Прайс-лист</a></li>
-                    <li><a href="/front/HTML/contact.html">Контакты</a></li>
-                </ul>
-            </nav>
-            <div class="header-actions">
-                <form class="search-form">
-                    <input type="text" placeholder="Поиск...">
-                    <button type="submit"><i class="fas fa-search"></i></button>
-                </form>
-                <div class="phone-number">+7 (123) 456-78-90</div>
-                <a href="#" class="btn">Заказать звонок</a>
-            </div>
-        </div>
-    </header>
+        </header>
 
     <!-- Слайдер -->
     <section class="slider">
@@ -76,43 +82,43 @@
                 <div class="product-slides">
                     <div class="product-slide">
                         <div class="product-card">
-                            <img src="/img/example1.jpeg" alt="Арматура А500С" style="margin-bottom: 15px;">
+                            <img src="/img/example1.jpeg" alt="Арматура А500С">
                             <h4>Арматура А500С</h4>
                         </div>
                     </div>
                     <div class="product-slide">
                         <div class="product-card">
-                            <img src="/img/example2.jpeg" alt="Труба профильная 40x20" style="margin-bottom: 15px;">
+                            <img src="/img/example2.jpeg" alt="Труба профильная 40x20">
                             <h4>Труба профильная 40x20</h4>
                         </div>
                     </div>
                     <div class="product-slide">
                         <div class="product-card">
-                            <img src="/img/example3.jpg" alt="Лист стальной 3мм" style="margin-bottom: 15px;">
+                            <img src="/img/example3.jpg" alt="Лист стальной 3мм">
                             <h4>Лист стальной 3мм</h4>
                         </div>
                     </div>
                     <div class="product-slide">
                         <div class="product-card">
-                            <img src="/img/example4.jpeg" alt="Уголок стальной 50x50" style="margin-bottom: 15px;">
+                            <img src="/img/example4.jpeg" alt="Уголок стальной 50x50">
                             <h4>Уголок стальной 50x50</h4>
                         </div>
                     </div>
                     <div class="product-slide">
                         <div class="product-card">
-                            <img src="/img/example5.jpeg" alt="Профнастил С8" style="margin-bottom: 15px;">
+                            <img src="/img/example5.jpeg" alt="Профнастил С8">
                             <h4>Профнастил С8</h4>
                         </div>
                     </div>
                     <div class="product-slide">
                         <div class="product-card">
-                            <img src="/img/example6.jpeg" alt="Швеллер 12П" style="margin-bottom: 15px;">
+                            <img src="/img/example6.jpeg" alt="Швеллер 12П">
                             <h4>Швеллер 12П</h4>
                         </div>
                     </div>
                     <div class="product-slide">
                         <div class="product-card">
-                            <img src="/img/example7.jpeg" alt="Балка двутавровая" style="margin-bottom: 15px;">
+                            <img src="/img/example7.jpeg" alt="Балка двутавровая">
                             <h4>Балка двутавровая</h4>
                         </div>
                     </div>
@@ -129,7 +135,7 @@
             <h2 class="section-title">Лучшие предложения</h2>
             <div class="offers-grid">
                 <div class="offer-card">
-                    <img src="/img/iron1.jpg" alt="Арматура А500С">
+                    <img src="/img/catalog/catalog1.jpeg" alt="Арматура А500С">
                     <span class="availability">Есть в наличии</span>
                     <h4>Арматура А500С</h4>
                     <div class="price-container">
@@ -143,7 +149,7 @@
                     </div>
                 </div>
                 <div class="offer-card">
-                    <img src="/img/iron2.jpg" alt="Труба профильная 40x20">
+                    <img src="/img/catalog/catalog2.jpeg" alt="Труба профильная 40x20">
                     <span class="availability">Есть в наличии</span>
                     <h4>Труба профильная 40x20</h4>
                     <div class="price-container">
@@ -157,7 +163,7 @@
                     </div>
                 </div>
                 <div class="offer-card">
-                    <img src="/img/iron3.webp" alt="Лист стальной 3мм">
+                    <img src="/img/catalog/catalog3.jpg" alt="Лист стальной 3мм">
                     <span class="availability">Есть в наличии</span>
                     <h4>Лист стальной 3мм</h4>
                     <div class="price-container">
@@ -171,7 +177,7 @@
                     </div>
                 </div>
                 <div class="offer-card">
-                    <img src="/img/iron4.jpg" alt="Уголок стальной 50x50">
+                    <img src="/img/catalog/catalog4.jpeg" alt="Уголок стальной 50x50">
                     <span class="availability">Есть в наличии</span>
                     <h4>Уголок стальной 50x50</h4>
                     <div class="price-container">
@@ -185,7 +191,7 @@
                     </div>
                 </div>
                 <div class="offer-card">
-                    <img src="/img/iron5.webp" alt="Профнастил С8">
+                    <img src="/img/catalog/catalog5.jpeg" alt="Профнастил С8">
                     <span class="availability">Есть в наличии</span>
                     <h4>Профнастил С8</h4>
                     <div class="price-container">
@@ -199,7 +205,7 @@
                     </div>
                 </div>
                 <div class="offer-card">
-                    <img src="/img/iron6.webp" alt="Швеллер 12П">
+                    <img src="/img/catalog/catalog6.jpeg" alt="Швеллер 12П">
                     <span class="availability">Есть в наличии</span>
                     <h4>Швеллер 12П</h4>
                     <div class="price-container">
@@ -213,7 +219,7 @@
                     </div>
                 </div>
                 <div class="offer-card">
-                    <img src="/img/iron7.jpg" alt="Балка двутавровая">
+                    <img src="/img/catalog/catalog7.png" alt="Балка двутавровая">
                     <span class="availability">Есть в наличии</span>
                     <h4>Балка двутавровая</h4>
                     <div class="price-container">
@@ -227,7 +233,7 @@
                     </div>
                 </div>
                 <div class="offer-card">
-                    <img src="/img/iron8.jpg" alt="Арматура А3">
+                    <img src="/img/catalog/catalog8.webp" alt="Арматура А3">
                     <span class="availability">Есть в наличии</span>
                     <h4>Арматура А3</h4>
                     <div class="price-container">
@@ -241,7 +247,7 @@
                     </div>
                 </div>
                 <div class="offer-card hidden">
-                    <img src="/img/iron9.jpg" alt="Труба круглая 50мм">
+                    <img src="/img/catalog/catalog9.jpeg" alt="Труба круглая 50мм">
                     <span class="availability">Есть в наличии</span>
                     <h4>Труба круглая 50мм</h4>
                     <div class="price-container">
@@ -255,7 +261,7 @@
                     </div>
                 </div>
                 <div class="offer-card hidden">
-                    <img src="/img/iron10.jpg" alt="Лист оцинкованный">
+                    <img src="/img/catalog/catalog10.jpg" alt="Лист оцинкованный">
                     <span class="availability">Есть в наличии</span>
                     <h4>Лист оцинкованный</h4>
                     <div class="price-container">
@@ -269,7 +275,7 @@
                     </div>
                 </div>
                 <div class="offer-card hidden">
-                    <img src="/img/iron11.jpg" alt="Уголок 25x25">
+                    <img src="/img/catalog/catalog11.png" alt="Уголок 25x25">
                     <span class="availability">Есть в наличии</span>
                     <h4>Уголок 25x25</h4>
                     <div class="price-container">
@@ -283,7 +289,7 @@
                     </div>
                 </div>
                 <div class="offer-card hidden">
-                    <img src="/img/iron12.jpg" alt="Профнастил С20">
+                    <img src="/img/catalog/catalog12.webp" alt="Профнастил С20">
                     <span class="availability">Есть в наличии</span>
                     <h4>Профнастил С20</h4>
                     <div class="price-container">
@@ -297,7 +303,7 @@
                     </div>
                 </div>
                 <div class="offer-card hidden">
-                    <img src="/img/iron13.jpg" alt="Швеллер 10П">
+                    <img src="/img/catalog/catalog13.png" alt="Швеллер 10П">
                     <span class="availability">Есть в наличии</span>
                     <h4>Швеллер 10П</h4>
                     <div class="price-container">
@@ -311,7 +317,7 @@
                     </div>
                 </div>
                 <div class="offer-card hidden">
-                    <img src="/img/iron14.jpg" alt="Балка 20Б1">
+                    <img src="/img/catalog/catalog14.jpg" alt="Балка 20Б1">
                     <span class="availability">Есть в наличии</span>
                     <h4>Балка 20Б1</h4>
                     <div class="price-container">
@@ -325,7 +331,7 @@
                     </div>
                 </div>
                 <div class="offer-card hidden">
-                    <img src="/img/iron4.jpg" alt="Арматура А800">
+                    <img src="/img/catalog/catalog15.jpg" alt="Арматура А800">
                     <span class="availability">Есть в наличии</span>
                     <h4>Арматура А800</h4>
                     <div class="price-container">
@@ -339,7 +345,7 @@
                     </div>
                 </div>
                 <div class="offer-card hidden">
-                    <img src="/img/iron6.webp" alt="Труба профильная 60x40">
+                    <img src="/img/catalog/catalog16.png" alt="Труба профильная 60x40">
                     <span class="availability">Есть в наличии</span>
                     <h4>Труба профильная 60x40</h4>
                     <div class="price-container">
@@ -383,7 +389,7 @@
                 <div class="advantage-item">
                     <i class="fas fa-percent"></i>
                     <h3>Акции и скидки</h3>
-                    <p>Много выгодных предложений и <br> скидок</p>
+                    <p>Много выгодных предложений и скидок</p>
                 </div>
                 <div class="advantage-item">
                     <i class="fas fa-shield-alt"></i>
@@ -428,6 +434,7 @@
         </div>
     </footer>
 
+    <script src="/front/JS/burger.js"></script>
     <script src="/front/JS/script.js"></script>
     <script src="/front/JS/slider.js"></script>
     <script src="/front/JS/offers.js"></script>

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Вход в админку</title>
+  <link rel="stylesheet" href="/front/CSS/admin.css" />
+  <script>window.CSRF_TOKEN='{{CSRF_TOKEN}}';</script>
+</head>
+<body class="full-center">
+  <form class="card login-card" method="post" action="/admin/login">
+    <h1>Вход в админку</h1>
+    <label for="login">Логин</label>
+    <input id="login" name="login" placeholder="admin" required />
+    <label for="password">Пароль</label>
+    <input id="password" type="password" name="password" placeholder="admin" required />
+    <input type="hidden" name="csrf" value="{{CSRF_TOKEN}}" />
+    <button class="btn" type="submit">Войти</button>
+  </form>
+</body>
+</html>
+
+

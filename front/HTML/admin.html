@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Админка</title>
+  <link rel="stylesheet" href="/front/CSS/admin.css" />
+  <script>window.CSRF_TOKEN='{{CSRF_TOKEN}}';</script>
+</head>
+<body>
+  <header>
+    <div class="left">
+      <h1>Админка</h1>
+      <nav class="nav">
+        <button class="btn" id="showOrdersBtn">Заявки услуг</button>
+        <button class="btn secondary" id="showUsersBtn">Пользователи</button>
+      </nav>
+    </div>
+    <div class="actions">
+      <a href="/front/HTML/services.html" class="btn secondary">К сайту</a>
+    </div>
+  </header>
+  <div class="container">
+    <section id="ordersSection" style="display:none;">
+      <div class="card">
+      <div class="card-header">
+        <div class="card-title">Заявки</div>
+        <div class="filters">
+          <select id="statusFilter">
+            <option value="all">Все</option>
+            <option value="active">Активна</option>
+            <option value="closed">Закрыта</option>
+          </select>
+          <input id="q" placeholder="Поиск по имени/телефону/email" />
+        </div>
+      </div>
+      <div style="max-height:60vh; overflow:auto;">
+        <table id="ordersTable">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Услуга</th>
+              <th>Клиент</th>
+              <th>Контакты</th>
+              <th>Статус</th>
+              <th>Создано</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="toolbar">
+        <span class="muted">Клик по кнопке меняет статус заявки.</span>
+      </div>
+      </div>
+    </section>
+    <section id="usersSection" style="display:none;">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Пользователи</div>
+          <div class="filters" style="margin-left:auto">
+            <button class="btn" id="refreshUsers">Обновить</button>
+          </div>
+        </div>
+        <div style="max-height:60vh; overflow:auto;">
+          <table id="usersTable">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Логин</th>
+                <th>Пароль</th>
+                <th>Email</th>
+                <th>Телефон</th>
+                <th>Админ</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class="toolbar">
+          <button class="btn" id="addUserBtn">Добавить пользователя</button>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+    async function fetchOrders() {
+      const res = await fetch('/api/admin/orders');
+      return await res.json();
+    }
+    async function setStatus(id, status) {
+      await fetch('/api/admin/orders/status', { method: 'PATCH', headers: {'Content-Type':'application/json','X-CSRF-Token':window.CSRF_TOKEN}, body: JSON.stringify({id, status}) });
+      load();
+    }
+    function render(rows) {
+      const filter = document.getElementById('statusFilter').value;
+      const q = document.getElementById('q').value.toLowerCase();
+      const tbody = document.querySelector('#ordersTable tbody');
+      tbody.innerHTML = '';
+      rows
+        .filter(r => filter==='all' || r.status===filter)
+        .filter(r => (r.name+r.phone+r.email+r.service).toLowerCase().includes(q))
+        .forEach(r => {
+          const tr = document.createElement('tr');
+          const actionBtn = r.status==='active'
+            ? '<button class="btn" onclick="setStatus(' + r.id + ', \'closed\')">Закрыть</button>'
+            : '<button class="btn" onclick="setStatus(' + r.id + ', \'active\')">Открыть</button>';
+          tr.innerHTML = '' +
+            '<td>' + r.id + '</td>' +
+            '<td>' + r.service + '</td>' +
+            '<td>' + r.name + '</td>' +
+            '<td>' + r.phone + '<br/><span class="muted">' + (r.email||'') + '</span></td>' +
+            '<td><span class="badge ' + (r.status==='active'?'active':'closed') + '">' + (r.status==='active'?'Активна':'Закрыта') + '</span></td>' +
+            '<td>' + new Date(r.createdAt).toLocaleString() + '</td>' +
+            '<td>' + actionBtn + '</td>';
+          tbody.appendChild(tr);
+        });
+    }
+    async function load(){ render(await fetchOrders()); }
+    document.getElementById('statusFilter').addEventListener('change', load);
+    document.getElementById('q').addEventListener('input', load);
+    const showOrdersBtn = document.getElementById('showOrdersBtn');
+    const ordersSection = document.getElementById('ordersSection');
+    showOrdersBtn.addEventListener('click', function(){ ordersSection.style.display = 'block'; usersSection.style.display='none'; load(); });
+
+    // Users management
+    const usersSection = document.getElementById('usersSection');
+    const showUsersBtn = document.getElementById('showUsersBtn');
+    const usersTableBody = () => document.querySelector('#usersTable tbody');
+    async function fetchUsers(){ const r = await fetch('/api/admin/users'); return await r.json(); }
+    async function renderUsers(){
+      const rows = await fetchUsers();
+      const tbody = usersTableBody();
+      tbody.innerHTML='';
+      rows.forEach(u => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = ''+
+          '<td>'+u.id+'</td>'+
+          '<td><input data-id="'+u.id+'" data-field="login" value="'+(u.login||'')+'" /></td>'+
+          '<td><input type="password" placeholder="новый пароль" data-id="'+u.id+'" data-field="password" /></td>'+
+          '<td><input data-id="'+u.id+'" data-field="email" value="'+(u.email||'')+'" /></td>'+
+          '<td><input data-id="'+u.id+'" data-field="phone" value="'+(u.phone||'')+'" /></td>'+
+          '<td><input type="checkbox" data-id="'+u.id+'" data-field="is_admin" '+(u.is_admin?'checked':'')+' /></td>'+
+          '<td><button class="btn" data-action="save" data-id="'+u.id+'">Сохранить</button></td>';
+        tbody.appendChild(tr);
+      });
+      tbody.addEventListener('click', async (e)=>{
+        const btn = e.target.closest('button[data-action="save"]');
+        if(!btn) return;
+        const id = parseInt(btn.getAttribute('data-id'));
+        const row = btn.closest('tr');
+        const payload = {
+          id,
+          login: row.querySelector('input[data-field="login"]').value,
+          password: row.querySelector('input[data-field="password"]').value,
+          email: row.querySelector('input[data-field="email"]').value,
+          phone: row.querySelector('input[data-field="phone"]').value,
+          is_admin: row.querySelector('input[data-field="is_admin"]').checked
+        };
+        await fetch('/api/admin/users', { method:'PATCH', headers:{'Content-Type':'application/json','X-CSRF-Token':window.CSRF_TOKEN}, body: JSON.stringify(payload) });
+        renderUsers();
+      }, { once: true });
+    }
+    showUsersBtn.addEventListener('click', function(){ usersSection.style.display='block'; ordersSection.style.display='none'; renderUsers(); });
+    document.getElementById('refreshUsers').addEventListener('click', renderUsers);
+  </script>
+</body>
+</html>
+
+

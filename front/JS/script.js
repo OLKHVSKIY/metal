@@ -138,3 +138,26 @@ function initMap() {
 
   myMap.geoObjects.add(myPlacemark);
 }
+
+// бургер
+
+document.addEventListener('DOMContentLoaded', () => {
+  const burgerBtn = document.querySelector('.burger-btn');
+  const navMenu = document.querySelector('.nav-menu');
+  const body = document.body;
+
+  // Переключение меню
+  burgerBtn.addEventListener('click', () => {
+    navMenu.classList.toggle('active');
+    body.style.overflow = navMenu.classList.contains('active') ? 'hidden' : '';
+  });
+
+  // Закрытие меню при клике на ссылку
+  const navLinks = document.querySelectorAll('.nav-menu a');
+  navLinks.forEach(link => {
+    link.addEventListener('click', () => {
+      navMenu.classList.remove('active');
+      body.style.overflow = '';
+    });
+  });
+});

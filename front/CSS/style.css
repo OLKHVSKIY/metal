@@ -1,3 +1,4 @@
+/* Зона 1: Переменные */
 :root {
   --primary-color: #d32f2f;
   --secondary-color: #d32f2f;
@@ -13,14 +14,14 @@
   --transition: all 0.3s ease;
 }
 
-.nav-menu a.active { color: var(--primary-color); }
-
+/* Зона 2: Сброс стилей */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+/* Зона 3: Общие стили для body и container */
 body {
   font-family: 'Roboto', 'Open Sans', sans-serif;
   line-height: 1.6;
@@ -31,60 +32,89 @@ body {
 .container {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 0 18px;
+  padding: 0 15px;
 }
 
-/* Header Styles */
+/* Зона 4: Стили хедера */
 .header {
   background-color: var(--light-color);
   color: var(--text-color);
-  padding: 15px 0;
+  padding: 12px 0;
   position: sticky;
   top: 0;
   z-index: 1000;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  margin-bottom: 28px;
+  margin-bottom: 20px;
 }
 
 .header-container {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 28px;
+  gap: 20px;
+  flex-wrap: nowrap;
 }
 
 .logo img {
-  max-height: 80px;
-  min-width: 130px;
+  max-height: 70px;
+  min-width: 120px;
+  margin-right: 30px;
+}
+
+.burger-btn {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: var(--text-color);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.burger-btn:hover {
+  color: var(--primary-color);
 }
 
 .nav-menu {
   display: flex;
   list-style: none;
   flex-wrap: wrap;
-  gap: 18px;
+  gap: 15px;
+  flex-grow: 1;
 }
 
-.nav-menu li {
-  position: relative;
-  margin: 0;
+.nav-menu-inner {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.nav-menu ul {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
 }
 
 .nav-menu li:not(:last-child)::after {
   content: '|';
   position: absolute;
-  right: -10px;
+  right: -10px; /* Скорректировано для учета margin-right */
   color: var(--gray-color);
-  font-size: 18px;
+  font-size: 16px;
   line-height: 1;
   margin-top: 4px;
+}
+
+.nav-menu li {
+  margin-right: 20px; /* Добавлен отступ справа для каждого li */
+  position: relative;
 }
 
 .nav-menu a {
   color: var(--text-color);
   text-decoration: none;
   font-weight: 500;
-  font-size: 18px;
+  font-size: 16px;
   transition: var(--transition);
   white-space: nowrap;
   position: relative;
@@ -109,26 +139,31 @@ body {
   width: 100%;
 }
 
+.nav-menu a.active {
+  color: var(--primary-color);
+}
+
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 23px;
+  gap: 20px;
   flex-shrink: 0;
 }
 
 .search-form {
+  margin-left: 15px;
   display: flex;
-  width: 220px;
+  width: 200px;
   border: 1px solid var(--gray-color);
   border-radius: var(--border-radius);
   overflow: hidden;
 }
 
 .search-form input {
-  padding: 12px 16px;
+  padding: 10px 14px;
   border: none;
   width: 100%;
-  font-size: 16px;
+  font-size: 14px;
   background-color: #fff;
 }
 
@@ -136,27 +171,27 @@ body {
   background-color: var(--secondary-color);
   color: var(--text-light);
   border: none;
-  padding: 12px 16px;
+  padding: 10px 14px;
   cursor: pointer;
-  flex-shrink: 0;
+  font-size: 14px;
   transition: var(--transition);
 }
 
 .phone-number {
   font-weight: bold;
-  font-size: 18px;
+  font-size: 16px;
   white-space: nowrap;
 }
 
 .btn {
   display: inline-block;
   background-color: var(--primary-color);
-  color: var(--text-light);
-  padding: 12px 23px;
+  color: var(--text-light) !important;
+  padding: 10px 20px;
   border-radius: var(--border-radius);
   text-decoration: none;
   font-weight: bold;
-  font-size: 16px;
+  font-size: 14px;
   transition: var(--transition);
   white-space: nowrap;
   flex-shrink: 0;
@@ -167,49 +202,50 @@ body {
   transform: translateY(-2px);
 }
 
-/* Best Offers Section */
+/* Зона 5: Стили секции лучших предложений */
 .best-offers {
-  background-color: var(--offer-bg-color);
-  padding: 58px 0;
+  padding: 40px 0;
 }
 
 .offers-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 23px;
-  margin-bottom: 35px;
+  gap: 20px;
+  margin-bottom: 30px;
 }
 
 .offer-card {
   background-color: var(--light-color);
   border-radius: var(--border-radius);
-  padding: 18px;
+  padding: 15px;
   text-align: center;
   transition: var(--transition);
-  border: #888;
+  border: 1px solid #ddd;
 }
 
 .offer-card:hover {
   transform: translateY(-5px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .offer-card img {
-  width: 270px;
-  height: 260px;
-  object-fit: cover;
-  margin-bottom: 12px;
+  width: 100%;
+  max-width: 220px;
+  height: 220px;
+  object-fit: contain;
+  margin-bottom: 10px;
 }
 
 .offer-card .availability {
   color: var(--green-color);
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   margin-bottom: 8px;
   display: block;
 }
 
 .offer-card h4 {
-  font-size: 16px;
+  font-size: 15px;
   margin-bottom: 8px;
   color: var(--text-color);
 }
@@ -217,18 +253,20 @@ body {
 .offer-card {
   transition: opacity 0.3s ease, transform 0.3s ease;
 }
+
 .offer-card.hidden {
   opacity: 0;
   transform: translateY(10px);
+  display: none;
 }
 
 .price-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 12px;
-  font-size: 14px;
-  margin-bottom: 12px;
+  gap: 10px;
+  font-size: 13px;
+  margin-bottom: 10px;
 }
 
 .old-price {
@@ -247,19 +285,15 @@ body {
   font-weight: 400;
 }
 
-.offer-card.hidden {
-  display: none;
-}
-
 .button-container {
   display: flex;
   justify-content: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .cart-btn {
-  width: 50px;
-  height: 40px;
+  width: 45px;
+  height: 35px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -268,7 +302,7 @@ body {
   border: none;
   border-radius: var(--border-radius);
   cursor: pointer;
-  font-size: 18px;
+  font-size: 16px;
   transition: var(--transition);
 }
 
@@ -280,13 +314,13 @@ body {
 
 .order-btn {
   flex: 1;
-  padding: 10px;
+  padding: 8px;
   background-color: var(--primary-color);
   color: var(--text-light);
   border: none;
   border-radius: var(--border-radius);
   cursor: pointer;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: bold;
   transition: var(--transition);
 }
@@ -301,11 +335,11 @@ body {
   margin: 0 auto;
   background-color: var(--primary-color);
   color: var(--text-light);
-  padding: 14px 28px;
+  padding: 12px 25px;
   border-radius: var(--border-radius);
   border: none;
   font-weight: bold;
-  font-size: 16px;
+  font-size: 14px;
   cursor: pointer;
   transition: var(--transition);
 }
@@ -315,31 +349,31 @@ body {
   transform: translateY(-2px);
 }
 
-/* Store Addresses Section */
+/* Зона 6: Стили секции адресов магазинов */
 .store-addresses {
-  padding: 58px 0;
+  padding: 40px 0;
 }
 
 .map-container {
   width: 100%;
-  height: 400px;
+  height: 350px;
   border-radius: var(--border-radius);
   overflow: hidden;
 }
 
-/* Categories Section */
+/* Зона 7: Стили секции категорий */
 .section-title {
   text-align: center;
-  font-size: 2.33rem;
-  /* color: var(--dark-color); */
-  margin-bottom: 20px;
+  font-size: 2rem;
+  color: var(--dark-color);
+  margin-bottom: 15px;
 }
 
 .categories {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(292px, 1fr));
-  gap: 23px;
-  margin-bottom: 58px;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+  margin-bottom: 40px;
 }
 
 .category-card {
@@ -357,57 +391,63 @@ body {
 
 .category-card img {
   width: 100%;
-  height: 210px;
+  height: 180px;
   object-fit: cover;
 }
 
 .category-card h3 {
-  padding: 18px;
+  padding: 15px;
   text-align: center;
   background-color: var(--dark-color);
   color: var(--text-light);
+  font-size: 16px;
 }
 
-/* Advantages Section */
+/* Зона 8: Стили секции преимуществ */
 .advantages {
   background-color: var(--dark-color);
   color: var(--text-light);
-  padding: 58px 0;
+  padding: 40px 0;
 }
 
 .advantages-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(292px, 1fr));
-  gap: 35px;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 25px;
 }
 
 .advantage-item {
   text-align: center;
-  padding: 23px;
+  padding: 20px;
 }
 
 .advantage-item i {
-  font-size: 2.92rem;
+  font-size: 2.5rem;
   color: var(--primary-color);
-  margin-bottom: 18px;
+  margin-bottom: 15px;
 }
 
 .advantage-item h3 {
-  margin-bottom: 12px;
+  margin-bottom: 10px;
+  font-size: 18px;
 }
 
-/* Footer */
+.advantage-item p {
+  font-size: 14px;
+}
+
+/* Зона 9: Стили футера */
 .footer {
   background-color: var(--dark-color);
   color: var(--text-light);
-  padding: 38px 0 23px;
+  padding: 30px 0 20px;
 }
 
 .footer-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(233px, 1fr));
-  gap: 35px;
-  margin-bottom: 35px;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 25px;
+  margin-bottom: 25px;
 }
 
 .footer-column {
@@ -421,36 +461,39 @@ body {
   width: 100%;
   height: 1px;
   background-color: rgba(255, 255, 255, 0.1);
-  margin-bottom: 23px;
+  margin-bottom: 20px;
 }
 
 .footer-column h3 {
-  margin-bottom: 23px;
+  margin-bottom: 20px;
   color: var(--primary-color);
+  font-size: 18px;
 }
 
 .footer-column .phone-number {
-  margin-bottom: 12px;
+  margin-bottom: 10px;
+  font-size: 16px;
 }
 
 .email-container {
   display: flex;
-  gap: 18px;
-  margin-bottom: 12px;
+  gap: 15px;
+  margin-bottom: 10px;
 }
 
 .email-container p {
   margin: 0;
+  font-size: 14px;
 }
 
 .social-links a {
   display: inline-block;
-  width: 47px;
-  height: 47px;
+  width: 40px;
+  height: 40px;
   background-color: rgba(255, 255, 255, 0.1);
   border-radius: 20%;
   text-align: center;
-  line-height: 47px;
+  line-height: 40px;
   transition: var(--transition);
   color: rgba(255, 255, 255, 0.6);
 }
@@ -461,20 +504,20 @@ body {
 }
 
 .social-links i {
-  font-size: 20px;
-  margin-top: 13px;
+  font-size: 18px;
+  margin-top: 11px;
 }
 
 .footer-column .info-links {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-top: 12px;
+  gap: 10px;
+  margin-top: 10px;
 }
 
 .footer-column .info-links a {
   color: var(--text-light);
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 400;
   text-decoration: none;
   transition: var(--transition);
@@ -486,45 +529,354 @@ body {
 
 .copyright {
   text-align: center;
-  padding-top: 23px;
+  padding-top: 20px;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 14px;
 }
 
-/* Responsive Design */
-@media (max-width: 1200px) {
-  .offers-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
+/* Зона 10: Адаптивные стили для планшетов (до 768px) */
 @media (max-width: 768px) {
+  .container {
+    padding: 0 12px;
+  }
+
   .header-container {
-    flex-direction: column;
-    gap: 18px;
+    flex-wrap: wrap;
+    position: relative;
+    align-items: center;
+    justify-content: space-between;
   }
-  
+
+  .burger-btn {
+    display: block;
+    order: 2;
+    z-index: 1002;
+  }
+
   .nav-menu {
-    flex-direction: column;
-    text-align: center;
-    gap: 12px;
+    display: none;
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 280px;
+    height: 100vh;
+    background-color: var(--light-color); /* Белый фон */
+    z-index: 1001;
+    padding: 20px;
+    transform: translateX(100%);
+    transition: transform 0.3s ease-in-out;
+    overflow-y: auto;
   }
-  
+
+  .nav-menu.active {
+    display: block;
+    transform: translateX(0);
+  }
+
+  .nav-menu-inner {
+    align-items: flex-start;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .nav-menu ul {
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+    padding: 0;
+  }
+
+  .nav-menu li {
+    width: 100%;
+  }
+
   .nav-menu li:not(:last-child)::after {
     display: none;
   }
-  
+
+  .nav-menu a {
+    color: var(--text-color); /* Черный цвет ссылок в мобильном меню */
+    font-size: 16px;
+    display: block;
+    padding: 10px 0;
+    transition: var(--transition);
+  }
+
+  .nav-menu a:hover {
+    color: var(--primary-color);
+    padding-left: 8px;
+  }
+
+  .nav-menu a::after {
+    display: none;
+  }
+
+  .header-actions {
+    display: none;
+  }
+
+  .mobile-header-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--gray-color);
+  }
+
+  .mobile-header-actions .btn {
+    color: var(--text-light) !important; /* Белый цвет текста кнопки */
+  }
+
+  .search-form {
+    width: 100%;
+    border: 1px solid var(--gray-color);
+    border-radius: var(--border-radius);
+    background-color: var(--light-color);
+  }
+
+  .search-form input {
+    font-size: 14px;
+    padding: 8px 12px;
+  }
+
+  .search-form button {
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+
+  .phone-number {
+    font-size: 14px;
+    text-align: center;
+  }
+
+  .btn {
+    font-size: 14px;
+    padding: 8px 15px;
+    width: 100%;
+    text-align: center;
+  }
+
   .offers-grid {
     grid-template-columns: repeat(2, 1fr);
   }
+
+  .offer-card img {
+    max-width: 200px;
+    height: 190px;
+  }
+
+  .offer-card h4 {
+    font-size: 14px;
+  }
+
+  .price-container {
+    font-size: 12px;
+    gap: 8px;
+  }
+
+  .cart-btn {
+    width: 40px;
+    height: 30px;
+    font-size: 14px;
+  }
+
+  .order-btn {
+    font-size: 13px;
+    padding: 6px;
+  }
+
+  .toggle-btn {
+    font-size: 13px;
+    padding: 10px 20px;
+  }
+
+  .map-container {
+    height: 300px;
+  }
+
+  .advantages-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .advantage-item i {
+    font-size: 2rem;
+  }
+
+  .advantage-item h3 {
+    font-size: 16px;
+  }
+
+  .advantage-item p {
+    font-size: 13px;
+  }
+
+  .footer-column h3 {
+    font-size: 16px;
+  }
+
+  .footer-column .phone-number {
+    font-size: 14px;
+  }
+
+  .email-container {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .social-links a {
+    width: 35px;
+    height: 35px;
+    line-height: 35px;
+  }
+
+  .social-links i {
+    font-size: 16px;
+    margin-top: 9px;
+  }
+
+  .footer-column .info-links a {
+    font-size: 13px;
+  }
+
+  .copyright {
+    font-size: 13px;
+  }
 }
 
+/* Зона 11: Адаптивные стили для мобильных (до 480px) */
 @media (max-width: 480px) {
+  .container {
+    padding: 0 10px;
+  }
+
+  .logo img {
+    max-height: 60px;
+    min-width: 100px;
+  }
+
+  .burger-btn {
+    font-size: 20px;
+  }
+
+  .nav-menu {
+    width: 100%;
+    padding: 15px;
+  }
+
+  .nav-menu a {
+    font-size: 14px;
+    padding: 8px 0;
+  }
+
+  .mobile-header-actions {
+    gap: 12px;
+  }
+
+  .mobile-header-actions .btn {
+    color: var(--text-light) !important;
+  }
+
+  .section-title {
+    font-size: 1.8rem;
+  }
+
   .offers-grid {
     grid-template-columns: 1fr;
   }
-  
-  .email-container {
-    flex-direction: column;
-    gap: 8px;
+
+  .offer-card img {
+    max-width: 180px;
+    height: 170px;
+  }
+
+  .offer-card h4 {
+    font-size: 13px;
+  }
+
+  .price-container {
+    font-size: 11px;
+  }
+
+  .cart-btn {
+    width: 35px;
+    height: 28px;
+    font-size: 13px;
+  }
+
+  .order-btn {
+    font-size: 12px;
+    padding: 5px;
+  }
+
+  .toggle-btn {
+    font-size: 12px;
+    padding: 8px 15px;
+  }
+
+  .map-container {
+    height: 250px;
+  }
+
+  .advantages-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .advantage-item {
+    padding: 15px;
+  }
+
+  .advantage-item i {
+    font-size: 1.8rem;
+  }
+
+  .advantage-item h3 {
+    font-size: 15px;
+  }
+
+  .advantage-item p {
+    font-size: 12px;
+  }
+
+  .footer {
+    padding: 20px 0 15px;
+  }
+
+  .footer-grid {
+    gap: 20px;
+    margin-bottom: 20px;
+  }
+
+  .footer-column h3 {
+    font-size: 15px;
+  }
+
+  .footer-column .phone-number {
+    font-size: 13px;
+  }
+
+  .email-container p {
+    font-size: 12px;
+  }
+
+  .social-links a {
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+  }
+
+  .social-links i {
+    font-size: 14px;
+    margin-top: 8px;
+  }
+
+  .footer-column .info-links a {
+    font-size: 12px;
+  }
+
+  .copyright {
+    font-size: 12px;
   }
 }
