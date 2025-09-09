@@ -57,7 +57,7 @@ body {
 .logo img {
   max-height: 70px;
   min-width: 120px;
-  margin-right: 30px;
+  margin-right: 5px;
 }
 
 .burger-btn {
@@ -98,7 +98,7 @@ body {
 .nav-menu li:not(:last-child)::after {
   content: '|';
   position: absolute;
-  right: -10px; /* Скорректировано для учета margin-right */
+  right: -15px; /* Скорректировано для учета margin-right */
   color: var(--gray-color);
   font-size: 16px;
   line-height: 1;
@@ -106,7 +106,7 @@ body {
 }
 
 .nav-menu li {
-  margin-right: 20px; /* Добавлен отступ справа для каждого li */
+  margin-right: 15px; /* Добавлен отступ справа для каждого li */
   position: relative;
 }
 
@@ -151,7 +151,6 @@ body {
 }
 
 .search-form {
-  margin-left: 15px;
   display: flex;
   width: 200px;
   border: 1px solid var(--gray-color);
@@ -475,6 +474,10 @@ body {
   font-size: 16px;
 }
 
+.address{
+  margin-bottom: 7px;
+}
+
 .email-container {
   display: flex;
   gap: 15px;
@@ -535,6 +538,7 @@ body {
 }
 
 /* Зона 10: Адаптивные стили для планшетов (до 768px) */
+
 @media (max-width: 768px) {
   .container {
     padding: 0 12px;

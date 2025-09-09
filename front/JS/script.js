@@ -125,15 +125,15 @@ function submitForm(formData) {
 function initMap() {
   console.log('Яндекс.Карты инициализированы');
   const myMap = new ymaps.Map("map", {
-    center: [59.987208, 30.445029], // Координаты: Санкт-Петербург, ул. Коммуны, 67
+    center: [59.820540, 30.370800], // Координаты: Московское шоссе 46Б, 
     zoom: 15
   });
 
   myMap.behaviors.disable('scrollZoom');
 
-  const myPlacemark = new ymaps.Placemark([59.987208, 30.445029], {
-    hintContent: 'Сеть металлобаз Металл ДК',
-    balloonContent: 'Санкт-Петербург, ул. Коммуны, 67'
+  const myPlacemark = new ymaps.Placemark([59.820540, 30.370800], {
+    hintContent: 'Межрегионсталь',
+    balloonContent: 'Санкт-Петербург, ул. Московское шоссе 46Б'
   });
 
   myMap.geoObjects.add(myPlacemark);
