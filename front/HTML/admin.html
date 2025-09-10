@@ -14,6 +14,7 @@
       <nav class="nav">
         <button class="btn" id="showOrdersBtn">Заявки услуг</button>
         <button class="btn secondary" id="showUsersBtn">Пользователи</button>
+        <button class="btn secondary" id="showNewsBtn">Новости</button>
       </nav>
     </div>
     <div class="actions">
@@ -84,6 +85,35 @@
         </div>
       </div>
     </section>
+    <section id="newsSection" style="display:none;">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Новости</div>
+          <div class="filters" style="margin-left:auto">
+            <button class="btn" id="refreshNews">Обновить</button>
+          </div>
+        </div>
+        <div style="max-height:60vh; overflow:auto;">
+          <table id="newsTable">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Заголовок</th>
+                <th>Краткий текст</th>
+                <th>Полный текст</th>
+                <th>Картинка (URL)</th>
+                <th>Дата</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class="toolbar">
+          <button class="btn" id="addNewsBtn">Добавить новость</button>
+        </div>
+      </div>
+    </section>
   </div>
   <script>
     async function fetchOrders() {
@@ -123,10 +153,11 @@
     document.getElementById('q').addEventListener('input', load);
     const showOrdersBtn = document.getElementById('showOrdersBtn');
     const ordersSection = document.getElementById('ordersSection');
-    showOrdersBtn.addEventListener('click', function(){ ordersSection.style.display = 'block'; usersSection.style.display='none'; load(); });
+    showOrdersBtn.addEventListener('click', function(){ ordersSection.style.display = 'block'; usersSection.style.display='none'; newsSection.style.display='none'; load(); });
 
     // Users management
     const usersSection = document.getElementById('usersSection');
+    const newsSection = document.getElementById('newsSection');
     const showUsersBtn = document.getElementById('showUsersBtn');
     const usersTableBody = () => document.querySelector('#usersTable tbody');
     async function fetchUsers(){ const r = await fetch('/api/admin/users'); return await r.json(); }
@@ -159,12 +190,81 @@
           phone: row.querySelector('input[data-field="phone"]').value,
           is_admin: row.querySelector('input[data-field="is_admin"]').checked
         };
-        await fetch('/api/admin/users', { method:'PATCH', headers:{'Content-Type':'application/json','X-CSRF-Token':window.CSRF_TOKEN}, body: JSON.stringify(payload) });
-        renderUsers();
-      }, { once: true });
+        try {
+          const r = await fetch('/api/admin/users', { method:'PATCH', headers:{'Content-Type':'application/json','X-CSRF-Token':window.CSRF_TOKEN}, body: JSON.stringify(payload) });
+          if(!r.ok){ const t = await r.text(); alert('Ошибка сохранения: '+t); }
+        } finally {
+          renderUsers();
+        }
+      });
     }
-    showUsersBtn.addEventListener('click', function(){ usersSection.style.display='block'; ordersSection.style.display='none'; renderUsers(); });
+    showUsersBtn.addEventListener('click', function(){ usersSection.style.display='block'; ordersSection.style.display='none'; newsSection.style.display='none'; renderUsers(); });
     document.getElementById('refreshUsers').addEventListener('click', renderUsers);
+    document.getElementById('addUserBtn').addEventListener('click', async function(){
+      const login = prompt('Логин нового пользователя:');
+      if(!login) return;
+      const password = prompt('Пароль:');
+      if(!password) return;
+      const email = prompt('Email (необязательно):') || '';
+      const phone = prompt('Телефон (необязательно):') || '';
+      const payload = { login, password, email, phone, is_admin: false };
+      await fetch('/api/admin/users', { method:'POST', headers:{'Content-Type':'application/json','X-CSRF-Token':window.CSRF_TOKEN}, body: JSON.stringify(payload) });
+      renderUsers();
+    });
+
+    // News management
+    const showNewsBtn = document.getElementById('showNewsBtn');
+    async function fetchNews(){ const r = await fetch('/api/admin/news'); return await r.json(); }
+    function newsTableBody(){ return document.querySelector('#newsTable tbody'); }
+    async function renderNewsAdmin(){
+      const rows = await fetchNews();
+      const tbody = newsTableBody();
+      tbody.innerHTML='';
+      rows.forEach(n => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = ''+
+          '<td>'+n.id+'</td>'+
+          '<td><input data-id="'+n.id+'" data-field="title" value="'+(n.title||'').replace(/"/g,'&quot;')+'" /></td>'+
+          '<td><input data-id="'+n.id+'" data-field="short_text" value="'+(n.short_text||'').replace(/"/g,'&quot;')+'" /></td>'+
+          '<td><textarea data-id="'+n.id+'" data-field="full_text" rows="3">'+(n.full_text||'')+'</textarea></td>'+
+          '<td><input data-id="'+n.id+'" data-field="image_url" placeholder="https://..." value="'+(n.image_url||'').replace(/"/g,'&quot;')+'" /></td>'+
+          '<td><input type="date" data-id="'+n.id+'" data-field="published_at" value="'+(n.published_at||'')+'" /></td>'+
+          '<td>'+
+            '<button class="btn" data-action="save" data-id="'+n.id+'">Сохранить</button> '+
+            '<button class="btn secondary" data-action="delete" data-id="'+n.id+'">Удалить</button>'+
+          '</td>';
+        tbody.appendChild(tr);
+      });
+      tbody.addEventListener('click', async (e)=>{
+        const btn = e.target.closest('button');
+        if(!btn) return;
+        const id = parseInt(btn.getAttribute('data-id'));
+        const action = btn.getAttribute('data-action');
+        const row = btn.closest('tr');
+        if(action === 'save'){
+          const payload = {
+            id,
+            title: row.querySelector('input[data-field="title"]').value,
+            short_text: row.querySelector('input[data-field="short_text"]').value,
+            full_text: row.querySelector('textarea[data-field="full_text"]').value,
+            image_url: row.querySelector('input[data-field=\"image_url\"]').value,
+            published_at: row.querySelector('input[data-field="published_at"]').value
+          };
+          await fetch('/api/admin/news', { method:'PATCH', headers:{'Content-Type':'application/json','X-CSRF-Token':window.CSRF_TOKEN}, body: JSON.stringify(payload) });
+          renderNewsAdmin();
+        } else if(action === 'delete'){
+          await fetch('/api/admin/news?id='+id, { method:'DELETE', headers:{'X-CSRF-Token':window.CSRF_TOKEN} });
+          renderNewsAdmin();
+        }
+      });
+    }
+    showNewsBtn.addEventListener('click', function(){ newsSection.style.display='block'; usersSection.style.display='none'; ordersSection.style.display='none'; renderNewsAdmin(); });
+    document.getElementById('refreshNews').addEventListener('click', renderNewsAdmin);
+    document.getElementById('addNewsBtn').addEventListener('click', async function(){
+      const payload = { title: 'Новая новость', short_text: 'Краткий текст', full_text: 'Полный текст', image_url: '', published_at: new Date().toISOString().slice(0,10) };
+      await fetch('/api/admin/news', { method:'POST', headers:{'Content-Type':'application/json','X-CSRF-Token':window.CSRF_TOKEN}, body: JSON.stringify(payload) });
+      renderNewsAdmin();
+    });
   </script>
 </body>
 </html>

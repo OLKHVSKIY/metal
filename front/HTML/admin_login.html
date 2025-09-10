@@ -11,9 +11,9 @@
   <form class="card login-card" method="post" action="/admin/login">
     <h1>Вход в админку</h1>
     <label for="login">Логин</label>
-    <input id="login" name="login" placeholder="admin" required />
+    <input id="login" name="login" placeholder="admin" autocomplete="username" required />
     <label for="password">Пароль</label>
-    <input id="password" type="password" name="password" placeholder="admin" required />
+    <input id="password" type="password" name="password" placeholder="admin" autocomplete="current-password" required />
     <input type="hidden" name="csrf" value="{{CSRF_TOKEN}}" />
     <button class="btn" type="submit">Войти</button>
   </form>

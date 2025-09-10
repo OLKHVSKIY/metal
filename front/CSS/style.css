@@ -9,7 +9,7 @@
   --text-color: #333;
   --text-light: #fff;
   --green-color: #28a745;
-  --border-radius: 5px;
+  --border-radius: 12px;
   --box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
   --transition: all 0.3s ease;
 }
@@ -98,7 +98,7 @@ body {
 .nav-menu li:not(:last-child)::after {
   content: '|';
   position: absolute;
-  right: -15px; /* Скорректировано для учета margin-right */
+  right: -30px;
   color: var(--gray-color);
   font-size: 16px;
   line-height: 1;
@@ -106,7 +106,7 @@ body {
 }
 
 .nav-menu li {
-  margin-right: 15px; /* Добавлен отступ справа для каждого li */
+  margin-right: 35px;
   position: relative;
 }
 
@@ -150,12 +150,17 @@ body {
   flex-shrink: 0;
 }
 
+.header-actions a{
+  margin-left: 15px;
+}
+
 .search-form {
   display: flex;
   width: 200px;
   border: 1px solid var(--gray-color);
   border-radius: var(--border-radius);
   overflow: hidden;
+  margin-left: 20px;
 }
 
 .search-form input {
@@ -176,29 +181,294 @@ body {
   transition: var(--transition);
 }
 
-.phone-number {
-  font-weight: bold;
-  font-size: 16px;
-  white-space: nowrap;
-}
-
-.btn {
-  display: inline-block;
-  background-color: var(--primary-color);
-  color: var(--text-light) !important;
-  padding: 10px 20px;
-  border-radius: var(--border-radius);
+.cart-link, .login-link {
+  color: var(--text-color);
   text-decoration: none;
-  font-weight: bold;
-  font-size: 14px;
+  font-size: 16px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   transition: var(--transition);
-  white-space: nowrap;
-  flex-shrink: 0;
 }
 
-.btn:hover {
-  background-color: #b71c1c;
+.cart-link:hover, .login-link:hover {
+  color: var(--primary-color);
+}
+
+.cart-link i, .login-link i {
+  font-size: 18px;
+}
+
+/* Auth Modal */
+.auth-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(5px);
+}
+
+.auth-modal-content {
+  background-color: var(--light-color);
+  width: 90%;
+  max-width: 420px;
+  border-radius: 16px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  position: relative;
+  overflow: hidden;
+  animation: modalSlideIn 0.3s ease;
+}
+
+.auth-close-btn {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  font-size: 28px;
+  cursor: pointer;
+  color: #999;
+  transition: var(--transition);
+  z-index: 10;
+  width: 33px;
+  height: 33px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-weight: 300;
+  padding-bottom: 4px;
+  padding-left: 1px;
+}
+
+.auth-close-btn:hover {
+  color: var(--primary-color);
+  background-color: rgba(211, 47, 47, 0.1);
+}
+
+.auth-form-container {
+  padding: 40px;
+  height: 540px;
+}
+
+.auth-tabs {
+  display: flex;
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  padding: 4px;
+  margin-bottom: 30px;
+  position: relative;
+}
+
+.auth-tab {
+  flex: 1;
+  padding: 12px;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 500;
+  color: #666;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  border: none;
+  background: none;
+  z-index: 2;
+}
+
+.form-group password-group i{
+  margin-top: 15px;
+  margin-right: 30px;
+}
+
+.auth-tab.active {
+  color: var(--primary-color);
+  background-color: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.form-group input {
+  padding: 16px;
+  border: 2px solid #e9ecef;
+  border-radius: 12px;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  background-color: #f8f9fa;
+  width: 100%;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  background-color: white;
+  box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.1);
+}
+
+.form-group input::placeholder {
+  color: #999;
+}
+
+.password-group {
+  position: relative;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 10px;
+  top: 61px;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #999;
+  font-size: 18px;
+  transition: var(--transition);
+  background: none;
+  border: none;
+  padding: 4px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+}
+
+.toggle-password:hover {
+  color: var(--primary-color);
+}
+
+.login-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 15px 0;
+}
+
+.forgot-password {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: var(--transition);
+}
+
+.forgot-password:hover {
+    color: #b71c1c;
+    text-decoration: underline;
+}
+
+.remember-me {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 10px 0;
+}
+
+#login-identifier {
+    text-align: left;
+    direction: ltr;
+}
+
+.phone-alternative {
+    display: none;
+}
+
+.apple-switch {
+  position: relative;
+  display: inline-block;
+  width: 51px;
+  height: 31px;
+}
+
+.apple-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.apple-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #e9ecef;
+  transition: .4s;
+  border-radius: 34px;
+}
+
+.apple-slider:before {
+  position: absolute;
+  content: "";
+  height: 27px;
+  width: 27px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.apple-switch input:checked + .apple-slider {
+  background-color: var(--primary-color);
+}
+
+.apple-switch input:checked + .apple-slider:before {
+  transform: translateX(20px);
+}
+
+.remember-me label {
+  font-size: 14px;
+  color: #666;
+  cursor: pointer;
+}
+
+.auth-btn {
+  background: linear-gradient(135deg, var(--primary-color), #b71c1c);
+  color: white;
+  padding: 16px;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+  width: 100%;
+}
+
+.auth-btn:hover {
   transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(211, 47, 47, 0.3);
+}
+
+.auth-btn:active {
+  transform: translateY(0);
 }
 
 /* Зона 5: Стили секции лучших предложений */
@@ -415,6 +685,10 @@ body {
   gap: 25px;
 }
 
+.advantages h2{
+  color: #fff;
+}
+
 .advantage-item {
   text-align: center;
   padding: 20px;
@@ -474,7 +748,7 @@ body {
   font-size: 16px;
 }
 
-.address{
+.address {
   margin-bottom: 7px;
 }
 
@@ -538,7 +812,6 @@ body {
 }
 
 /* Зона 10: Адаптивные стили для планшетов (до 768px) */
-
 @media (max-width: 768px) {
   .container {
     padding: 0 12px;
@@ -564,7 +837,7 @@ body {
     right: 0;
     width: 280px;
     height: 100vh;
-    background-color: var(--light-color); /* Белый фон */
+    background-color: var(--light-color);
     z-index: 1001;
     padding: 20px;
     transform: translateX(100%);
@@ -593,6 +866,7 @@ body {
 
   .nav-menu li {
     width: 100%;
+    margin-top: 20px;
   }
 
   .nav-menu li:not(:last-child)::after {
@@ -600,15 +874,11 @@ body {
   }
 
   .nav-menu a {
-    color: var(--text-color); /* Черный цвет ссылок в мобильном меню */
     font-size: 16px;
-    display: block;
     padding: 10px 0;
-    transition: var(--transition);
   }
 
   .nav-menu a:hover {
-    color: var(--primary-color);
     padding-left: 8px;
   }
 
@@ -630,15 +900,13 @@ body {
     border-top: 1px solid var(--gray-color);
   }
 
-  .mobile-header-actions .btn {
-    color: var(--text-light) !important; /* Белый цвет текста кнопки */
+  .mobile-header-actions .cart-link,
+  .mobile-header-actions .login-link {
+    justify-content: flex-start;
   }
 
   .search-form {
     width: 100%;
-    border: 1px solid var(--gray-color);
-    border-radius: var(--border-radius);
-    background-color: var(--light-color);
   }
 
   .search-form input {
@@ -649,18 +917,6 @@ body {
   .search-form button {
     padding: 8px 12px;
     font-size: 14px;
-  }
-
-  .phone-number {
-    font-size: 14px;
-    text-align: center;
-  }
-
-  .btn {
-    font-size: 14px;
-    padding: 8px 15px;
-    width: 100%;
-    text-align: center;
   }
 
   .offers-grid {
@@ -748,6 +1004,19 @@ body {
   .copyright {
     font-size: 13px;
   }
+
+  .auth-modal-content {
+    width: 95%;
+    padding: 20px;
+  }
+
+  .auth-tab {
+    font-size: 14px;
+  }
+
+  .auth-btn {
+    font-size: 14px;
+  }
 }
 
 /* Зона 11: Адаптивные стили для мобильных (до 480px) */
@@ -777,10 +1046,6 @@ body {
 
   .mobile-header-actions {
     gap: 12px;
-  }
-
-  .mobile-header-actions .btn {
-    color: var(--text-light) !important;
   }
 
   .section-title {
@@ -882,5 +1147,99 @@ body {
 
   .copyright {
     font-size: 12px;
+  }
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-50px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 480px) {
+    .login-options {
+        flex-direction: column;
+        gap: 10px;
+        align-items: flex-start;
+    }
+    
+    .forgot-password {
+        margin-left: 0;
+    }
+}
+
+/* Адаптивность для модального окна */
+@media (max-width: 768px) {
+  .auth-modal-content {
+    max-width: 90%;
+    margin: 20px;
+  }
+  
+  .auth-form-container {
+    padding: 30px 25px;
+  }
+  
+  .auth-tab {
+    font-size: 14px;
+    padding: 10px;
+  }
+  
+  .form-group input {
+    padding: 14px;
+    font-size: 15px;
+  }
+  
+  .auth-btn {
+    padding: 14px;
+    font-size: 15px;
+  }
+  
+  .toggle-password {
+    right: 14px;
+    top: 52%;
+  }
+}
+
+@media (max-width: 480px) {
+  .auth-form-container {
+    padding: 25px 20px;
+  }
+  
+  .auth-tabs {
+    margin-bottom: 25px;
+  }
+  
+  .auth-tab {
+    font-size: 13px;
+    padding: 8px;
+  }
+  
+  .form-group input {
+    padding: 12px;
+    font-size: 14px;
+  }
+  
+  .auth-btn {
+    padding: 12px;
+    font-size: 14px;
+  }
+  
+  .auth-close-btn {
+    top: 12px;
+    right: 12px;
+    font-size: 24px;
+    width: 35px;
+    height: 35px;
+  }
+  
+  .toggle-password {
+    right: 12px;
+    top: 50%;
+    font-size: 16px;
   }
 }

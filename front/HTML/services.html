@@ -12,40 +12,104 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <!-- Header -->
-        <header class="header">
-            <div class="container header-container">
-                <div class="logo">
-                    <a href="/front/HTML/main.html">
-                        <img src="/img/logo.png" alt="Металл">
-                    </a>
-                </div>
-                <button class="burger-btn">
-                    <i class="fas fa-bars"></i>
-                </button>
-                <nav class="nav-menu">
-                    <div class="nav-menu-inner">
-                        <ul>
-                            <li><a href="/front/HTML/catalog.html">Каталог</a></li>
-                            <li><a href="#">Акции</a></li>
-                            <li><a href="/front/HTML/services.html">Услуги</a></li>
-                            <li><a href="#">Доставка</a></li>
-                            <li><a href="#">Прайс-лист</a></li>
-                            <li><a href="/front/HTML/contact.html">Контакты</a></li>
-                        </ul>
-                        <div class="header-actions mobile-header-actions">
-                            <form class="search-form">
-                                <input type="text" placeholder="Поиск...">
-                                <button type="submit"><i class="fas fa-search"></i></button>
-                            </form>
-                            <div class="phone-number">+7 (981) 720-10-10</div>
-                            <a href="#" class="btn">Заказать звонок</a>
-                        </div>
-                    </div>
-                </nav>
-
+        <!-- Header -->
+    <header class="header">
+        <div class="container header-container">
+            <div class="logo">
+                <a href="/front/HTML/main.html">
+                    <img src="/img/logo.png" alt="Металл">
+                </a>
             </div>
-        </header>
+            <button class="burger-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+            <nav class="nav-menu">
+                <div class="nav-menu-inner">
+                    <ul>
+                        <li><a href="/front/HTML/catalog.html">Каталог</a></li>
+                        <li><a href="#">Акции</a></li>
+                        <li><a href="/front/HTML/services.html">Услуги</a></li>
+                        <li><a href="#">Доставка</a></li>
+                        <li><a href="#">Прайс-лист</a></li>
+                        <li><a href="/front/HTML/contact.html">Контакты</a></li>
+                    </ul>
+                    <div class="header-actions mobile-header-actions">
+                        <form class="search-form">
+                            <input type="text" placeholder="Поиск...">
+                            <button type="submit"><i class="fas fa-search"></i></button>
+                        </form>
+                        <a href="#" class="cart-link"><i class="fas fa-shopping-cart"></i> Корзина</a>
+                        <a href="#" class="login-link"><i class="fas fa-user"></i> Войти</a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+
+ <!-- Auth Modal -->
+    <div class="auth-modal" id="authModal">
+        <div class="auth-modal-content">
+            <span class="auth-close-btn">&times;</span>
+            <div class="auth-form-container">
+                <div class="auth-tabs">
+                    <button class="auth-tab active" data-tab="login">Вход</button>
+                    <button class="auth-tab" data-tab="register">Регистрация</button>
+                </div>
+                
+                <form id="loginForm" class="auth-form">
+                    <div class="form-group">
+                        <label for="login-identifier">Логин или телефон:</label>
+                        <input type="text" id="login-identifier" placeholder="Логин / Номер телефона" required>
+                    </div>
+                    
+                    <div class="form-group password-group">
+                        <label for="login-password">Пароль:</label>
+                        <input type="password" id="login-password" placeholder="Пароль" required>
+                        <button type="button" class="toggle-password">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="login-options">
+                        <div class="remember-me">
+                            <label class="apple-switch">
+                                <input type="checkbox" id="remember-me">
+                                <span class="apple-slider"></span>
+                            </label>
+                            <label for="remember-me">Запомнить пароль</label>
+                        </div>
+                        
+                        <a href="#" class="forgot-password">Забыли пароль?</a>
+                    </div>
+                    
+                    <button type="submit" class="auth-btn">Войти</button>
+                </form>
+                
+                <form id="registerForm" class="auth-form" style="display: none;">
+                    <div class="form-group">
+                        <label for="register-username">Логин:</label>
+                        <input type="text" id="register-username" placeholder="Придумайте логин" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="register-phone">Номер телефона:</label>
+                        <input type="tel" id="register-phone" placeholder="+7 (___) ___-__-__" required>
+                    </div>
+                    
+                    <div class="form-group password-group">
+                        <label for="register-password">Пароль:</label>
+                        <input type="password" id="register-password" placeholder="Придумайте пароль" required>
+                        <button type="button" class="toggle-password">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    
+                    <button type="submit" class="auth-btn">Зарегистрироваться</button>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <!-- Services Section -->
     <section class="services">

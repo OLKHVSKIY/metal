@@ -1,21 +1,16 @@
 package main
 
 import (
-    "crypto/hmac"
     "crypto/rand"
-    "crypto/sha256"
     "database/sql"
     "encoding/json"
-    "encoding/hex"
     "fmt"
     "log"
     "net/http"
-    "net/url"
     "os"
     "path/filepath"
     "strconv"
     "strings"
-    "time"
 
     _ "modernc.org/sqlite"
     "golang.org/x/crypto/bcrypt"
@@ -76,18 +71,9 @@ const defaultTelegramChatID = "7257756560"
 const telegramChatIDCacheFile = "telegram_chat_id.txt"
 
 // DB and models
-type Order struct {
-    ID        int64     `json:"id"`
-    Service   string    `json:"service"`
-    Name      string    `json:"name"`
-    Phone     string    `json:"phone"`
-    Email     string    `json:"email"`
-    Status    string    `json:"status"` // active/closed
-    CreatedAt time.Time `json:"createdAt"`
-}
-
 var db *sql.DB
 var userDB *sql.DB
+var newsDB *sql.DB
 
 func initDB() error {
     var err error
@@ -107,6 +93,23 @@ func initDB() error {
         );
     `)
     if err != nil { return err }
+
+    // news database
+    newsDB, err = sql.Open("sqlite", "file:news.db?_pragma=journal_mode(WAL)")
+    if err != nil { return err }
+    _, err = newsDB.Exec(`
+        CREATE TABLE IF NOT EXISTS news (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            title TEXT NOT NULL,
+            short_text TEXT NOT NULL,
+            full_text TEXT NOT NULL,
+            published_at TEXT NOT NULL DEFAULT (date('now'))
+        );
+        CREATE INDEX IF NOT EXISTS idx_news_published_at ON news(published_at DESC);
+    `)
+    if err != nil { return err }
+    // try to add image_url column for older DBs (ignore error if exists)
+    _, _ = newsDB.Exec("ALTER TABLE news ADD COLUMN image_url TEXT")
 
     // users database
     userDB, err = sql.Open("sqlite", "file:users.db?_pragma=journal_mode(WAL)")
@@ -134,38 +137,8 @@ func initDB() error {
     return nil
 }
 
-func createOrder(o *Order) (int64, error) {
-    res, err := db.Exec("INSERT INTO orders (service, name, phone, email, status) VALUES (?,?,?,?,?)", o.Service, o.Name, o.Phone, o.Email, o.Status)
-    if err != nil {
-        return 0, err
-    }
-    return res.LastInsertId()
-}
-
-func listOrders() ([]Order, error) {
-    rows, err := db.Query("SELECT id, service, name, phone, email, status, created_at FROM orders ORDER BY created_at DESC")
-    if err != nil {
-        return nil, err
-    }
-    defer rows.Close()
-    var out []Order
-    for rows.Next() {
-        var o Order
-        var ts string
-        if err := rows.Scan(&o.ID, &o.Service, &o.Name, &o.Phone, &o.Email, &o.Status, &ts); err != nil {
-            return nil, err
-        }
-        t, _ := time.Parse("2006-01-02 15:04:05", ts)
-        o.CreatedAt = t
-        out = append(out, o)
-    }
-    return out, nil
-}
-
-func updateOrderStatus(id int64, status string) error {
-    _, err := db.Exec("UPDATE orders SET status=? WHERE id=?", status, id)
-    return err
-}
+// NOTE: handlers for orders, news, users are defined in orders.go, news.go, users.go
+// This file only wires routes and shared helpers.
 
 func dirExists(p string) bool {
     info, err := os.Stat(p)
@@ -199,6 +172,7 @@ func main() {
     mux.HandleFunc("/api/catalog/products", withCORS(handleGetProducts))
     mux.HandleFunc("/api/search", withCORS(handleSearch))
     mux.HandleFunc("/api/gost", withCORS(handleGostList))
+    mux.HandleFunc("/api/news", withCORS(handleNewsList))
     mux.HandleFunc("/api/health", withCORS(func(w http.ResponseWriter, r *http.Request) {
         if r.Method != http.MethodGet {
             http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
@@ -213,6 +187,7 @@ func main() {
     mux.HandleFunc("/api/admin/orders", withCORS(csrfProtect(requireAdmin(adminListOrders))))
     mux.HandleFunc("/api/admin/orders/status", withCORS(csrfProtect(requireAdmin(adminUpdateOrderStatus))))
     mux.HandleFunc("/api/admin/users", withCORS(csrfProtect(requireAdmin(adminUsersHandler))))
+    mux.HandleFunc("/api/admin/news", withCORS(csrfProtect(requireAdmin(adminNewsHandler))))
 
     // Simple admin UI
     // auth pages
@@ -268,67 +243,14 @@ func main() {
 func withCORS(h http.HandlerFunc) http.HandlerFunc {
     return func(w http.ResponseWriter, r *http.Request) {
         w.Header().Set("Access-Control-Allow-Origin", "*")
-        w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PATCH, OPTIONS")
-        w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+        w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE, OPTIONS")
+        w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization, X-CSRF-Token")
         w.Header().Set("X-Content-Type-Options", "nosniff")
         w.Header().Set("X-Frame-Options", "DENY")
         w.Header().Set("Referrer-Policy", "no-referrer")
         if r.Method == http.MethodOptions {
             w.WriteHeader(http.StatusNoContent)
             return
-        }
-        h(w, r)
-    }
-}
-
-// --- Auth helpers ---
-const sessionCookieName = "admin_session"
-func setSession(w http.ResponseWriter, login string, isAdmin bool) {
-    if !isAdmin { return }
-    cookie := &http.Cookie{
-        Name: sessionCookieName,
-        Value: url.QueryEscape(login),
-        Path: "/",
-        HttpOnly: true,
-        SameSite: http.SameSiteLaxMode,
-        Expires: time.Now().Add(30*time.Minute),
-    }
-    http.SetCookie(w, cookie)
-}
-func clearSession(w http.ResponseWriter) {
-    http.SetCookie(w, &http.Cookie{Name: sessionCookieName, Value: "", Path: "/", Expires: time.Unix(0,0)})
-}
-func isAdminRequest(r *http.Request) bool {
-    c, err := r.Cookie(sessionCookieName)
-    if err != nil || c.Value == "" { return false }
-    login, _ := url.QueryUnescape(c.Value)
-    var isAdmin int
-    if err := userDB.QueryRow("SELECT is_admin FROM users WHERE login=?", login).Scan(&isAdmin); err != nil { return false }
-    return isAdmin == 1
-}
-func requireAdmin(h http.HandlerFunc) http.HandlerFunc {
-    return func(w http.ResponseWriter, r *http.Request) {
-        if !isAdminRequest(r) {
-            http.Redirect(w, r, "/admin/login", http.StatusFound)
-            return
-        }
-        h(w, r)
-    }
-}
-
-// CSRF middleware for state-changing admin APIs
-func csrfProtect(h http.HandlerFunc) http.HandlerFunc {
-    return func(w http.ResponseWriter, r *http.Request) {
-        if r.Method == http.MethodPost || r.Method == http.MethodPatch || r.Method == http.MethodDelete {
-            token := r.Header.Get("X-CSRF-Token")
-            if token == "" && r.Header.Get("Content-Type") == "application/x-www-form-urlencoded" {
-                _ = r.ParseForm()
-                token = r.FormValue("csrf")
-            }
-            if !validateCSRF(token) {
-                http.Error(w, "invalid csrf", http.StatusForbidden)
-                return
-            }
         }
         h(w, r)
     }
@@ -363,13 +285,6 @@ func logout(w http.ResponseWriter, r *http.Request) {
 
 // removed inline login HTML; using external file
 
-func writeJSON(w http.ResponseWriter, v any) {
-    w.Header().Set("Content-Type", "application/json; charset=utf-8")
-    enc := json.NewEncoder(w)
-    enc.SetIndent("", "  ")
-    _ = enc.Encode(v)
-}
-
 // --- Security helpers: CSRF, headers, rate limiting ---
 var csrfSecret = mustRandomKey()
 
@@ -380,27 +295,7 @@ func mustRandomKey() []byte {
     return buf
 }
 
-func generateCSRFToken() string {
-    ts := fmt.Sprintf("%d", time.Now().Unix())
-    mac := hmac.New(sha256.New, csrfSecret)
-    mac.Write([]byte(ts))
-    sig := hex.EncodeToString(mac.Sum(nil))
-    return ts + ":" + sig
-}
-
-func validateCSRF(token string) bool {
-    parts := strings.Split(token, ":")
-    if len(parts) != 2 { return false }
-    tsStr, sig := parts[0], parts[1]
-    // token valid for 2 hours
-    ts, err := strconv.ParseInt(tsStr, 10, 64)
-    if err != nil { return false }
-    if time.Since(time.Unix(ts,0)) > 2*time.Hour { return false }
-    mac := hmac.New(sha256.New, csrfSecret)
-    mac.Write([]byte(tsStr))
-    expected := hex.EncodeToString(mac.Sum(nil))
-    return hmac.Equal([]byte(sig), []byte(expected))
-}
+// generateCSRFToken and validateCSRF moved to http_helpers.go
 
 func sendHTMLWithCSRF(w http.ResponseWriter, path string) {
     b, err := os.ReadFile(path)
@@ -507,177 +402,15 @@ func handleGostList(w http.ResponseWriter, r *http.Request) {
     writeJSON(w, files)
 }
 
-// Orders Handlers
-func ordersHandler(w http.ResponseWriter, r *http.Request) {
-    switch r.Method {
-    case http.MethodPost:
-        var payload struct {
-            Service string `json:"service"`
-            Name    string `json:"name"`
-            Phone   string `json:"phone"`
-            Email   string `json:"email"`
-        }
-        if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
-            http.Error(w, err.Error(), http.StatusBadRequest)
-            return
-        }
-        o := &Order{
-            Service: payload.Service,
-            Name:    strings.TrimSpace(payload.Name),
-            Phone:   strings.TrimSpace(payload.Phone),
-            Email:   strings.TrimSpace(payload.Email),
-            Status:  "active",
-        }
-        id, err := createOrder(o)
-        if err != nil {
-            http.Error(w, err.Error(), http.StatusInternalServerError)
-            return
-        }
-        // Telegram notify (best-effort)
-        go sendTelegram(fmt.Sprintf("Новая заявка: %s\nИмя: %s\nТелефон: %s\nEmail: %s", o.Service, o.Name, o.Phone, o.Email))
-        writeJSON(w, map[string]any{"id": id, "status": "ok"})
-    default:
-        http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
-    }
-}
+// moved to news.go: handleNewsList, adminNewsHandler
 
-func adminListOrders(w http.ResponseWriter, r *http.Request) {
-    if r.Method != http.MethodGet {
-        http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
-        return
-    }
-    items, err := listOrders()
-    if err != nil {
-        http.Error(w, err.Error(), http.StatusInternalServerError)
-        return
-    }
-    writeJSON(w, items)
-}
+// moved to orders.go: ordersHandler
 
-func adminUpdateOrderStatus(w http.ResponseWriter, r *http.Request) {
-    if r.Method != http.MethodPatch {
-        http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
-        return
-    }
-    var payload struct {
-        ID     int64  `json:"id"`
-        Status string `json:"status"`
-    }
-    if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
-        http.Error(w, err.Error(), http.StatusBadRequest)
-        return
-    }
-    if payload.Status != "active" && payload.Status != "closed" {
-        http.Error(w, "invalid status", http.StatusBadRequest)
-        return
-    }
-    if err := updateOrderStatus(payload.ID, payload.Status); err != nil {
-        http.Error(w, err.Error(), http.StatusInternalServerError)
-        return
-    }
-    writeJSON(w, map[string]string{"status": "ok"})
-}
+// moved to orders.go: adminListOrders
 
-// Telegram
-func sendTelegram(text string) {
-    botToken := os.Getenv("TELEGRAM_BOT_TOKEN")
-    if botToken == "" {
-        botToken = defaultTelegramBotToken
-    }
-    chatID := os.Getenv("TELEGRAM_CHAT_ID")
-    if chatID == "" {
-        // use default provided chat id first
-        chatID = defaultTelegramChatID
-        if chatID == "" {
-            chatID = getOrDiscoverChatID(botToken)
-        }
-    }
-    if botToken == "" || chatID == "" {
-        log.Printf("telegram not configured")
-        return
-    }
-    url := fmt.Sprintf("https://api.telegram.org/bot%s/sendMessage", botToken)
-    body := map[string]string{
-        "chat_id": chatID,
-        "text":    text,
-        "parse_mode": "HTML",
-    }
-    buf, _ := json.Marshal(body)
-    req, _ := http.NewRequest(http.MethodPost, url, strings.NewReader(string(buf)))
-    req.Header.Set("Content-Type", "application/json")
-    resp, err := http.DefaultClient.Do(req)
-    if err != nil {
-        log.Printf("telegram send error: %v", err)
-        return
-    }
-    _ = resp.Body.Close()
-}
+// moved to orders.go: adminUpdateOrderStatus
 
-// --- Admin Users API ---
-type User struct {
-    ID int64 `json:"id"`
-    Login string `json:"login"`
-    Email string `json:"email"`
-    Phone string `json:"phone"`
-    IsAdmin bool `json:"is_admin"`
-    Password string `json:"password,omitempty"`
-}
-
-func adminUsersHandler(w http.ResponseWriter, r *http.Request) {
-    switch r.Method {
-    case http.MethodGet:
-        rows, err := userDB.Query("SELECT id, login, email, phone, is_admin FROM users ORDER BY id DESC")
-        if err != nil { http.Error(w, err.Error(), 500); return }
-        defer rows.Close()
-        var out []User
-        for rows.Next() {
-            var u User
-            var adminInt int
-            if err := rows.Scan(&u.ID, &u.Login, &u.Email, &u.Phone, &adminInt); err != nil { http.Error(w, err.Error(), 500); return }
-            u.IsAdmin = adminInt==1
-            out = append(out, u)
-        }
-        writeJSON(w, out)
-    case http.MethodPost:
-        var u User
-        if err := json.NewDecoder(r.Body).Decode(&u); err != nil { http.Error(w, err.Error(), 400); return }
-        if strings.TrimSpace(u.Login)=="" || strings.TrimSpace(u.Password)=="" { http.Error(w, "login and password required", 400); return }
-        hash, _ := bcrypt.GenerateFromPassword([]byte(u.Password), bcrypt.DefaultCost)
-        adminInt := 0
-        if u.IsAdmin { adminInt = 1 }
-        res, err := userDB.Exec("INSERT INTO users (login, password_hash, email, phone, is_admin) VALUES (?,?,?,?,?)", u.Login, string(hash), u.Email, u.Phone, adminInt)
-        if err != nil { http.Error(w, err.Error(), 500); return }
-        id, _ := res.LastInsertId()
-        writeJSON(w, map[string]any{"id": id, "status":"ok"})
-    case http.MethodPatch:
-        var u User
-        if err := json.NewDecoder(r.Body).Decode(&u); err != nil { http.Error(w, err.Error(), 400); return }
-        if u.ID == 0 { http.Error(w, "id required", 400); return }
-        // Build dynamic update
-        fields := []string{}
-        args := []any{}
-        if u.Login != "" { fields = append(fields, "login=?"); args = append(args, u.Login) }
-        if u.Email != "" || u.Email == "" { fields = append(fields, "email=?"); args = append(args, u.Email) }
-        if u.Phone != "" || u.Phone == "" { fields = append(fields, "phone=?"); args = append(args, u.Phone) }
-        if u.Password != "" { hash, _ := bcrypt.GenerateFromPassword([]byte(u.Password), bcrypt.DefaultCost); fields = append(fields, "password_hash=?"); args = append(args, string(hash)) }
-        adminInt := 0
-        if u.IsAdmin { adminInt = 1 }
-        fields = append(fields, "is_admin=?")
-        args = append(args, adminInt)
-        if len(fields)==0 { writeJSON(w, map[string]string{"status":"ok"}); return }
-        args = append(args, u.ID)
-        q := "UPDATE users SET " + strings.Join(fields, ",") + " WHERE id=?"
-        if _, err := userDB.Exec(q, args...); err != nil { http.Error(w, err.Error(), 500); return }
-        writeJSON(w, map[string]string{"status":"ok"})
-    case http.MethodDelete:
-        idStr := r.URL.Query().Get("id")
-        if idStr == "" { http.Error(w, "id required", 400); return }
-        if _, err := userDB.Exec("DELETE FROM users WHERE id=?", idStr); err != nil { http.Error(w, err.Error(), 500); return }
-        writeJSON(w, map[string]string{"status":"ok"})
-    default:
-        http.Error(w, "method not allowed", 405)
-    }
-}
+// moved to users.go: type User, adminUsersHandler
 
 // Attempts to read cached chat ID or discover it from getUpdates, then caches it.
 func getOrDiscoverChatID(botToken string) string {

@@ -24,7 +24,7 @@
   width: 360px;
   height: 470px;
   overflow: hidden;
-  border-radius: var(--border-radius);
+  border-radius: 15px;
   position: relative;
   cursor: pointer;
   transition: var(--transition);
