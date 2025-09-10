@@ -766,13 +766,14 @@ body {
 .social-links a {
   display: inline-block;
   width: 40px;
-  height: 40px;
+  height: 45px;
   background-color: rgba(255, 255, 255, 0.1);
   border-radius: 20%;
   text-align: center;
   line-height: 40px;
   transition: var(--transition);
   color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 6px;
 }
 
 .social-links a:hover {
