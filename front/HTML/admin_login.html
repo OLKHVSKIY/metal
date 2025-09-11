@@ -4,10 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Вход в админку</title>
+  <link rel="icon" href="/img/icon.ico" type="image/x-icon">
+  <link rel="shortcut icon" href="/img/icon.ico" type="image/x-icon">
   <link rel="stylesheet" href="/front/CSS/admin.css" />
   <script>window.CSRF_TOKEN='{{CSRF_TOKEN}}';</script>
 </head>
+
 <body class="full-center">
+
   <form class="card login-card" method="post" action="/admin/login">
     <h1>Вход в админку</h1>
     <label for="login">Логин</label>
@@ -17,7 +21,6 @@
     <input type="hidden" name="csrf" value="{{CSRF_TOKEN}}" />
     <button class="btn" type="submit">Войти</button>
   </form>
+
 </body>
 </html>
-
-

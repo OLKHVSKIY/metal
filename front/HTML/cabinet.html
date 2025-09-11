@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Личный кабинет</title>
+  <link rel="icon" href="/img/icon.ico" type="image/x-icon">
+  <link rel="shortcut icon" href="/img/icon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="/front/CSS/style.css" />
+  <link rel="stylesheet" href="/front/CSS/cabinet.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container header-container">
+            <div class="logo">
+                <a href="/front/HTML/main.html">
+                    <img src="/img/logo.png" alt="Металл">
+                </a>
+            </div>
+            <button class="burger-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+            <nav class="nav-menu">
+                <div class="nav-menu-inner">
+                    <ul>
+                        <li><a href="/front/HTML/catalog.html">Каталог</a></li>
+                        <li><a href="#">Акции</a></li>
+                        <li><a href="/front/HTML/services.html">Услуги</a></li>
+                        <li><a href="#">Доставка</a></li>
+                        <li><a href="#">Прайс-лист</a></li>
+                        <li><a href="/front/HTML/contact.html">Контакты</a></li>
+                    </ul>
+                    <div class="header-actions mobile-header-actions">
+                        <a href="#" class="cart-link"><i class="fas fa-shopping-cart"></i> Корзина</a>
+                                    <button id="logoutBtn" class="btn btn-secondary">
+                                    <i class="fas fa-sign-out-alt"></i>
+                                      Выйти
+                                    </button>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+  <main class="account-container">
+    <div class="account-header">
+      <h1 class="account-title">Личный кабинет</h1>
+      <p class="account-subtitle" id="userInfo">Загрузка информации...</p>
+    </div>
+
+    <nav class="account-nav">
+      <button class="nav-tab active" data-tab="profile">Профиль</button>
+      <button class="nav-tab" data-tab="orders">Мои заказы</button>
+      <button class="nav-tab" data-tab="favorites">Избранное</button>
+      <button class="nav-tab" data-tab="settings">Настройки</button>
+    </nav>
+
+    <!-- Вкладка профиля -->
+    <div class="tab-content active" id="profile-tab">
+      <div class="profile-card">
+        <div class="profile-header">
+          <div class="profile-avatar" id="userAvatar">
+            <i class="fas fa-user"></i>
+          </div>
+          <div class="profile-info">
+            <h3 id="userName">Пользователь</h3>
+            <p id="userEmail">email@example.com</p>
+            <p id="userPhone">+7 (999) 999-99-99</p>
+          </div>
+        </div>
+        
+        <div class="profile-stats">
+          <div class="stat-item">
+            <div class="stat-number">5</div>
+            <div class="stat-label">Заказов</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">3</div>
+            <div class="stat-label">В избранном</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">2</div>
+            <div class="stat-label">Активных заказа</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="profile-card">
+        <h3 style="margin-bottom: 20px;">Контактная информация</h3>
+        <form id="profileForm">
+          <div class="form-group">
+            <label>Имя:</label>
+            <input type="text" id="firstName" placeholder="Введите ваше имя">
+          </div>
+          <div class="form-group">
+            <label>Фамилия:</label>
+            <input type="text" id="lastName" placeholder="Введите вашу фамилию">
+          </div>
+          <div class="form-group">
+            <label>Email:</label>
+            <input type="email" id="email" placeholder="Введите ваш email">
+          </div>
+          <div class="form-group">
+            <label>Телефон:</label>
+            <input type="tel" id="phone" placeholder="+7 (999) 999-99-99">
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Вкладка заказов -->
+    <div class="tab-content" id="orders-tab">
+      <div class="profile-card">
+        <h3 style="margin-bottom: 20px;">История заказов</h3>
+        <div class="orders-list" id="ordersList">
+          <div class="order-card">
+            <div class="order-header">
+              <div>
+                <div class="order-number">Заказ #12345</div>
+                <div class="order-date">12 января 2024</div>
+              </div>
+              <span class="order-status status-completed">Выполнен</span>
+            </div>
+            <div class="order-details">
+              <div class="order-items">Арматура А500С (10 шт.), Труба профильная 40x20 (5 м)</div>
+              <div class="order-total">25 800 ₽</div>
+            </div>
+          </div>
+
+          <div class="order-card">
+            <div class="order-header">
+              <div>
+                <div class="order-number">Заказ #12346</div>
+                <div class="order-date">15 января 2024</div>
+              </div>
+              <span class="order-status status-processing">В обработке</span>
+            </div>
+            <div class="order-details">
+              <div class="order-items">Лист стальной 3мм (2 шт.), Уголок 50x50 (8 м)</div>
+              <div class="order-total">18 400 ₽</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Вкладка избранного -->
+    <div class="tab-content" id="favorites-tab">
+      <div class="profile-card">
+        <h3 style="margin-bottom: 20px;">Избранные товары</h3>
+        <div class="favorites-grid" id="favoritesList">
+          <div class="favorite-item">
+            <img src="/img/catalog/catalog1.jpeg" alt="Арматура А500С" class="favorite-image">
+            <h4 class="favorite-title">Арматура А500С</h4>
+            <div class="favorite-price">800 ₽ / шт</div>
+            <div class="favorite-actions">
+              <button class="btn btn-primary">В корзину</button>
+              <button class="btn btn-secondary">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="favorite-item">
+            <img src="/img/catalog/catalog2.jpeg" alt="Труба профильная 40x20" class="favorite-image">
+            <h4 class="favorite-title">Труба профильная 40x20</h4>
+            <div class="favorite-price">950 ₽ / м</div>
+            <div class="favorite-actions">
+              <button class="btn btn-primary">В корзину</button>
+              <button class="btn btn-secondary">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Вкладка настроек -->
+    <div class="tab-content" id="settings-tab">
+      <div class="profile-card">
+        <h3 style="margin-bottom: 20px;">Настройки аккаунта</h3>
+
+        <div class="form-group">
+          <label>Язык интерфейса</label>
+          <select style="padding: 12px; border: 2px solid var(--gray-color); border-radius: var(--border-radius); width: 100%;">
+            <option>Русский</option>
+            <option>English</option>
+          </select>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn btn-primary" id="changePasswordBtn">
+            <i class="fas fa-key"></i>
+            Сменить пароль
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Модальное окно смены пароля -->
+  <div class="password-modal" id="passwordModal">
+    <div class="password-modal-content">
+      <span class="close-modal" id="closePasswordModal">&times;</span>
+      <h2 style="margin-bottom: 20px; text-align: center;">Смена пароля</h2>
+      
+      <form id="passwordForm">
+        <div class="form-group">
+          <label>Текущий пароль:</label>
+          <input type="password" placeholder="Введите текущий пароль" required>
+        </div>
+        
+        <div class="form-group">
+          <label>Новый пароль:</label>
+          <input type="password" placeholder="Введите новый пароль" required>
+        </div>
+        
+        <div class="form-group">
+          <label>Подтвердите новый пароль:</label>
+          <input type="password" placeholder="Повторите новый пароль" required>
+        </div>
+        
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Сохранить пароль</button>
+          <button type="button" class="btn btn-secondary" id="cancelPasswordChange">Отмена</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="/front/JS/cabinet.js"></script>
+  <script src="/front/JS/script.js"></script>
+
+</body>
+</html>

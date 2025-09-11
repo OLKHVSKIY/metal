@@ -13,6 +13,10 @@ import (
 
 func writeJSON(w http.ResponseWriter, v any) {
     w.Header().Set("Content-Type", "application/json; charset=utf-8")
+    // Prevent caching of API responses so clients always see fresh data
+    w.Header().Set("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0")
+    w.Header().Set("Pragma", "no-cache")
+    w.Header().Set("Expires", "0")
     enc := json.NewEncoder(w)
     enc.SetIndent("", "  ")
     _ = enc.Encode(v)

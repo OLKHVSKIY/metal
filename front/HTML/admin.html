@@ -4,9 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Админка</title>
+  <link rel="icon" href="/img/icon.ico" type="image/x-icon">
+  <link rel="shortcut icon" href="/img/icon.ico" type="image/x-icon">
   <link rel="stylesheet" href="/front/CSS/admin.css" />
   <script>window.CSRF_TOKEN='{{CSRF_TOKEN}}';</script>
 </head>
+
 <body>
   <header>
     <div class="left">
@@ -15,12 +18,14 @@
         <button class="btn" id="showOrdersBtn">Заявки услуг</button>
         <button class="btn secondary" id="showUsersBtn">Пользователи</button>
         <button class="btn secondary" id="showNewsBtn">Новости</button>
+        <button class="btn secondary" id="showArticlesBtn">Статьи</button>
       </nav>
     </div>
     <div class="actions">
       <a href="/front/HTML/services.html" class="btn secondary">К сайту</a>
     </div>
   </header>
+
   <div class="container">
     <section id="ordersSection" style="display:none;">
       <div class="card">
@@ -85,6 +90,34 @@
         </div>
       </div>
     </section>
+    <section id="articlesSection" style="display:none;">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Статьи</div>
+          <div class="filters" style="margin-left:auto">
+            <button class="btn" id="refreshArticles">Обновить</button>
+          </div>
+        </div>
+        <div style="max-height:60vh; overflow:auto;">
+          <table id="articlesTable">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Заголовок</th>
+                <th>Краткий текст</th>
+                <th>Полный текст</th>
+                <th>Дата</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class="toolbar">
+          <button class="btn" id="addArticleBtn">Добавить статью</button>
+        </div>
+      </div>
+    </section>
     <section id="newsSection" style="display:none;">
       <div class="card">
         <div class="card-header">
@@ -115,6 +148,7 @@
       </div>
     </section>
   </div>
+
   <script>
     async function fetchOrders() {
       const res = await fetch('/api/admin/orders');
@@ -153,11 +187,12 @@
     document.getElementById('q').addEventListener('input', load);
     const showOrdersBtn = document.getElementById('showOrdersBtn');
     const ordersSection = document.getElementById('ordersSection');
-    showOrdersBtn.addEventListener('click', function(){ ordersSection.style.display = 'block'; usersSection.style.display='none'; newsSection.style.display='none'; load(); });
+    showOrdersBtn.addEventListener('click', function(){ ordersSection.style.display = 'block'; usersSection.style.display='none'; newsSection.style.display='none'; articlesSection.style.display='none'; load(); });
 
     // Users management
     const usersSection = document.getElementById('usersSection');
     const newsSection = document.getElementById('newsSection');
+    const articlesSection = document.getElementById('articlesSection');
     const showUsersBtn = document.getElementById('showUsersBtn');
     const usersTableBody = () => document.querySelector('#usersTable tbody');
     async function fetchUsers(){ const r = await fetch('/api/admin/users'); return await r.json(); }
@@ -198,7 +233,7 @@
         }
       });
     }
-    showUsersBtn.addEventListener('click', function(){ usersSection.style.display='block'; ordersSection.style.display='none'; newsSection.style.display='none'; renderUsers(); });
+    showUsersBtn.addEventListener('click', function(){ usersSection.style.display='block'; ordersSection.style.display='none'; newsSection.style.display='none'; articlesSection.style.display='none'; renderUsers(); });
     document.getElementById('refreshUsers').addEventListener('click', renderUsers);
     document.getElementById('addUserBtn').addEventListener('click', async function(){
       const login = prompt('Логин нового пользователя:');
@@ -258,12 +293,93 @@
         }
       });
     }
-    showNewsBtn.addEventListener('click', function(){ newsSection.style.display='block'; usersSection.style.display='none'; ordersSection.style.display='none'; renderNewsAdmin(); });
+    showNewsBtn.addEventListener('click', function(){ newsSection.style.display='block'; usersSection.style.display='none'; ordersSection.style.display='none'; articlesSection.style.display='none'; renderNewsAdmin(); });
     document.getElementById('refreshNews').addEventListener('click', renderNewsAdmin);
     document.getElementById('addNewsBtn').addEventListener('click', async function(){
       const payload = { title: 'Новая новость', short_text: 'Краткий текст', full_text: 'Полный текст', image_url: '', published_at: new Date().toISOString().slice(0,10) };
       await fetch('/api/admin/news', { method:'POST', headers:{'Content-Type':'application/json','X-CSRF-Token':window.CSRF_TOKEN}, body: JSON.stringify(payload) });
       renderNewsAdmin();
+    });
+
+    // Articles management
+    const showArticlesBtn = document.getElementById('showArticlesBtn');
+    async function fetchArticles(){ const r = await fetch('/api/admin/articles'); return await r.json(); }
+    function articlesTableBody(){ return document.querySelector('#articlesTable tbody'); }
+    async function renderArticlesAdmin(){
+      const rows = await fetchArticles();
+      const tbody = articlesTableBody();
+      tbody.innerHTML='';
+      rows.forEach(a => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = ''+
+          '<td>'+a.id+'</td>'+
+          '<td><input data-id="'+a.id+'" data-field="title" value="'+(a.title||'').replace(/\"/g,'&quot;')+'" /></td>'+
+          '<td><input data-id="'+a.id+'" data-field="short_text" value="'+(a.short_text||'').replace(/\"/g,'&quot;')+'" /></td>'+
+          '<td><textarea class="rich" data-id="'+a.id+'" data-field="full_text" rows="10">'+(a.full_text||'')+'</textarea>'+
+          '<div class="editor-toolbar" style="margin-top:6px; display:flex; gap:6px; flex-wrap:wrap">'+
+            '<button type="button" class="btn secondary" data-editor="h3">H3</button>'+
+            '<button type="button" class="btn secondary" data-editor="h4">H4</button>'+
+            '<button type="button" class="btn secondary" data-editor="bold"><b>B</b></button>'+
+            '<button type="button" class="btn secondary" data-editor="ul">• Список</button>'+
+            '<button type="button" class="btn secondary" data-editor="ol">1. Список</button>'+
+            '<button type="button" class="btn secondary" data-editor="table">Таблица</button>'+
+          '</div></td>'+
+          '<td><input type="date" data-id="'+a.id+'" data-field="published_at" value="'+(a.published_at||'')+'" /></td>'+
+          '<td>'+
+            '<button class="btn" data-action="save" data-id="'+a.id+'">Сохранить</button> '+
+            '<button class="btn secondary" data-action="delete" data-id="'+a.id+'">Удалить</button>'+
+          '</td>';
+        tbody.appendChild(tr);
+      });
+      tbody.addEventListener('click', async (e)=>{
+        // toolbar actions
+        const toolBtn = e.target.closest('button[data-editor]');
+        if(toolBtn){
+          const row = toolBtn.closest('tr');
+          const ta = row.querySelector('textarea[data-field="full_text"]');
+          const act = toolBtn.getAttribute('data-editor');
+          const wrap = (prefix, suffix) => {
+            const start = ta.selectionStart, end = ta.selectionEnd;
+            const val = ta.value;
+            ta.value = val.slice(0,start) + prefix + val.slice(start,end) + suffix + val.slice(end);
+            ta.focus();
+          };
+          if(act==='h3') wrap('<h3>','</h3>');
+          if(act==='h4') wrap('<h4>','</h4>');
+          if(act==='bold') wrap('<strong>','</strong>');
+          if(act==='ul') wrap('<ul>\n  <li>','</li>\n</ul>');
+          if(act==='ol') wrap('<ol>\n  <li>','</li>\n</ol>');
+          if(act==='table') wrap('<table>\n  <tr><th>Колонка</th><th>Колонка</th></tr>\n  <tr><td>Ячейка</td><td>Ячейка</td></tr>\n</table>','');
+          e.preventDefault();
+          return;
+        }
+        const btn = e.target.closest('button[data-action]');
+        if(!btn) return;
+        const id = parseInt(btn.getAttribute('data-id'));
+        const action = btn.getAttribute('data-action');
+        const row = btn.closest('tr');
+        if(action === 'save'){
+          const payload = {
+            id,
+            title: row.querySelector('input[data-field="title"]').value,
+            short_text: row.querySelector('input[data-field="short_text"]').value,
+            full_text: row.querySelector('textarea[data-field="full_text"]').value,
+            published_at: row.querySelector('input[data-field="published_at"]').value
+          };
+          await fetch('/api/admin/articles', { method:'PATCH', headers:{'Content-Type':'application/json','X-CSRF-Token':window.CSRF_TOKEN}, body: JSON.stringify(payload) });
+          renderArticlesAdmin();
+        } else if(action === 'delete'){
+          await fetch('/api/admin/articles?id='+id, { method:'DELETE', headers:{'X-CSRF-Token':window.CSRF_TOKEN} });
+          renderArticlesAdmin();
+        }
+      });
+    }
+    showArticlesBtn.addEventListener('click', function(){ articlesSection.style.display='block'; usersSection.style.display='none'; ordersSection.style.display='none'; newsSection.style.display='none'; renderArticlesAdmin(); });
+    document.getElementById('refreshArticles').addEventListener('click', renderArticlesAdmin);
+    document.getElementById('addArticleBtn').addEventListener('click', async function(){
+      const payload = { title: 'Новая статья', short_text: 'Краткий текст', full_text: 'Полный текст', published_at: new Date().toISOString().slice(0,10) };
+      await fetch('/api/admin/articles', { method:'POST', headers:{'Content-Type':'application/json','X-CSRF-Token':window.CSRF_TOKEN}, body: JSON.stringify(payload) });
+      renderArticlesAdmin();
     });
   </script>
 </body>

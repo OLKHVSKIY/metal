@@ -14,7 +14,7 @@
     <script src="https://api-maps.yandex.ru/2.1.79/?lang=ru_RU&apikey=e72e91bf-e966-4ffa-975b-57a5571ab5a8" defer></script>
 </head>
 <body>
-       <!-- Header -->
+    <!-- Header -->
     <header class="header">
         <div class="container header-container">
             <div class="logo">
@@ -36,11 +36,8 @@
                         <li><a href="/front/HTML/contact.html">Контакты</a></li>
                     </ul>
                     <div class="header-actions mobile-header-actions">
-                        <form class="search-form">
-                            <input type="text" placeholder="Поиск...">
-                            <button type="submit"><i class="fas fa-search"></i></button>
-                        </form>
-                        <a href="#" class="cart-link"><i class="fas fa-shopping-cart"></i> Корзина</a>
+
+                        <a href="/cart/" class="cart-link"><i class="fas fa-shopping-cart"></i> Корзина</a>
                         <a href="#" class="login-link"><i class="fas fa-user"></i> Войти</a>
                     </div>
                 </div>
@@ -49,7 +46,7 @@
     </header>
 
 
-    <!-- Auth Modal -->
+     <!-- Auth Modal -->
     <div class="auth-modal" id="authModal">
         <div class="auth-modal-content">
             <span class="auth-close-btn">&times;</span>
@@ -61,8 +58,8 @@
                 
                 <form id="loginForm" class="auth-form">
                     <div class="form-group">
-                        <label for="login-identifier">Логин или телефон:</label>
-                        <input type="text" id="login-identifier" placeholder="Логин / Номер телефона" required>
+                        <label for="login-email">Email или телефон:</label>
+                        <input type="text" id="login-email" placeholder="Email / Номер телефона" required>
                     </div>
                     
                     <div class="form-group password-group">
@@ -90,8 +87,8 @@
                 
                 <form id="registerForm" class="auth-form" style="display: none;">
                     <div class="form-group">
-                        <label for="register-username">Логин:</label>
-                        <input type="text" id="register-username" placeholder="Придумайте логин" required>
+                        <label for="register-email">Email:</label>
+                        <input type="email" id="register-email" placeholder="Введите ваш email" required>
                     </div>
                     
                     <div class="form-group">
@@ -119,9 +116,9 @@
             <h2 class="section-title">Контакты</h2>
             <div class="contacts-text">
                 <p>Наша компания Межрегионсталь имеет представительство в Санкт-Петербурге.</p>
-<p>Благодаря масштабным поставкам мы поддерживаем конкурентные цены и предлагаем широкий выбор металлопроката в Санкт-Петербурге.</p>
-<p>Мы реализуем качественный черный металлопрокат с доставкой по Санкт-Петербургу и Московскому району. Оказываем услуги резки и обработки металла, предоставляем консультации и помощь в подборе материалов.</p>
-<p>Приглашаем посетить наш офис. Наши специалисты подробно проконсультируют по ассортименту и помогут выбрать оптимальное решение для ваших задач.</p>
+                <p>Благодаря масштабным поставкам мы поддерживаем конкурентные цены и предлагаем широкий выбор металлопроката в Санкт-Петербурге.</p>   
+                <p>Мы реализуем качественный черный металлопрокат с доставкой по Санкт-Петербургу и Московскому району. Оказываем услуги резки и обработки металла, предоставляем консультации и помощь в подборе материалов.</p>
+                <p>Приглашаем посетить наш офис. Наши специалисты подробно проконсультируют по ассортименту и помогут выбрать оптимальное решение для ваших задач.</p>
             </div>
             <div class="contacts-info">
                 <div class="contact-item">
@@ -202,7 +199,7 @@
                     <div class="info-links">
                         <a href="/front/HTML/gost.html">ГОСТ и ТУ</a>
                         <a href="/front/HTML/news.html">Новости</a>
-                        <a href="#">Статьи</a>
+                        <a href="/front/HTML/articles.html">Статьи</a>
                     </div>
                 </div>
                 <div class="footer-column">
@@ -226,6 +223,7 @@
         </div>
     </footer>
 
+    <script src="/front/JS/auth.js"></script>
     <script src="/front/JS/script.js"></script>
     <script src="/front/JS/contact.js"></script>
 </body>

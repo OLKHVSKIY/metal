@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Корзина</title>
+  <link rel="icon" href="/img/icon.ico" type="image/x-icon">
+  <link rel="shortcut icon" href="/img/icon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="/front/CSS/style.css">
+  <link rel="stylesheet" href="/front/CSS/cart.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container header-container">
+            <div class="logo">
+                <a href="/front/HTML/main.html">
+                    <img src="/img/logo.png" alt="Металл">
+                </a>
+            </div>
+            <button class="burger-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+            <nav class="nav-menu">
+                <div class="nav-menu-inner">
+                    <ul>
+                        <li><a href="/front/HTML/catalog.html">Каталог</a></li>
+                        <li><a href="#">Акции</a></li>
+                        <li><a href="/front/HTML/services.html">Услуги</a></li>
+                        <li><a href="#">Доставка</a></li>
+                        <li><a href="#">Прайс-лист</a></li>
+                        <li><a href="/front/HTML/contact.html">Контакты</a></li>
+                    </ul>
+                    <div class="header-actions mobile-header-actions">
+
+                        <a href="/cart/" class="cart-link"><i class="fas fa-shopping-cart"></i> Корзина</a>
+                        <a href="#" class="login-link"><i class="fas fa-user"></i> Войти</a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+  <main class="cart-container">
+    <h1 class="cart-title">Ваша корзина</h1>
+    <div id="cartList" class="cart-items"></div>
+    <div id="cartSummary" class="cart-summary"></div>
+    <div class="continue-shopping">
+      <a href="/front/HTML/catalog.html" class="continue-link">
+        <i class="fas fa-arrow-left"></i>
+        Продолжить покупки
+      </a>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-column">
+          <div class="footer-divider"></div>
+          <h3>Информация</h3>
+          <div class="info-links">
+            <a href="/front/HTML/gost.html">ГОСТ и ТУ</a>
+            <a href="/front/HTML/news.html">Новости</a>
+            <a href="/front/HTML/articles.html">Статьи</a>
+          </div>
+        </div>
+        <div class="footer-column">
+          <div class="footer-divider"></div>
+          <h3>Контакты</h3>
+          <p class="phone-number">+7 (981) 720-10-10</p>
+          <div class="email-container">
+            <p>info@metall.ru</p>
+          </div>
+          <p class="address">Адрес: г. СПб, ул. Московское шоссе 46Б, офис 310</p>
+          <div class="social-links">
+            <a href="#"><i class="fab fa-vk"></i></a>
+            <a href="#"><i class="fab fa-telegram"></i></a>
+            <a href="#"><i class="fab fa-whatsapp"></i></a>
+          </div>
+        </div>
+      </div>
+      <div class="copyright">
+        <p>&copy; 2021 - 2025 Межрегионсталь. Все права защищены.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/front/JS/auth.js"></script>
+  <script src="/front/JS/script.js"></script>
+  <script src="/front/JS/cart.js"></script>
+</body>
+</html>

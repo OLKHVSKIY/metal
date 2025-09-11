@@ -5,6 +5,10 @@ document.addEventListener('DOMContentLoaded', function() {
   initFormValidation();
   initScrollAnimations();
   replaceEmptyLinks();
+  initAuthButton();
+  initCartLink();
+  initCartButtons();
+  updateCartCounter();
 
   // Инициализация Яндекс.Карты
   if (typeof ymaps !== 'undefined') {
@@ -56,7 +60,8 @@ function initSmoothScroll() {
 
 // Валидация форм
 function initFormValidation() {
-  const forms = document.querySelectorAll('form');
+  // Исключаем формы авторизации/регистрации, у них своя логика в auth.js
+  const forms = document.querySelectorAll('form:not(.auth-form)');
   
   forms.forEach(form => {
     form.addEventListener('submit', function(e) {
@@ -111,6 +116,108 @@ function replaceEmptyLinks() {
   });
 }
 
+// Замена кнопки Войти -> Кабинет при активной сессии
+async function initAuthButton(){
+  try{
+    const r = await fetch('/api/me', { credentials: 'include' });
+    if(!r.ok) return; // не авторизован — ничего не меняем
+    const nav = document.querySelector('.nav-menu .header-actions');
+    if(!nav) return;
+    // Ищем существующую ссылку входа
+    const loginLink = nav.querySelector('.login-link');
+    const btn = document.createElement('a');
+    btn.className = 'btn';
+    btn.href = '/cabinet/';
+    btn.textContent = 'Кабинет';
+    if(loginLink){
+      loginLink.replaceWith(btn);
+    } else {
+      nav.appendChild(btn);
+    }
+  }catch(e){
+    // ignore
+  }
+}
+
+// Делает ссылку Корзина кликабельной и ведущей на /cart/
+function initCartLink(){
+  const cart = document.querySelector('.header-actions .cart-link');
+  if(cart){
+    // Сделаем обычной ссылкой на /cart/
+    cart.setAttribute('href', '/cart/');
+  }
+}
+
+// Обработчики кнопок добавления в корзину на карточках предложений
+function initCartButtons(){
+  const buttons = document.querySelectorAll('.offer-card .cart-btn');
+  if(!buttons || buttons.length===0) return;
+  buttons.forEach(btn => {
+    btn.addEventListener('click', function(){
+      const card = btn.closest('.offer-card');
+      if(!card) return;
+      const titleEl = card.querySelector('h4');
+      const priceEl = card.querySelector('.new-price');
+      const imgEl = card.querySelector('img');
+      const title = titleEl ? titleEl.textContent.trim() : 'Товар';
+      const priceStr = priceEl ? priceEl.textContent.replace(/[^0-9]/g,'') : '0';
+      const price = parseInt(priceStr||'0', 10);
+      const image = imgEl ? imgEl.getAttribute('src') : '';
+      const id = (title + '|' + image).toLowerCase();
+
+      const item = { id, title, price, image, qty: 1 };
+      addToCart(item);
+      updateCartCounter();
+    });
+  });
+}
+
+function readCart(){
+  try{
+    const raw = localStorage.getItem('cartItems');
+    return raw ? JSON.parse(raw) : [];
+  }catch{ return []; }
+}
+
+function writeCart(items){
+  localStorage.setItem('cartItems', JSON.stringify(items));
+}
+
+function addToCart(newItem){
+  const items = readCart();
+  const idx = items.findIndex(i => i.id === newItem.id);
+  if(idx >= 0){
+    items[idx].qty = (items[idx].qty||1) + (newItem.qty||1);
+  } else {
+    items.push(newItem);
+  }
+  writeCart(items);
+}
+
+function getCartCount(){
+  const items = readCart();
+  return items.reduce((sum, i) => sum + (i.qty||1), 0);
+}
+
+function updateCartCounter(){
+  const link = document.querySelector('.header-actions .cart-link');
+  if(!link) return;
+  let badge = link.querySelector('.cart-count-badge');
+  if(!badge){
+    badge = document.createElement('span');
+    badge.className = 'cart-count-badge';
+    badge.style.cssText = 'margin-left:4px;background:#e53935;color:#fff;border-radius:10px;padding:0 5px;font-size:10px;line-height:14px;display:inline-block;vertical-align:top;';
+    link.appendChild(badge);
+  }
+  const count = getCartCount();
+  if(count>0){
+    badge.textContent = count;
+    badge.style.display = 'inline-block';
+  } else {
+    badge.style.display = 'none';
+  }
+}
+
 // Функция для отправки данных форм (заглушка)
 function submitForm(formData) {
   console.log('Данные формы:', formData);
@@ -139,17 +246,25 @@ function initMap() {
   myMap.geoObjects.add(myPlacemark);
 }
 
-// бургер
-
+// Обновленный код для бургер-меню
 document.addEventListener('DOMContentLoaded', () => {
   const burgerBtn = document.querySelector('.burger-btn');
   const navMenu = document.querySelector('.nav-menu');
   const body = document.body;
 
   // Переключение меню
-  burgerBtn.addEventListener('click', () => {
+  burgerBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
     navMenu.classList.toggle('active');
-    body.style.overflow = navMenu.classList.contains('active') ? 'hidden' : '';
+    body.classList.toggle('menu-open');
+    
+    // Меняем иконку
+    const icon = burgerBtn.querySelector('i');
+    if (navMenu.classList.contains('active')) {
+      icon.className = 'fas fa-times';
+    } else {
+      icon.className = 'fas fa-bars';
+    }
   });
 
   // Закрытие меню при клике на ссылку
@@ -157,7 +272,31 @@ document.addEventListener('DOMContentLoaded', () => {
   navLinks.forEach(link => {
     link.addEventListener('click', () => {
       navMenu.classList.remove('active');
-      body.style.overflow = '';
+      body.classList.remove('menu-open');
+      const icon = burgerBtn.querySelector('i');
+      icon.className = 'fas fa-bars';
     });
+  });
+
+  // Закрытие меню при клике вне его
+  document.addEventListener('click', (e) => {
+    if (navMenu.classList.contains('active') && 
+        !e.target.closest('.nav-menu') && 
+        !e.target.closest('.burger-btn')) {
+      navMenu.classList.remove('active');
+      body.classList.remove('menu-open');
+      const icon = burgerBtn.querySelector('i');
+      icon.className = 'fas fa-bars';
+    }
+  });
+
+  // Закрытие меню при нажатии Escape
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && navMenu.classList.contains('active')) {
+      navMenu.classList.remove('active');
+      body.classList.remove('menu-open');
+      const icon = burgerBtn.querySelector('i');
+      icon.className = 'fas fa-bars';
+    }
   });
 });

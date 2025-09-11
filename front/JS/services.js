@@ -374,26 +374,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (service) {
         // Очищаем содержимое .service-details
-        serviceDetails.innerHTML = `
-          <span class="close-btn">&times;</span>
-          <h3 class="service-title">${service.title}</h3>
-          <img class="service-banner" src="${service.banner}" alt="Баннер ${service.title}">
-          <div class="service-description">${service.description}</div>
-          <div class="service-advantages">
-            <h4>Наши преимущества</h4>
-            <div class="advantages-grid"></div>
-          </div>
-          <div class="service-form">
-            <h4>Заявка на услугу</h4>
-            <form class="request-form">
-              <p>Оставьте Ваши данные и мы Вам перезвоним</p>
-              <input type="text" name="name" placeholder="Имя:" required>
-              <input type="tel" name="phone" placeholder="Телефон:" required>
-              <input type="email" name="email" placeholder="E-mail:">
-              <button type="submit" class="order-btn">Жду звонка</button>
-            </form>
-          </div>
-        `;
+      serviceDetails.innerHTML = `
+        <span class="close-btn">&times;</span>
+        <h3 class="service-title">${service.title}</h3>
+        <img class="service-banner" src="${service.banner}" alt="Баннер ${service.title}">
+        
+        <div class="service-form">
+          <h4>Заявка на услугу</h4>
+          <form class="request-form">
+            <p>Оставьте Ваши данные и мы Вам перезвоним!</p>
+            <input type="text" name="name" placeholder="Имя:" required>
+            <input type="tel" name="phone" placeholder="Телефон:" required>
+            <input type="email" name="email" placeholder="E-mail:">
+            <button type="submit" class="order-btn">Жду звонка</button>
+          </form>
+        </div>
+        
+        <div class="service-description">${service.description}</div>
+        <div class="service-advantages">
+          <h4>Наши преимущества</h4>
+          <div class="advantages-grid"></div>
+        </div>
+      `;
 
         // Переопределяем элементы после перерисовки
         const newCloseBtn = serviceDetails.querySelector('.close-btn');
@@ -445,16 +447,37 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  
+
   // Обработка отправки формы
-  serviceDetails.addEventListener('submit', (e) => {
+  serviceDetails.addEventListener('submit', async (e) => {
     if (e.target.matches('.request-form')) {
       e.preventDefault();
       const formData = new FormData(e.target);
-      const name = formData.get('name');
-      const phone = formData.get('phone');
-      const email = formData.get('email');
-      alert(`Заявка отправлена!\nУслуга: ${serviceTitle.textContent}\nИмя: ${name}\nТелефон: ${phone}\nE-mail: ${email || 'Не указан'}`);
-      e.target.reset();
+      const name = (formData.get('name')||'').trim();
+      const phone = (formData.get('phone')||'').trim();
+      const email = (formData.get('email')||'').trim();
+      const service = (serviceDetails.querySelector('.service-title')?.textContent || '').trim();
+      try {
+        const res = await fetch('/api/orders', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ service, name, phone, email })
+        });
+        if (!res.ok) {
+          const txt = await res.text();
+          throw new Error(txt||('HTTP '+res.status));
+        }
+        const data = await res.json();
+        alert(`Заявка отправлена! №${data.id}\nУслуга: ${service}\nИмя: ${name}\nТелефон: ${phone}\nE-mail: ${email || 'Не указан'}`);
+        e.target.reset();
+        // Закрыть модалку
+        modal.classList.remove('open');
+        setTimeout(() => { modal.style.display = 'none'; document.body.style.overflow = ''; }, 300);
+      } catch (err) {
+        console.error('Order submit failed', err);
+        alert('Не удалось отправить заявку. Попробуйте еще раз.');
+      }
     }
   });
 });

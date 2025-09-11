@@ -5,12 +5,15 @@ import (
     "database/sql"
     "encoding/json"
     "fmt"
+    "io"
     "log"
     "net/http"
+    "net/url"
     "os"
     "path/filepath"
     "strconv"
     "strings"
+    "time"
 
     _ "modernc.org/sqlite"
     "golang.org/x/crypto/bcrypt"
@@ -74,6 +77,7 @@ const telegramChatIDCacheFile = "telegram_chat_id.txt"
 var db *sql.DB
 var userDB *sql.DB
 var newsDB *sql.DB
+var articlesDB *sql.DB
 
 func initDB() error {
     var err error
@@ -110,6 +114,27 @@ func initDB() error {
     if err != nil { return err }
     // try to add image_url column for older DBs (ignore error if exists)
     _, _ = newsDB.Exec("ALTER TABLE news ADD COLUMN image_url TEXT")
+
+    // articles database
+    articlesDB, err = sql.Open("sqlite", "file:articles.db?_pragma=journal_mode(WAL)")
+    if err != nil { return err }
+    _, err = articlesDB.Exec(`
+        CREATE TABLE IF NOT EXISTS articles (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            title TEXT NOT NULL,
+            short_text TEXT NOT NULL,
+            full_text TEXT NOT NULL,
+            published_at TEXT NOT NULL
+        );
+        CREATE INDEX IF NOT EXISTS idx_articles_published_at ON articles(published_at DESC);
+    `)
+    if err != nil { return err }
+    // seed default articles if table is empty
+    var ac int
+    _ = articlesDB.QueryRow("SELECT COUNT(1) FROM articles").Scan(&ac)
+    if ac == 0 {
+        if err := seedDefaultArticles(); err != nil { return err }
+    }
 
     // users database
     userDB, err = sql.Open("sqlite", "file:users.db?_pragma=journal_mode(WAL)")
@@ -173,6 +198,33 @@ func main() {
     mux.HandleFunc("/api/search", withCORS(handleSearch))
     mux.HandleFunc("/api/gost", withCORS(handleGostList))
     mux.HandleFunc("/api/news", withCORS(handleNewsList))
+    // Public auth
+    mux.HandleFunc("/api/register", withCORS(publicRegister))
+    mux.HandleFunc("/api/login", withCORS(publicLogin))
+    mux.HandleFunc("/api/me", withCORS(func(w http.ResponseWriter, r *http.Request) {
+        if r.Method != http.MethodGet { http.Error(w, "method not allowed", http.StatusMethodNotAllowed); return }
+        c, err := r.Cookie(userSessionCookieName)
+        if err != nil || c.Value == "" {
+            http.Error(w, "unauthorized", http.StatusUnauthorized)
+            return
+        }
+        loginVal, _ := url.QueryUnescape(c.Value)
+        var id int64
+        var login, email, phone string
+        var isAdmin int
+        err = userDB.QueryRow("SELECT id, login, email, phone, is_admin FROM users WHERE login=? OR email=? OR phone=?", loginVal, loginVal, loginVal).Scan(&id, &login, &email, &phone, &isAdmin)
+        if err != nil {
+            http.Error(w, "unauthorized", http.StatusUnauthorized)
+            return
+        }
+        writeJSON(w, map[string]any{"id": id, "login": login, "email": email, "phone": phone, "is_admin": isAdmin==1})
+    }))
+    mux.HandleFunc("/api/logout", withCORS(func(w http.ResponseWriter, r *http.Request) {
+        if r.Method != http.MethodPost { http.Error(w, "method not allowed", http.StatusMethodNotAllowed); return }
+        clearUserSession(w)
+        writeJSON(w, map[string]string{"status":"ok"})
+    }))
+    mux.HandleFunc("/api/articles", withCORS(handleArticlesList))
     mux.HandleFunc("/api/health", withCORS(func(w http.ResponseWriter, r *http.Request) {
         if r.Method != http.MethodGet {
             http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
@@ -182,12 +234,53 @@ func main() {
         _, _ = w.Write([]byte("{\n  \"status\": \"ok\"\n}"))
     }))
 
+    // Simple image proxy for external news images to avoid hotlinking and expiring URLs
+    mux.HandleFunc("/api/image-proxy", withCORS(func(w http.ResponseWriter, r *http.Request) {
+        if r.Method != http.MethodGet {
+            http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+            return
+        }
+        raw := r.URL.Query().Get("u")
+        if strings.TrimSpace(raw) == "" {
+            http.Error(w, "missing url", http.StatusBadRequest)
+            return
+        }
+        u, err := url.Parse(raw)
+        if err != nil || (u.Scheme != "http" && u.Scheme != "https") {
+            http.Error(w, "invalid url", http.StatusBadRequest)
+            return
+        }
+        client := &http.Client{ Timeout: 10 * time.Second }
+        req, _ := http.NewRequest(http.MethodGet, u.String(), nil)
+        // Pretend to be a browser to avoid some CDNs blocking requests
+        req.Header.Set("User-Agent", "Mozilla/5.0 (compatible; ImageProxy/1.0)")
+        resp, err := client.Do(req)
+        if err != nil {
+            http.Error(w, err.Error(), http.StatusBadGateway)
+            return
+        }
+        defer resp.Body.Close()
+        if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+            http.Error(w, fmt.Sprintf("upstream status %d", resp.StatusCode), http.StatusBadGateway)
+            return
+        }
+        ct := resp.Header.Get("Content-Type")
+        if ct == "" { ct = "image/jpeg" }
+        w.Header().Set("Content-Type", ct)
+        w.Header().Set("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0")
+        w.Header().Set("Pragma", "no-cache")
+        w.Header().Set("Expires", "0")
+        // Stream body
+        _, _ = io.Copy(w, resp.Body)
+    }))
+
     // Orders API
     mux.HandleFunc("/api/orders", withCORS(ordersHandler))
     mux.HandleFunc("/api/admin/orders", withCORS(csrfProtect(requireAdmin(adminListOrders))))
     mux.HandleFunc("/api/admin/orders/status", withCORS(csrfProtect(requireAdmin(adminUpdateOrderStatus))))
     mux.HandleFunc("/api/admin/users", withCORS(csrfProtect(requireAdmin(adminUsersHandler))))
     mux.HandleFunc("/api/admin/news", withCORS(csrfProtect(requireAdmin(adminNewsHandler))))
+    mux.HandleFunc("/api/admin/articles", withCORS(csrfProtect(requireAdmin(adminArticlesHandler))))
 
     // Simple admin UI
     // auth pages
@@ -221,7 +314,16 @@ func main() {
 
     // Static serving for front/, img/, gost/
     mux.Handle("/front/", http.StripPrefix("/front/", http.FileServer(http.Dir(frontDirPath))))
-    mux.Handle("/img/", http.StripPrefix("/img/", http.FileServer(http.Dir(imgDirPath))))
+    // Serve images with headers disabling browser cache to ensure fresh updates
+    mux.Handle("/img/", http.StripPrefix("/img/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        w.Header().Set("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0")
+        w.Header().Set("Pragma", "no-cache")
+        w.Header().Set("Expires", "0")
+        http.FileServer(http.Dir(imgDirPath)).ServeHTTP(w, r)
+    })))
+
+    // Public news page by ID
+    mux.HandleFunc("/back/news/", handleNewsPublic)
     mux.Handle("/gost/", http.StripPrefix("/gost/", http.FileServer(http.Dir(gostDirPath))))
 
     // Root redirect to main page
@@ -231,6 +333,26 @@ func main() {
             return
         }
         http.NotFound(w, r)
+    })
+
+    // Serve cabinet page from front/HTML
+    mux.HandleFunc("/cabinet/", func(w http.ResponseWriter, r *http.Request) {
+        p := filepath.Join(frontDirPath, "HTML", "cabinet.html")
+        b, err := os.ReadFile(p)
+        if err != nil { http.Error(w, "not found", http.StatusNotFound); return }
+        w.Header().Set("Content-Type", "text/html; charset=utf-8")
+        w.Header().Set("Cache-Control", "no-store")
+        _, _ = w.Write(b)
+    })
+
+    // Serve cart page from front/HTML
+    mux.HandleFunc("/cart/", func(w http.ResponseWriter, r *http.Request) {
+        p := filepath.Join(frontDirPath, "HTML", "cart.html")
+        b, err := os.ReadFile(p)
+        if err != nil { http.Error(w, "not found", http.StatusNotFound); return }
+        w.Header().Set("Content-Type", "text/html; charset=utf-8")
+        w.Header().Set("Cache-Control", "no-store")
+        _, _ = w.Write(b)
     })
 
     addr := ":8080"
