@@ -121,12 +121,21 @@ async function initAuthButton(){
   try{
     const r = await fetch('/api/me', { credentials: 'include' });
     if(!r.ok) return; // не авторизован — ничего не меняем
-    const nav = document.querySelector('.nav-menu .header-actions');
+    let nav = document.querySelector('.nav-menu .header-actions');
+    if(!nav) nav = document.querySelector('.header-actions');
     if(!nav) return;
+    // Если мы уже на странице кабинета, кнопку скрываем
+    if (window.location && /^\/cabinet\/?/i.test(window.location.pathname || '')) {
+      const existingCab = nav.querySelector('a[href="/cabinet/"]');
+      if(existingCab){ existingCab.remove(); }
+      const loginAnchor = nav.querySelector('.login-link');
+      if(loginAnchor){ loginAnchor.remove(); }
+      return;
+    }
     // Ищем существующую ссылку входа
     const loginLink = nav.querySelector('.login-link');
     const btn = document.createElement('a');
-    btn.className = 'btn';
+    btn.className = 'btn-cabinet';
     btn.href = '/cabinet/';
     btn.textContent = 'Кабинет';
     if(loginLink){
@@ -149,7 +158,8 @@ function initCartLink(){
 }
 
 // Обработчики кнопок добавления в корзину на карточках предложений
-function initCartButtons(){
+// Делаем доступной глобально, чтобы вызывать после динамической отрисовки
+window.initCartButtons = function initCartButtons(){
   const buttons = document.querySelectorAll('.offer-card .cart-btn');
   if(!buttons || buttons.length===0) return;
   buttons.forEach(btn => {
@@ -300,3 +310,30 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 });
+
+// Применение ссылок на соцсети глобально (иконки в любом месте страницы)
+document.addEventListener('DOMContentLoaded', async () => {
+  try{
+    const r = await fetch('/api/social', { cache: 'no-store' });
+    if(!r.ok) return;
+    const s = await r.json();
+    const map = { vk: s.vk_link||'', telegram: s.telegram_link||'', whatsapp: s.wp_link||'' };
+    const containers = document.querySelectorAll('.social-links');
+    containers.forEach(container => {
+      const anchors = Array.from(container.querySelectorAll('a'));
+      anchors.forEach((a, idx) => {
+        const isVK = !!a.querySelector('.fa-vk');
+        const isTG = !!a.querySelector('.fa-telegram, .fa-telegram-plane');
+        const isWA = !!a.querySelector('.fa-whatsapp');
+        let url = '';
+        if(isVK) url = map.vk; else if(isTG) url = map.telegram; else if(isWA) url = map.whatsapp;
+        // fallback by order VK, TG, WA
+        if(!url){ if(idx===0) url = map.vk; else if(idx===1) url = map.telegram; else if(idx===2) url = map.whatsapp; }
+        if(url && url !== '#') { a.href = url; a.target = '_blank'; a.rel = 'noopener'; a.style.pointerEvents=''; a.style.opacity=''; a.addEventListener('click', function(ev){ ev.stopPropagation(); try{ window.open(url, '_blank'); }catch(_){} }); }
+        else { a.href = '#'; a.removeAttribute('target'); a.removeAttribute('rel'); a.style.pointerEvents='none'; a.style.opacity='0.5'; }
+      });
+    });
+  }catch(e){ /* ignore */ }
+});
+
+document.body.classList.add('loaded');

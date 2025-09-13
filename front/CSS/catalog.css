@@ -26,13 +26,22 @@
   width: 130px;
   height: 130px;
   object-fit: contain;
-  margin-bottom: 12px;
+
 }
 
 .catalog-offer-card h4 {
   font-size: 16px;
   margin-bottom: 8px;
   color: var(--text-color);
+  text-decoration: none !important;
+}
+
+.catalog-offer-card {
+  text-decoration: none !important;
+}
+
+.catalog-offer-card h4 {
+  text-decoration: none !important;
 }
 
 
@@ -105,3 +114,7 @@
   background-color: #b71c1c;
   transform: translateY(-2px);
 }
+
+
+/* catalog-list */
+

@@ -119,6 +119,7 @@
     margin: 23px 0;
 }
 
+
 .product-slider-container {
     position: relative;
     width: 1400px;
@@ -155,6 +156,8 @@
     justify-content: space-between;
     padding: 6px;
     transition: transform 0.3s ease;
+    text-decoration: none !important;
+
 }
 
 .product-card:hover {
@@ -172,6 +175,7 @@
     color: var(--text-color);
     margin: 0;
     text-align: center;
+    text-decoration: none !important;
 }
 
 .prev-product-slide,

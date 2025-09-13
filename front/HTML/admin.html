@@ -8,6 +8,25 @@
   <link rel="shortcut icon" href="/img/icon.ico" type="image/x-icon">
   <link rel="stylesheet" href="/front/CSS/admin.css" />
   <script>window.CSRF_TOKEN='{{CSRF_TOKEN}}';</script>
+  <style>
+    /* Make price field wider for better readability */
+    #productsTable input[data-field="price"] {
+      width: 140px;
+    }
+    /* Widen newly added numeric fields */
+    #productsTable input[data-field="price_per_ton"] {
+      width: 160px;
+    }
+    #productsTable input[data-field="weight_kg"] {
+      width: 120px;
+    }
+    #productsTable input[data-field="length_m"] {
+      width: 120px;
+    }
+    #productsTable input[data-field="weight_tons"] {
+      width: 120px;
+    }
+  </style>
 </head>
 
 <body>
@@ -16,9 +35,14 @@
       <h1>Админка</h1>
       <nav class="nav">
         <button class="btn" id="showOrdersBtn">Заявки услуг</button>
+        <button class="btn secondary" id="showItemOrdersBtn">Заказы</button>
         <button class="btn secondary" id="showUsersBtn">Пользователи</button>
         <button class="btn secondary" id="showNewsBtn">Новости</button>
         <button class="btn secondary" id="showArticlesBtn">Статьи</button>
+        <button class="btn secondary" id="showCatalogBtn">Каталог</button>
+        <button class="btn secondary" id="showTypeDescrBtn">Описание товаров</button>
+        <button class="btn secondary" id="showSocialBtn">Соцсети</button>
+        <button class="btn secondary" id="showFeaturedBtn">Лучшие предложения</button>
       </nav>
     </div>
     <div class="actions">
@@ -59,6 +83,14 @@
       <div class="toolbar">
         <span class="muted">Клик по кнопке меняет статус заявки.</span>
       </div>
+      </div>
+    </section>
+    <section id="itemOrdersSection" style="display:none;">
+      <div class="card">
+        <div class="card-header"><div class="card-title">Заказы</div><div class="filters" style="margin-left:auto"><button class="btn" id="refreshItemOrders">Обновить</button></div></div>
+        <div style="max-height:60vh; overflow:auto;">
+          <table id="itemOrdersTable"><thead><tr><th>ID</th><th>Товар</th><th>Кол-во</th><th>Сумма</th><th>Телефон</th><th>Пользователь</th><th>Статус</th><th>Создано</th><th></th></tr></thead><tbody></tbody></table>
+        </div>
       </div>
     </section>
     <section id="usersSection" style="display:none;">
@@ -147,6 +179,102 @@
         </div>
       </div>
     </section>
+    <section id="catalogSection" style="display:none;">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Каталог товаров</div>
+          <div class="filters" style="margin-left:auto; display:flex; gap:8px;">
+            <select id="catTypeFilter"></select>
+            <input id="catSearch" placeholder="Поиск по названию/размеру" />
+            <select id="catSort">
+              <option value="-id">Сначала новые</option>
+              <option value="name">По названию (А→Я)</option>
+              <option value="-price">Сначала дороже</option>
+              <option value="price">Сначала дешевле</option>
+            </select>
+            <button class="btn" id="refreshProducts">Обновить</button>
+          </div>
+        </div>
+        <div style="margin:12px 0; padding:12px; background:#f9fafb; border:1px solid #e5e7eb; border-radius:8px;">
+          <b>Инструкция по добавлению:</b>
+          <ol style="margin:6px 0 0 16px;">
+            <li>Нажмите «Добавить товар».</li>
+            <li>Выберите <i>Тип</i> из списка (например: armatura — Арматура, truba-profilnaya — Труба профильная).</li>
+            <li>Укажите <i>Название</i>, <i>Размер</i>, ссылку на <i>Изображение</i> и <i>Цену</i>.</li>
+            <li>Сохраните строку. Товар появится в каталоге после обновления.</li>
+          </ol>
+        </div>
+        <div style="max-height:60vh; overflow:auto;">
+          <table id="productsTable">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Тип</th>
+                <th>Название</th>
+                <th>Размер</th>
+                <th>Подтип</th>
+                <th>Картинка</th>
+                <th>Цена за метр</th>
+                <th>Цена за тонну</th>
+                <th>Толщина (мм)</th>
+                <th>Вес (кг)</th>
+                <th>Длина (м)</th>
+                <th>Вес (т)</th>
+                <th>Наличие</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class="toolbar">
+          <button class="btn" id="addProductBtn">Добавить товар</button>
+        </div>
+      </div>
+    </section>
+    <section id="socialSection" style="display:none;">
+      <div class="card">
+        <div class="card-header"><div class="card-title">Ссылки на соцсети</div></div>
+        <div style="padding:12px; display:grid; gap:10px; max-width:600px;">
+          <label>Telegram: <input id="tgLink" placeholder="https://t.me/your" /></label>
+          <label>VK: <input id="vkLink" placeholder="https://vk.com/your" /></label>
+          <label>WhatsApp: <input id="wpLink" placeholder="https://wa.me/79..." /></label>
+          <div><button class="btn" id="saveSocial">Сохранить</button></div>
+        </div>
+      </div>
+    </section>
+    <section id="featuredSection" style="display:none;">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Лучшие предложения</div>
+          <div class="filters" style="margin-left:auto">
+            <button class="btn" id="refreshFeatured">Обновить</button>
+          </div>
+        </div>
+        <div id="featuredList" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;padding:8px 0;"></div>
+      </div>
+    </section>
+    <section id="typeDescrSection" style="display:none;">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Описание товаров по типу</div>
+          <div class="filters" style="margin-left:auto">
+            <button class="btn" id="refreshTypeDescr">Обновить</button>
+          </div>
+        </div>
+        <div style="max-height:60vh; overflow:auto;">
+          <table id="typeDescrTable">
+            <thead>
+              <tr><th>Тип</th><th>Описание</th><th></th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class="toolbar">
+          <button class="btn" id="addTypeDescr">Добавить</button>
+        </div>
+      </div>
+    </section>
   </div>
 
   <script>
@@ -187,7 +315,7 @@
     document.getElementById('q').addEventListener('input', load);
     const showOrdersBtn = document.getElementById('showOrdersBtn');
     const ordersSection = document.getElementById('ordersSection');
-    showOrdersBtn.addEventListener('click', function(){ ordersSection.style.display = 'block'; usersSection.style.display='none'; newsSection.style.display='none'; articlesSection.style.display='none'; load(); });
+    showOrdersBtn.addEventListener('click', function(){ ordersSection.style.display = 'block'; usersSection.style.display='none'; newsSection.style.display='none'; articlesSection.style.display='none'; catalogSection.style.display='none'; (document.getElementById('featuredSection')||{}).style&&(document.getElementById('featuredSection').style.display='none'); typeDescrSection.style.display='none'; socialSection.style.display='none'; (document.getElementById('itemOrdersSection')||{}).style&&(document.getElementById('itemOrdersSection').style.display='none'); load(); });
 
     // Users management
     const usersSection = document.getElementById('usersSection');
@@ -233,7 +361,7 @@
         }
       });
     }
-    showUsersBtn.addEventListener('click', function(){ usersSection.style.display='block'; ordersSection.style.display='none'; newsSection.style.display='none'; articlesSection.style.display='none'; renderUsers(); });
+    showUsersBtn.addEventListener('click', function(){ usersSection.style.display='block'; ordersSection.style.display='none'; newsSection.style.display='none'; articlesSection.style.display='none'; catalogSection.style.display='none'; (document.getElementById('featuredSection')||{}).style&&(document.getElementById('featuredSection').style.display='none'); typeDescrSection.style.display='none'; socialSection.style.display='none'; (document.getElementById('itemOrdersSection')||{}).style&&(document.getElementById('itemOrdersSection').style.display='none'); renderUsers(); });
     document.getElementById('refreshUsers').addEventListener('click', renderUsers);
     document.getElementById('addUserBtn').addEventListener('click', async function(){
       const login = prompt('Логин нового пользователя:');
@@ -293,7 +421,7 @@
         }
       });
     }
-    showNewsBtn.addEventListener('click', function(){ newsSection.style.display='block'; usersSection.style.display='none'; ordersSection.style.display='none'; articlesSection.style.display='none'; renderNewsAdmin(); });
+    showNewsBtn.addEventListener('click', function(){ newsSection.style.display='block'; usersSection.style.display='none'; ordersSection.style.display='none'; articlesSection.style.display='none'; catalogSection.style.display='none'; (document.getElementById('featuredSection')||{}).style&&(document.getElementById('featuredSection').style.display='none'); typeDescrSection.style.display='none'; socialSection.style.display='none'; (document.getElementById('itemOrdersSection')||{}).style&&(document.getElementById('itemOrdersSection').style.display='none'); renderNewsAdmin(); });
     document.getElementById('refreshNews').addEventListener('click', renderNewsAdmin);
     document.getElementById('addNewsBtn').addEventListener('click', async function(){
       const payload = { title: 'Новая новость', short_text: 'Краткий текст', full_text: 'Полный текст', image_url: '', published_at: new Date().toISOString().slice(0,10) };
@@ -374,12 +502,612 @@
         }
       });
     }
-    showArticlesBtn.addEventListener('click', function(){ articlesSection.style.display='block'; usersSection.style.display='none'; ordersSection.style.display='none'; newsSection.style.display='none'; renderArticlesAdmin(); });
+    showArticlesBtn.addEventListener('click', function(){ articlesSection.style.display='block'; usersSection.style.display='none'; ordersSection.style.display='none'; newsSection.style.display='none'; catalogSection.style.display='none'; (document.getElementById('featuredSection')||{}).style&&(document.getElementById('featuredSection').style.display='none'); typeDescrSection.style.display='none'; socialSection.style.display='none'; (document.getElementById('itemOrdersSection')||{}).style&&(document.getElementById('itemOrdersSection').style.display='none'); renderArticlesAdmin(); });
     document.getElementById('refreshArticles').addEventListener('click', renderArticlesAdmin);
     document.getElementById('addArticleBtn').addEventListener('click', async function(){
       const payload = { title: 'Новая статья', short_text: 'Краткий текст', full_text: 'Полный текст', published_at: new Date().toISOString().slice(0,10) };
       await fetch('/api/admin/articles', { method:'POST', headers:{'Content-Type':'application/json','X-CSRF-Token':window.CSRF_TOKEN}, body: JSON.stringify(payload) });
       renderArticlesAdmin();
+    });
+    // --- Catalog management ---
+    const showCatalogBtn = document.getElementById('showCatalogBtn');
+    const catalogSection = document.getElementById('catalogSection');
+    const productsTableBody = () => document.querySelector('#productsTable tbody');
+    const typeOptions = [
+      {slug:'armatura', label:'Арматура'},
+      {slug:'truba-profilnaya', label:'Труба профильная'},
+      {slug:'sortovoy-prokat', label:'Сортовой прокат'},
+      {slug:'truba-kruglaya', label:'Труба круглая'},
+      {slug:'listovoy-prokat', label:'Листовой прокат'},
+      {slug:'profnastil', label:'Профнастил'},
+      {slug:'kovanye-izdeliya', label:'Кованые изделия'},
+      {slug:'shtaketnik-metallicheskiy', label:'Штакетник металлический'},
+      {slug:'setka-metallicheskaia', label:'Сетка металлическая'},
+      {slug:'stroymaterialy', label:'Стройматериалы'},
+      {slug:'zabory', label:'Заборы'},
+      {slug:'krepezh', label:'Крепеж'},
+      {slug:'fitingi', label:'Фитинги'},
+      {slug:'vintovye-svai', label:'Винтовые сваи'},
+      {slug:'zaglushki-dlya-profilnyh-trub', label:'Заглушки для профильных труб'}
+    ];
+    function fillTypeSelect(select){
+      select.innerHTML = '';
+      // All types option
+      const allOpt = document.createElement('option');
+      allOpt.value = ''; allOpt.textContent = '— Все типы —';
+      select.appendChild(allOpt);
+      typeOptions.forEach(o => {
+        const opt = document.createElement('option');
+        opt.value = o.slug; opt.textContent = `${o.slug} — ${o.label}`;
+        select.appendChild(opt);
+      });
+    }
+    // Subtype options per type (должно совпадать с подкатегориями на витрине)
+    function fillSubtypeSelect(select, typeSlug){
+      const map = {
+        'profnastil': [
+          {slug:'krashennyy', label:'Профнастил крашеный'},
+          {slug:'ocinkovannyy', label:'Профнастил оцинкованный'},
+          {slug:'dlya-zabora', label:'Профнастил для забора'}
+        ],
+        'truba-profilnaya': [
+          {slug:'kvadratnaya', label:'Труба квадратная'},
+          {slug:'otsinkovannaya', label:'Труба оцинкованная'},
+          {slug:'pryamougolnaya', label:'Труба прямоугольная'}
+        ],
+        'armatura': [
+          {slug:'a500c', label:'Арматура А500C'},
+          {slug:'a1', label:'Гладкая арматура A1'},
+          {slug:'a400', label:'Арматура A400'},
+          {slug:'fixatory', label:'Фиксаторы для арматуры'},
+          {slug:'stekloplastikovaya', label:'Арматура стеклопластиковая'}
+        ],
+        'truba-kruglaya': [
+          {slug:'besshovnaya', label:'Бесшовные трубы'},
+          {slug:'vgp', label:'Труба водогазопроводная'},
+          {slug:'ocinkovannaya', label:'Труба оцинкованная'},
+          {slug:'elektrosvarka', label:'Труба электросварная'}
+        ],
+        'listovoy-prokat': [
+          {slug:'ocinkovanniy', label:'Лист оцинкованный'},
+          {slug:'st_goryachekatanyi', label:'Лист стальной горячекатаный'},
+          {slug:'st_holodnokatanyi', label:'Лист стальной холоднокатаный'},
+          {slug:'rifleniy_romb', label:'Лист рифленый ромб'},
+          {slug:'riflenaya_chechevica', label:'Лист рифленый чечевица'},
+          {slug:'prosechno-vytyazhnoy', label:'Лист просечно-вытяжной'}
+        ],
+        'sortovoy-prokat': [
+          {slug:'dvutavrovaya-balka', label:'Балка двутавровая'},
+          {slug:'ugolok', label:'Уголок'},
+          {slug:'polosa', label:'Полоса'},
+          {slug:'shveller', label:'Швеллер'},
+          {slug:'kvadrat-stalnoy', label:'Квадрат стальной'},
+          {slug:'provoloka-vyazalnaya', label:'Проволока вязальная'}
+        ],
+        'kovanye-izdeliya': [
+          {slug:'balyasiny-poruchni', label:'Балясины, поручни'},
+          {slug:'vinograd', label:'Виноград'},
+          {slug:'vstavka-v-balyasiny', label:'Вставка в балясины'},
+          {slug:'dekorativnye-kolpaki', label:'Декоративные колпаки'},
+          {slug:'korzinki', label:'Корзинки'},
+          {slug:'listya', label:'Листья'},
+          {slug:'osnovaniya-balyasin', label:'Основания балясин'},
+          {slug:'piki', label:'Пики'},
+          {slug:'polusfera', label:'Полусфера металлическая'},
+          {slug:'ruchki-i-petli', label:'Ручки и петли'},
+          {slug:'slozhnaya-kovka', label:'Сложная ковка'},
+          {slug:'hudozh-prokat', label:'Художественный прокат'},
+          {slug:'cvety-nakladki', label:'Цветы, накладки'},
+          {slug:'shary', label:'Шары'},
+          {slug:'elementy-ornamenta', label:'Элементы орнамента'}
+        ],
+        'shtaketnik-metallicheskiy': [
+          {slug:'m-obraznyj', label:'Штакетник М-образный'},
+          {slug:'p-obraznyj', label:'Штакетник П-образный'},
+          {slug:'polukruglyj', label:'Штакетник Полукруглый'},
+          {slug:'zolotoy-dub', label:'Золотой дуб евроштакетник'},
+          {slug:'seryy', label:'Серый евроштакетник'},
+          {slug:'zelenyy', label:'Зеленый евроштакетник'}
+        ],
+        'setka-metallicheskaia': [
+          {slug:'rabica', label:'Сетка рабица'},
+          {slug:'svark-v-kartah', label:'Сетка сварная в картах'},
+          {slug:'svark-v-rulonah', label:'Сетка сварная в рулонах'},
+          {slug:'kladichnaya', label:'Сетка кладочная'},
+          {slug:'pvkh', label:'Сетка сварная ПВХ'}
+        ],
+        'zaglushki-dlya-profilnyh-trub': [
+          {slug:'metallicheskie', label:'Заглушки металлические'},
+          {slug:'plastikovye', label:'Заглушки пластиковые'}
+        ],
+        'zabory': [
+          {slug:'setka-dlya-zabora', label:'Сетка сварная для забора'},
+          {slug:'setka-rabica', label:'Сетка рабица для забора'},
+          {slug:'lagi', label:'Лаги для забора'},
+          {slug:'stolby', label:'Столбы для забора'},
+          {slug:'komplektuyushchie', label:'Комплектующие для забора'}
+        ],
+        'krepezh': [
+          {slug:'ankery', label:'Анкеры'},
+          {slug:'gvozdi', label:'Гвозди строительные'},
+          {slug:'dyubeli', label:'Дюбели'},
+          {slug:'samorezy', label:'Саморезы'},
+          {slug:'santehnicheskij', label:'Сантехнический крепеж'},
+          {slug:'metricheskij', label:'Метрический крепеж'}
+        ],
+        'fitingi': [
+          {slug:'bochata', label:'Бочата'},
+          {slug:'gayki-chugunnye', label:'Гайки чугунные'},
+          {slug:'mufty', label:'Муфты'},
+          {slug:'rezba', label:'Резьба'},
+          {slug:'sgony', label:'Сгоны'},
+          {slug:'otvody', label:'Отводы'}
+        ],
+        'vintovye-svai': [
+          {slug:'57mm', label:'Винтовые сваи 57 мм'},
+          {slug:'76mm', label:'Винтовые сваи 76 мм'},
+          {slug:'89mm', label:'Винтовые сваи 89 мм'},
+          {slug:'108mm', label:'Винтовые сваи 108 мм'},
+          {slug:'133mm', label:'Винтовые сваи 133 мм'},
+          {slug:'159mm', label:'Винтовые сваи 159 мм'},
+          {slug:'ogolovki', label:'Оголовки для свай'}
+        ],
+        'stroymaterialy': [
+          {slug:'bloki', label:'Блоки строительные'},
+          {slug:'diski-otreznye', label:'Диски отрезные'},
+          {slug:'izolyacionnye', label:'Изоляционные материалы'},
+          {slug:'gipsokarton', label:'Профиль и комплектующие для гипсокартона'},
+          {slug:'fanera', label:'Фанера'},
+          {slug:'elektrody', label:'Электроды'},
+          {slug:'suhie-smesi', label:'Сухие смеси и грунтовки'},
+          {slug:'listovye-materialy', label:'Листовые материалы'}
+        ]
+      };
+      select.innerHTML = '';
+      const arr = map[typeSlug] || [];
+      // пустой вариант разрешен
+      const empty = document.createElement('option'); empty.value=''; empty.textContent='—'; select.appendChild(empty);
+      arr.forEach(o => { const opt = document.createElement('option'); opt.value=o.slug; opt.textContent=o.label; select.appendChild(opt); });
+    }
+    function typeLabel(slug){ const f=typeOptions.find(x=>x.slug===slug); return f?f.label:slug; }
+    async function fetchProductsAdmin(params){
+      const url = new URL('/api/admin/products', window.location.origin);
+      Object.entries(params||{}).forEach(([k,v])=>{ if(v!==undefined && v!=='') url.searchParams.set(k,v); });
+      const r = await fetch(url.toString());
+      return await r.json();
+    }
+    async function renderProducts(){
+      const type = document.getElementById('catTypeFilter').value;
+      const q = document.getElementById('catSearch').value;
+      const sortSel = document.getElementById('catSort').value;
+      let sort = ''; let order = '';
+      if(sortSel.startsWith('-')){ sort = sortSel.slice(1); order = 'desc'; } else { sort = sortSel; order = 'asc'; }
+      const rows = await fetchProductsAdmin({ type, q, sort, order });
+      const tbody = productsTableBody();
+      tbody.innerHTML = '';
+      rows.forEach(p => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = ''+
+          '<td>'+p.id+'</td>'+
+          '<td><select data-id="'+p.id+'" data-field="type"></select><div class="muted">'+typeLabel(p.type)+'</div></td>'+
+          '<td><input data-id="'+p.id+'" data-field="name" value="'+(p.name||'').replace(/"/g,'&quot;')+'" /></td>'+
+          '<td><input data-id="'+p.id+'" data-field="size" value="'+(p.size||'').replace(/"/g,'&quot;')+'" /></td>'+
+          '<td><select data-id="'+p.id+'" data-field="subtype"></select></td>'+
+          '<td><input data-id="'+p.id+'" data-field="img" value="'+(p.img||'').replace(/"/g,'&quot;')+'" /></td>'+
+          '<td><input type="number" step="0.01" data-id="'+p.id+'" data-field="price" value="'+(p.price||0)+'" /></td>'+
+          '<td><input type="number" step="1" data-id="'+p.id+'" data-field="price_per_ton" value="'+(p.price_per_ton||0)+'" /></td>'+
+          '<td><input type="number" step="0.01" data-id="'+p.id+'" data-field="thickness_mm" value="'+(p.thickness_mm||0)+'" /></td>'+
+          '<td><input type="number" step="0.001" data-id="'+p.id+'" data-field="weight_kg" value="'+(p.weight_kg||0)+'" /></td>'+
+          '<td><input type="number" step="0.01" data-id="'+p.id+'" data-field="length_m" value="'+(p.length_m||0)+'" /></td>'+
+          '<td><input type="text" disabled value="'+(((p.weight_kg||0)/1000).toFixed(3))+'" /></td>'+
+          '<td><input data-id="'+p.id+'" data-field="sku" value="'+(p.sku||'').replace(/"/g,'&quot;')+'" /></td>'+
+          '<td><select data-id="'+p.id+'" data-field="in_stock"><option value="1">В наличии</option><option value="0">Под заказ</option></select></td>'+
+          '<td><button class="btn" data-action="save" data-id="'+p.id+'">Сохранить</button> <button class="btn secondary" data-action="delete" data-id="'+p.id+'">Удалить</button></td>';
+        tbody.appendChild(tr);
+        const sel = tr.querySelector('select[data-field="type"]');
+        fillTypeSelect(sel); sel.value = p.type;
+        // subtype options depend on type
+        const subSel = tr.querySelector('select[data-field="subtype"]');
+        fillSubtypeSelect(subSel, p.type);
+        subSel.value = p.subtype || '';
+        if (p.subtype && subSel.value !== p.subtype) {
+          const opt = document.createElement('option');
+          opt.value = p.subtype; opt.textContent = p.subtype; opt.selected = true;
+          subSel.appendChild(opt);
+        }
+        function applyArmaturaDropdownsRow(){
+          const tField = tr.querySelector('[data-field="thickness_mm"]');
+          const lField = tr.querySelector('[data-field="length_m"]');
+          if(sel.value==='armatura'){
+            // always show as plain inputs
+            const ensureInput = (node, key)=>{
+              let el=node;
+              if(el.tagName.toLowerCase()==='select'){
+                const inp=document.createElement('input'); inp.type='number'; inp.step='0.01'; inp.setAttribute('data-field', key); inp.value=el.value||''; el.replaceWith(inp); el=inp;
+              } else { el.type='number'; el.step='0.01'; }
+              const listId = el.getAttribute('list');
+              if(listId){ const dl=tr.querySelector('#'+CSS.escape(listId)); if(dl) dl.remove(); el.removeAttribute('list'); }
+            };
+            ensureInput(tField, 'thickness_mm');
+            ensureInput(lField, 'length_m');
+          } else {
+            // keep as is for non-armatura (no-op)
+          }
+        }
+        function applyProfileSizeDropdownRow(){
+          const build = (list)=>{
+            let el = tr.querySelector('[data-field="size"]');
+            if(el.tagName.toLowerCase()!=='input'){
+              const inp=document.createElement('input'); inp.setAttribute('data-field','size'); inp.placeholder='Размер'; el.replaceWith(inp); el = inp;
+            }
+            const listId = 'dl-size-'+Math.random().toString(36).slice(2);
+            el.setAttribute('list', listId);
+            const dl=document.createElement('datalist'); dl.id=listId; list.forEach(v=>{ const o=document.createElement('option'); o.value=v; dl.appendChild(o); });
+            el.after(dl);
+          };
+          const revert = ()=>{ /* keep input as free text */ };
+          const sub = (subSel.value||'').toLowerCase();
+          const isSquare = /kvadrat|квадрат/.test(sub);
+          const isRect = /pryamougol|прямоугол/.test(sub);
+          const isGalv = /otsink|ocink|оцинк/.test(sub);
+          if(isSquare || isRect || isGalv){
+            const squareSizes = ['10x10','15x15','20x20','25x25','30x30','40x40','50x50','60x60','70x70','80x80','100x100','120x120','140x140','150x150','160x160','180x180','200x200','250x250','300x300'];
+            const rectSizes = ['10x20','30x15','30x20','40x25','50x25','50x30','60x30','60x40','80x40','80x50','100x50','100x60','120x60','120x80','140x80','140x100','160x80','160x100','160x120','180x100','180x120','200x100','200x120','200x140','240x120','240x160','300x120','300x200'];
+            build((isSquare || isGalv) ? squareSizes : rectSizes);
+          } else {
+            revert();
+          }
+        }
+        applyArmaturaDropdownsRow();
+        applyProfileSizeDropdownRow();
+        sel.addEventListener('change', ()=>{ fillSubtypeSelect(subSel, sel.value); subSel.value=''; applyArmaturaDropdownsRow(); applyProfileSizeDropdownRow(); });
+        subSel.addEventListener('change', applyProfileSizeDropdownRow);
+        const stockSel = tr.querySelector('select[data-field="in_stock"]');
+        stockSel.value = (p.in_stock? '1':'0');
+      });
+    }
+    function initCatalogFilters(){
+      const typeSel = document.getElementById('catTypeFilter');
+      fillTypeSelect(typeSel);
+      // Show all by default
+      typeSel.value = '';
+      typeSel.addEventListener('change', renderProducts);
+      document.getElementById('catSearch').addEventListener('input', renderProducts);
+      document.getElementById('catSort').addEventListener('change', renderProducts);
+      document.getElementById('refreshProducts').addEventListener('click', renderProducts);
+    }
+    // Inline add row
+    function insertNewProductRow(){
+      const tbody = productsTableBody();
+      if (tbody.querySelector('tr[data-new="1"]')) return; // already opened
+      const tr = document.createElement('tr');
+      tr.setAttribute('data-new','1');
+      tr.innerHTML = ''+
+        '<td>—</td>'+
+        '<td><select data-field="type"></select></td>'+
+        '<td><input data-field="name" placeholder="Название" /></td>'+
+        '<td><input data-field="size" placeholder="Размер" /></td>'+
+        '<td><select data-field="subtype"></select></td>'+
+        '<td><input data-field="img" placeholder="URL картинки" /></td>'+
+        '<td><input type="number" step="0.01" data-field="price" placeholder="0" /></td>'+
+        '<td><input type="number" step="1" data-field="price_per_ton" placeholder="0" /></td>'+
+        '<td><input type="number" step="0.01" data-field="thickness_mm" placeholder="0" /></td>'+
+        '<td><input type="number" step="0.001" data-field="weight_kg" placeholder="0" /></td>'+
+        '<td><input type="number" step="0.01" data-field="length_m" placeholder="0" /></td>'+
+        '<td><input type="text" data-field="weight_tons" disabled value="0.000" /></td>'+
+        '<td><select data-field="in_stock"><option value="1">В наличии</option><option value="0">Под заказ</option></select></td>'+
+        '<td><button class="btn" data-action="new-save">Сохранить</button> <button class="btn secondary" data-action="new-cancel">Отмена</button></td>';
+      tbody.prepend(tr);
+      const sel = tr.querySelector('select[data-field="type"]');
+      fillTypeSelect(sel);
+      sel.value = document.getElementById('catTypeFilter').value || 'armatura';
+      const subSel = tr.querySelector('select[data-field="subtype"]');
+      fillSubtypeSelect(subSel, sel.value);
+      sel.addEventListener('change', ()=>fillSubtypeSelect(subSel, sel.value));
+      // If armatura selected, convert thickness/length to dropdowns
+      function applyArmaturaDropdowns(){
+        const tField0 = tr.querySelector('input[data-field="thickness_mm"]') || tr.querySelector('select[data-field="thickness_mm"]');
+        const lField0 = tr.querySelector('input[data-field="length_m"]') || tr.querySelector('select[data-field="length_m"]');
+        // ensure plain numeric inputs without lists for armatura
+        function toPlainNumber(el, key){
+          let inp = el;
+          if (el.tagName.toLowerCase() !== 'input') {
+            inp = document.createElement('input');
+            inp.setAttribute('data-field', key);
+            inp.type = 'number';
+            inp.step = '0.01';
+            el.replaceWith(inp);
+          } else {
+            inp.type = 'number'; inp.step = '0.01';
+          }
+          // remove datalist if attached
+          const listId = inp.getAttribute('list');
+          if (listId){
+            const dl = inp.parentNode.querySelector('#'+CSS.escape(listId));
+            if (dl) dl.remove();
+            inp.removeAttribute('list');
+          }
+        }
+        if(sel.value==='armatura'){
+          toPlainNumber(tField0, 'thickness_mm');
+          toPlainNumber(lField0, 'length_m');
+        }
+      }
+      // If profile pipe selected, convert size to dropdown based on subtype
+      function applyProfileSizeDropdown(){
+        const sizeField0 = tr.querySelector('[data-field="size"]');
+        function toInputWithDatalist(el, options){
+          let inp = el;
+          if(el.tagName.toLowerCase() !== 'input'){
+            inp = document.createElement('input');
+            inp.setAttribute('data-field','size');
+            inp.placeholder = 'Размер';
+            el.replaceWith(inp);
+          }
+          const listId = 'dl-size-'+Math.random().toString(36).slice(2);
+          inp.setAttribute('list', listId);
+          const dl = document.createElement('datalist'); dl.id = listId;
+          options.forEach(v=>{ const o=document.createElement('option'); o.value=v; dl.appendChild(o); });
+          inp.after(dl);
+        }
+        const sub = (subSel.value||'').toLowerCase();
+        const isSquare = /kvadrat|квадрат/.test(sub);
+        const isRect = /pryamougol|прямоугол/.test(sub);
+        const isGalv = /otsink|ocink|оцинк/.test(sub);
+        if(isSquare || isRect || isGalv){
+          const squareSizes = ['10x10','15x15','20x20','25x25','30x30','40x40','50x50','60x60','70x70','80x80','100x100','120x120','140x140','150x150','160x160','180x180','200x200','250x250','300x300'];
+          const rectSizes = ['10x20','30x15','30x20','40x25','50x25','50x30','60x30','60x40','80x40','80x50','100x50','100x60','120x60','120x80','140x80','140x100','160x80','160x100','160x120','180x100','180x120','200x100','200x120','200x140','240x120','240x160','300x120','300x200'];
+          toInputWithDatalist(sizeField0, (isSquare||isGalv)? squareSizes : rectSizes);
+        }
+      }
+      applyArmaturaDropdowns();
+      applyProfileSizeDropdown();
+      sel.addEventListener('change', applyArmaturaDropdowns);
+      sel.addEventListener('change', applyProfileSizeDropdown);
+      subSel.addEventListener('change', applyProfileSizeDropdown);
+    }
+    document.getElementById('addProductBtn')?.addEventListener('click', insertNewProductRow);
+
+    productsTableBody().addEventListener('click', async (e)=>{
+      const btn = e.target.closest('button[data-action]');
+      if(!btn) return;
+      const idStr = btn.getAttribute('data-id')||'';
+      const id = parseInt(idStr||'0');
+      // handle new row actions first
+      if(btn.getAttribute('data-action')==='new-cancel'){
+        const row = btn.closest('tr'); row?.remove(); return;
+      }
+      if(btn.getAttribute('data-action')==='new-save'){
+        const row = btn.closest('tr');
+        const payload = {
+          type: row.querySelector('select[data-field="type"]').value,
+          name: row.querySelector('input[data-field="name"]').value,
+          size: row.querySelector('input[data-field="size"]').value,
+          img: row.querySelector('input[data-field="img"]').value,
+          subtype: row.querySelector('select[data-field="subtype"]').value,
+          price: parseFloat(row.querySelector('input[data-field="price"]').value||'0'),
+          price_per_ton: parseFloat(row.querySelector('input[data-field="price_per_ton"]').value||'0'),
+          thickness_mm: parseFloat((row.querySelector('[data-field="thickness_mm"]').value)||'0'),
+          weight_kg: parseFloat(row.querySelector('input[data-field="weight_kg"]').value||'0'),
+          length_m: parseFloat((row.querySelector('[data-field="length_m"]').value)||'0'),
+          in_stock: row.querySelector('select[data-field="in_stock"]').value==='1'
+        };
+        if(!payload.type){ alert('Выберите тип товара'); return; }
+        const resp = await fetch('/api/admin/products', { method:'POST', headers:{'Content-Type':'application/json','X-CSRF-Token':window.CSRF_TOKEN}, body: JSON.stringify(payload) });
+        if(!resp.ok){ const t = await resp.text(); alert('Ошибка сохранения: '+t); return; }
+        const created = await resp.json();
+        // Превращаем временную строку в обычную без перерисовки всей таблицы,
+        // чтобы не терять редактирование других строк
+        row.removeAttribute('data-new');
+        row.innerHTML = ''+
+          '<td>'+created.id+'</td>'+
+          '<td><select data-id="'+created.id+'" data-field="type"></select><div class="muted">'+typeLabel(created.type||payload.type)+'</div></td>'+
+          '<td><input data-id="'+created.id+'" data-field="name" value="'+(created.name||payload.name||'').replace(/"/g,'&quot;')+'" /></td>'+
+          '<td><input data-id="'+created.id+'" data-field="size" value="'+(created.size||payload.size||'').replace(/"/g,'&quot;')+'" /></td>'+
+          '<td><select data-id="'+created.id+'" data-field="subtype"></select></td>'+
+          '<td><input data-id="'+created.id+'" data-field="img" value="'+(created.img||payload.img||'').replace(/"/g,'&quot;')+'" /></td>'+
+          '<td><input type="number" step="0.01" data-id="'+created.id+'" data-field="price" value="'+(created.price||payload.price||0)+'" /></td>'+
+          '<td><input type="number" step="1" data-id="'+created.id+'" data-field="price_per_ton" value="'+(created.price_per_ton||payload.price_per_ton||0)+'" /></td>'+
+          '<td><input type="number" step="0.01" data-id="'+created.id+'" data-field="thickness_mm" value="'+(created.thickness_mm||payload.thickness_mm||0)+'" /></td>'+
+          '<td><input type="number" step="0.001" data-id="'+created.id+'" data-field="weight_kg" value="'+(created.weight_kg||payload.weight_kg||0)+'" /></td>'+
+          '<td><input type="number" step="0.01" data-id="'+created.id+'" data-field="length_m" value="'+(created.length_m||payload.length_m||0)+'" /></td>'+
+          '<td><input type="text" disabled value="'+(((created.weight_kg||payload.weight_kg||0)/1000).toFixed(3))+'" /></td>'+
+          '<td><select data-id="'+created.id+'" data-field="in_stock"><option value="1">В наличии</option><option value="0">Под заказ</option></select></td>'+
+          '<td><button class="btn" data-action="save" data-id="'+created.id+'">Сохранить</button> <button class="btn secondary" data-action="delete" data-id="'+created.id+'">Удалить</button></td>';
+        const nTypeSel = row.querySelector('select[data-field="type"]');
+        fillTypeSelect(nTypeSel); nTypeSel.value = created.type||payload.type;
+        const nSubSel = row.querySelector('select[data-field="subtype"]');
+        fillSubtypeSelect(nSubSel, nTypeSel.value);
+        const subVal = created.subtype||payload.subtype||'';
+        nSubSel.value = subVal;
+        if (subVal && nSubSel.value !== subVal) {
+          const opt2 = document.createElement('option');
+          opt2.value = subVal; opt2.textContent = subVal; opt2.selected = true;
+          nSubSel.appendChild(opt2);
+        }
+        nTypeSel.addEventListener('change', ()=>{ fillSubtypeSelect(nSubSel, nTypeSel.value); });
+        // apply dropdowns for profile pipe in created row
+        (function(){
+          function apply(){
+            const typeVal = nTypeSel.value;
+            const sizeField = row.querySelector('[data-field="size"]');
+            if(typeVal==='armatura'){
+              // already handled by earlier logic for new rows
+            }
+            if(typeVal==='truba-profilnaya'){
+              const ssub = (nSubSel.value||'').toLowerCase();
+              const isSquare = /kvadrat|квадрат/.test(ssub);
+              const isRect = /pryamougol|прямоугол/.test(ssub);
+              const isGalv = /otsink|ocink|оцинк/.test(ssub);
+              const squareSizes = ['10x10','15x15','20x20','25x25','30x30','40x40','50x50','60x60','70x70','80x80','100x100','120x120','140x140','150x150','160x160','180x180','200x200','250x250','300x300'];
+              const rectSizes = ['10x20','30x15','30x20','40x25','50x25','50x30','60x30','60x40','80x40','80x50','100x50','100x60','120x60','120x80','140x80','140x100','160x80','160x100','160x120','180x100','180x120','200x100','200x120','200x140','240x120','240x160','300x120','300x200'];
+              if(sizeField.tagName.toLowerCase()==='input'){
+                const s=document.createElement('select'); s.setAttribute('data-field','size'); s.style.minWidth='140px';
+                sizeField.replaceWith(s);
+              }
+              const sSel = row.querySelector('[data-field="size"]');
+              sSel.innerHTML='';
+              ((isSquare || isGalv) ? squareSizes : rectSizes).forEach(v=>{ const o=document.createElement('option'); o.value=v; o.textContent=v; sSel.appendChild(o); });
+            }
+          }
+          apply();
+          nTypeSel.addEventListener('change', apply);
+          nSubSel.addEventListener('change', apply);
+        })();
+        const nStockSel = row.querySelector('select[data-field="in_stock"]');
+        nStockSel.value = (created.in_stock===true || payload.in_stock) ? '1':'0';
+        return;
+      }
+      if(btn.getAttribute('data-action')==='delete'){
+        await fetch('/api/admin/products?id='+id, { method:'DELETE', headers:{'X-CSRF-Token':window.CSRF_TOKEN} });
+        renderProducts(); return;
+      }
+      const row = btn.closest('tr');
+      const payload = {
+        id,
+        type: row.querySelector('select[data-field="type"]').value,
+        name: row.querySelector('input[data-field="name"]').value,
+        size: row.querySelector('[data-field="size"]').value,
+        img: row.querySelector('input[data-field="img"]').value,
+        subtype: row.querySelector('select[data-field="subtype"]').value,
+        price: parseFloat(row.querySelector('input[data-field="price"]').value||'0'),
+        price_per_ton: parseFloat(row.querySelector('input[data-field="price_per_ton"]').value||'0'),
+        thickness_mm: parseFloat(row.querySelector('[data-field="thickness_mm"]').value||'0'),
+        weight_kg: parseFloat(row.querySelector('input[data-field="weight_kg"]').value||'0'),
+        length_m: parseFloat(row.querySelector('[data-field="length_m"]').value||'0'),
+        in_stock: row.querySelector('select[data-field="in_stock"]').value==='1'
+      };
+      if(!payload.type){ alert('Выберите тип товара'); return; }
+      const resp2 = await fetch('/api/admin/products', { method:'PATCH', headers:{'Content-Type':'application/json','X-CSRF-Token':window.CSRF_TOKEN}, body: JSON.stringify(payload) });
+      if(!resp2.ok){ const t = await resp2.text(); alert('Ошибка сохранения: '+t); }
+      // Не перерисовываем всю таблицу, чтобы не терять несохраненные изменения в других строках
+    });
+    // live recalc tons when kg changes
+    productsTableBody().addEventListener('input', function(e){
+      const inp = e.target.closest('input[data-field="weight_kg"]');
+      if(!inp) return;
+      const row = inp.closest('tr');
+      const tons = row.querySelector('input[data-field="weight_tons"]');
+      const kg = parseFloat(inp.value||'0');
+      if(tons) tons.value = isNaN(kg) ? '0.000' : (kg/1000).toFixed(3);
+    });
+    showCatalogBtn.addEventListener('click', function(){ catalogSection.style.display='block'; ordersSection.style.display='none'; usersSection.style.display='none'; newsSection.style.display='none'; articlesSection.style.display='none'; (document.getElementById('featuredSection')||{}).style&&(document.getElementById('featuredSection').style.display='none'); typeDescrSection.style.display='none'; socialSection.style.display='none'; (document.getElementById('itemOrdersSection')||{}).style&&(document.getElementById('itemOrdersSection').style.display='none'); initCatalogFilters(); renderProducts(); });
+
+    // --- Type descriptions management ---
+    const typeDescrSection = document.getElementById('typeDescrSection');
+    const showTypeDescrBtn = document.getElementById('showTypeDescrBtn');
+    function typeDescrBody(){ return document.querySelector('#typeDescrTable tbody'); }
+    async function fetchTypeDescr(){ const r = await fetch('/api/admin/product_descriptions'); return await r.json(); }
+    async function renderTypeDescr(){
+      const rows = await fetchTypeDescr();
+      const tbody = typeDescrBody();
+      tbody.innerHTML='';
+      (rows||[]).forEach(r => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = '<td><select data-field="type"></select></td>'+
+          '<td><textarea rows="3" data-field="description">'+(r.description||'')+'</textarea></td>'+
+          '<td><button class="btn" data-action="save" data-type="'+(r.type||'')+'">Сохранить</button> <button class="btn secondary" data-action="delete" data-type="'+(r.type||'')+'">Удалить</button></td>';
+        tbody.appendChild(tr);
+        const sel = tr.querySelector('select[data-field="type"]'); fillTypeSelect(sel); sel.value = r.type || '';
+      });
+    }
+    showTypeDescrBtn.addEventListener('click', function(){ typeDescrSection.style.display='block'; ordersSection.style.display='none'; usersSection.style.display='none'; newsSection.style.display='none'; articlesSection.style.display='none'; catalogSection.style.display='none'; (document.getElementById('featuredSection')||{}).style&&(document.getElementById('featuredSection').style.display='none'); (document.getElementById('socialSection')||{}).style&&(document.getElementById('socialSection').style.display='none'); (document.getElementById('itemOrdersSection')||{}).style&&(document.getElementById('itemOrdersSection').style.display='none'); renderTypeDescr(); });
+
+    // Social links
+    const showSocialBtn = document.getElementById('showSocialBtn');
+    const socialSection = document.getElementById('socialSection');
+    async function loadSocial(){ const r = await fetch('/api/admin/social'); return await r.json(); }
+    async function renderSocial(){ const s = await loadSocial(); document.getElementById('tgLink').value = s.telegram_link||''; document.getElementById('vkLink').value = s.vk_link||''; document.getElementById('wpLink').value = s.wp_link||''; }
+    showSocialBtn.addEventListener('click', function(){ socialSection.style.display='block'; ordersSection.style.display='none'; usersSection.style.display='none'; newsSection.style.display='none'; articlesSection.style.display='none'; catalogSection.style.display='none'; (document.getElementById('featuredSection')||{}).style&&(document.getElementById('featuredSection').style.display='none'); typeDescrSection.style.display='none'; (document.getElementById('itemOrdersSection')||{}).style&&(document.getElementById('itemOrdersSection').style.display='none'); renderSocial(); });
+    document.getElementById('saveSocial')?.addEventListener('click', async function(){ const payload = { telegram_link: document.getElementById('tgLink').value, vk_link: document.getElementById('vkLink').value, wp_link: document.getElementById('wpLink').value }; const r = await fetch('/api/admin/social', { method:'PATCH', headers:{'Content-Type':'application/json','X-CSRF-Token':window.CSRF_TOKEN}, body: JSON.stringify(payload) }); if(!r.ok){ const t=await r.text(); alert('Ошибка сохранения: '+t); return; } alert('Сохранено'); });
+
+    // Featured management
+    // Item orders management
+    const showItemOrdersBtn = document.getElementById('showItemOrdersBtn');
+    const itemOrdersSection = document.getElementById('itemOrdersSection');
+    const itemOrdersTBody = ()=>document.querySelector('#itemOrdersTable tbody');
+    async function loadItemOrders(){ const r = await fetch('/api/admin/item_orders'); return await r.json(); }
+    async function renderItemOrders(){
+      const arr = await loadItemOrders(); const tb = itemOrdersTBody(); tb.innerHTML = '';
+      (arr||[]).forEach(o=>{ const tr=document.createElement('tr'); tr.innerHTML = `<td>${o.id}</td><td>${(o.title||'')}</td><td>${o.qty||1}</td><td>${(o.total||0)}</td><td>${o.phone||''}</td><td>${o.user_login||''}</td><td><select data-id="${o.id}"><option>Ожидает подтверждения</option><option>Подтверждена</option><option>Доставляется</option><option>Отменена</option><option>Доставлено</option></select></td><td>${o.created_at||''}</td><td><button class="btn" data-save="${o.id}">Сохранить</button></td>`; tb.appendChild(tr); tr.querySelector('select').value = o.status||'Ожидает подтверждения'; });
+    }
+    showItemOrdersBtn.addEventListener('click', function(){ itemOrdersSection.style.display='block'; ordersSection.style.display='none'; usersSection.style.display='none'; newsSection.style.display='none'; articlesSection.style.display='none'; catalogSection.style.display='none'; (document.getElementById('featuredSection')||{}).style&&(document.getElementById('featuredSection').style.display='none'); typeDescrSection.style.display='none'; socialSection.style.display='none'; renderItemOrders(); });
+    document.getElementById('refreshItemOrders').addEventListener('click', renderItemOrders);
+    itemOrdersTBody().addEventListener('click', async function(e){ const btn = e.target.closest('button[data-save]'); if(!btn) return; const id = parseInt(btn.getAttribute('data-save')); const row = btn.closest('tr'); const status = row.querySelector('select').value; await fetch('/api/admin/item_orders/status', { method:'PATCH', headers:{'Content-Type':'application/json','X-CSRF-Token':window.CSRF_TOKEN}, body: JSON.stringify({id, status}) }); });
+    const showFeaturedBtn = document.getElementById('showFeaturedBtn');
+    const featuredSection = document.getElementById('featuredSection');
+    const featuredList = document.getElementById('featuredList');
+    async function fetchAllProducts(){ const r = await fetch('/api/admin/products'); return await r.json(); }
+    async function fetchFeaturedIds(){ const r = await fetch('/api/admin/featured'); return await r.json(); }
+    async function renderFeatured(){
+      const [all, ids] = await Promise.all([fetchAllProducts(), fetchFeaturedIds()]);
+      const selected = new Set(ids||[]);
+      featuredList.innerHTML = '';
+      (all||[]).forEach(p => {
+        const el = document.createElement('div');
+        el.className = 'card';
+        el.style.padding = '10px';
+        el.style.display = 'flex';
+        el.style.gap = '10px';
+        el.style.alignItems = 'center';
+        el.innerHTML = '<img src="'+(p.img||'')+'" style="width:64px;height:64px;object-fit:cover;border-radius:6px;background:#f5f5f5">'+
+          '<div style="flex:1 1 auto"><div style="font-weight:600">'+(p.name||'')+'</div><div class="muted" style="font-size:12px">ID: '+p.id+'</div></div>'+
+          '<label style="white-space:nowrap"><input type="checkbox" data-id="'+p.id+'" '+(selected.has(p.id)?'checked':'')+'> Лучшее предложение</label>';
+        featuredList.appendChild(el);
+      });
+    }
+    showFeaturedBtn.addEventListener('click', function(){
+      const fs = document.getElementById('featuredSection');
+      if(!fs){ alert('Секция лучших предложений не найдена'); return; }
+      fs.style.display='block';
+      catalogSection.style.display='none';
+      ordersSection.style.display='none';
+      usersSection.style.display='none';
+      newsSection.style.display='none';
+      articlesSection.style.display='none';
+      typeDescrSection.style.display='none';
+      socialSection.style.display='none';
+      (document.getElementById('itemOrdersSection')||{}).style&&(document.getElementById('itemOrdersSection').style.display='none');
+      renderFeatured();
+    });
+    document.getElementById('refreshFeatured').addEventListener('click', renderFeatured);
+    featuredList.addEventListener('change', async function(e){
+      const cb = e.target.closest('input[type="checkbox"][data-id]');
+      if(!cb) return;
+      const id = parseInt(cb.getAttribute('data-id'));
+      const payload = { id, featured: cb.checked };
+      const resp = await fetch('/api/admin/featured', { method:'PATCH', headers:{'Content-Type':'application/json','X-CSRF-Token':window.CSRF_TOKEN}, body: JSON.stringify(payload) });
+      if(!resp.ok){ const t=await resp.text(); alert('Ошибка: '+t); cb.checked = !cb.checked; }
+    });
+    document.getElementById('refreshTypeDescr').addEventListener('click', renderTypeDescr);
+    document.getElementById('addTypeDescr').addEventListener('click', function(){
+      const tbody = typeDescrBody();
+      const tr = document.createElement('tr');
+      tr.innerHTML = '<td><select data-field="type"></select></td>'+
+        '<td><textarea rows="3" data-field="description"></textarea></td>'+
+        '<td><button class="btn" data-action="save">Сохранить</button> <button class="btn secondary" data-action="removeRow">Убрать</button></td>';
+      tbody.prepend(tr);
+      fillTypeSelect(tr.querySelector('select[data-field="type"]'));
+    });
+    typeDescrBody().addEventListener('click', async (e)=>{
+      const btn = e.target.closest('button'); if(!btn) return;
+      const row = btn.closest('tr');
+      const action = btn.getAttribute('data-action');
+      if(action==='removeRow'){ row.remove(); return; }
+      if(action==='delete'){
+        const type = btn.getAttribute('data-type');
+        await fetch('/api/admin/product_descriptions?type='+encodeURIComponent(type), { method:'DELETE', headers:{'X-CSRF-Token':window.CSRF_TOKEN} });
+        renderTypeDescr(); return;
+      }
+      if(action==='save'){
+        const payload = {
+          type: row.querySelector('select[data-field="type"]').value,
+          description: row.querySelector('textarea[data-field="description"]').value
+        };
+        if(!payload.type){ alert('Выберите тип'); return; }
+        await fetch('/api/admin/product_descriptions', { method:'POST', headers:{'Content-Type':'application/json','X-CSRF-Token':window.CSRF_TOKEN}, body: JSON.stringify(payload) });
+        renderTypeDescr();
+      }
     });
   </script>
 </body>

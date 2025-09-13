@@ -25,8 +25,7 @@
             <nav class="nav-menu">
                 <div class="nav-menu-inner">
                     <ul>
-                        <li><a href="/front/HTML/catalog.html">Каталог</a></li>
-                        <li><a href="#">Акции</a></li>
+                        <li><a href="/catalog/">Каталог</a></li>
                         <li><a href="/front/HTML/services.html">Услуги</a></li>
                         <li><a href="#">Доставка</a></li>
                         <li><a href="#">Прайс-лист</a></li>
@@ -112,70 +111,70 @@
         <div class="container">
             <h2 class="section-title">Каталог металла в Санкт-Петербурге</h2>
             <div class="catalog-grid">
-                <div class="catalog-offer-card">
+                <a class="catalog-offer-card" href="/catalog/armatura/">
                     <img src="/img/catalog/catalog1.jpeg" alt="Арматура А500С">
                     <h4>Арматура</h4>
-                </div>
-                <div class="catalog-offer-card">
+                </a>
+                <a class="catalog-offer-card" href="/catalog/truba-profilnaya/">
                     <img src="/img/catalog/catalog2.jpeg" alt="Труба профильная 40x20">
                     <h4>Труба профильная</h4>
-                </div>
-                <div class="catalog-offer-card">
+                </a>
+                <a class="catalog-offer-card" href="/catalog/sortovoy-prokat/">
                     <img src="/img/catalog/catalog3.jpg" alt="Лист стальной 3мм">
                     <h4>Cортовой прокат</h4>
-                </div>
-                <div class="catalog-offer-card">
+                </a>
+                <a class="catalog-offer-card" href="/catalog/truba-kruglaya/">
                     <img src="/img/catalog/catalog4.jpeg" alt="Уголок стальной 50x50">
                     <h4>Труба круглая</h4>
-                </div>
-                <div class="catalog-offer-card">
+                </a>
+                <a class="catalog-offer-card" href="/catalog/listovoy-prokat/">
                     <img src="/img/catalog/catalog5.jpeg" alt="Профнастил С8">
                     <h4>Листовой прокат</h4>
-                </div>
-                <div class="catalog-offer-card">
+                </a>
+                <a class="catalog-offer-card" href="/catalog/profnastil/">
                     <img src="/img/catalog/catalog6.jpeg" alt="Швеллер 12П">
                     <h4>Профнастил</h4>
-                </div>
-                <div class="catalog-offer-card">
+                </a>
+                <a class="catalog-offer-card" href="/catalog/kovanye-izdeliya/">
                     <img src="/img/catalog/catalog7.png" alt="Балка двутавровая">
                     <h4>Кованые изделия</h4>
-                </div>
-                <div class="catalog-offer-card">
+                </a>
+                <a class="catalog-offer-card" href="/catalog/shtaketnik-metallicheskiy/">
                     <img src="/img/catalog/catalog8.webp" alt="Арматура А3">
                     <h4>Штакетник металлический</h4>
-                </div>
-                <div class="catalog-offer-card">
+                </a>
+                <a class="catalog-offer-card" href="/catalog/setka-metallicheskaia/">
                     <img src="/img/catalog/catalog9.jpeg" alt="Труба круглая 50мм">
                     <h4>Сетка металлическая</h4>
-                </div>
-                <div class="catalog-offer-card">
+                </a>
+                <a class="catalog-offer-card" href="/catalog/stroymaterialy/">
                     <img src="/img/catalog/catalog10.png" alt="Лист оцинкованный">
                     <h4>Стройматериалы</h4>
-                </div>
-                <div class="catalog-offer-card">
+                </a>
+                <a class="catalog-offer-card" href="/catalog/zabory/">
                     <img src="/img/catalog/catalog11.png" alt="Уголок 25x25">
                     <h4>Заборы</h4>
-                </div>
-                <div class="catalog-offer-card">
+                </a>
+                <a class="catalog-offer-card" href="/catalog/krepezh/">
                     <img src="/img/catalog/catalog12.webp" alt="Профнастил С20">
                     <h4>Крепеж</h4>
-                </div>
-                <div class="catalog-offer-card">
+                </a>
+                <a class="catalog-offer-card" href="/catalog/petli/">
                     <img src="/img/catalog/catalog13.png" alt="Швеллер 10П">
                     <h4>Петли</h4>
-                </div>
-                <div class="catalog-offer-card">
+                </a>
+                <a class="catalog-offer-card" href="/catalog/fitingi/">
                     <img src="/img/catalog/catalog14.jpg" alt="Балка 20Б1">
                     <h4>Фитинги</h4>
-                </div>
-                <div class="catalog-offer-card">
+                </a>
+                <a class="catalog-offer-card" href="/catalog/vintovye-svai/">
                     <img src="/img/catalog/catalog15.jpg" alt="Арматура А800">
                     <h4>Винтовые сваи</h4>
-                </div>
-                <div class="catalog-offer-card">
+                </a>
+                <a class="catalog-offer-card" href="/catalog/zaglushki-dlya-profilnyh-trub/">
                     <img src="/img/catalog/catalog16.png" alt="Труба профильная 60x40">
                     <h4>Заглушки для профильных труб</h4>
-                </div>
+                </a>
             </div>
         </div>
     </section>
@@ -213,6 +212,40 @@
             </div>
         </div>
     </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterLinks = document.querySelectorAll('.mini-catalog a');
+            filterLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const target = document.querySelector('.filter-card');
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        setTimeout(() => {
+                            window.location.href = this.href;
+                        }, 300);
+                    }
+                });
+            });
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.product-row').forEach(row => {
+                row.style.opacity = '0';
+                row.style.transform = 'translateY(20px)';
+                row.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                observer.observe(row);
+            });
+        });
+    </script>
 
     <script src="/front/JS/auth.js"></script>
     <script src="/front/JS/script.js"></script>

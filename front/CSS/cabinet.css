@@ -72,6 +72,57 @@
     color: var(--primary-color);
 }
 
+#logoutBtn {
+    background: none;
+    border: none;
+    color: var(--text-color);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 19px;
+    transition: var(--transition);
+    white-space: nowrap;
+    position: relative;
+    cursor: pointer;
+    padding: 8px 0;
+    font-family: inherit;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: 10px;
+}
+
+#logoutBtn:hover {
+    color: var(--primary-color);
+    background: none;
+    transform: none;
+    box-shadow: none;
+}
+
+#logoutBtn::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: 0;
+    left: 0;
+    background-color: var(--primary-color);
+    transition: width 0.3s ease;
+}
+
+#logoutBtn:hover::after {
+    width: 100%;
+}
+
+/* Стили для иконки */
+#logoutBtn i {
+    font-size: 18px;
+    transition: var(--transition);
+}
+
+#logoutBtn:hover i {
+    color: var(--primary-color);
+}
+
 /* Контент вкладок */
 .tab-content {
     display: none;
@@ -205,13 +256,33 @@
 }
 
 .btn-secondary {
-    background: #f8f9fa;
-    color: #666;
-    border: 2px solid var(--gray-color);
+  color: var(--text-color);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 19px;
+  transition: var(--transition);
+  white-space: nowrap;
+  position: relative;
 }
 
 .btn-secondary:hover {
-    background: #e9ecef;
+    color: var(--primary-color);
+}
+
+
+.logout-btn:hover {
+      color: var(--primary-color);
+}
+
+.logout-btn::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: -4px;
+  left: 0;
+  background-color: var(--primary-color);
+  transition: width 0.3s ease;
 }
 
 .orders-list {
@@ -359,21 +430,6 @@
     position: relative;
     animation: modalSlideIn 0.3s ease;
 }
-
-.close-modal {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    font-size: 24px;
-    color: #999;
-    cursor: pointer;
-    transition: color 0.3s ease;
-}
-
-.close-modal:hover {
-    color: var(--primary-color);
-}
-
 
 @keyframes fadeIn {
     from { opacity: 0; }

@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{CATEGORY_TITLE}} — каталог</title>
+    <link rel="icon" href="/img/icon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="/img/icon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/front/CSS/style.css">
+    <link rel="stylesheet" href="/front/CSS/catalog.css">
+    <link rel="stylesheet" href="/front/CSS/catalog-list.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container header-container">
+            <div class="logo">
+                <a href="/front/HTML/main.html">
+                    <img src="/img/logo.png" alt="Металл">
+                </a>
+            </div>
+            <button class="burger-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+            <nav class="nav-menu">
+                <div class="nav-menu-inner">
+                    <ul>
+                        <li><a href="/catalog/">Каталог</a></li>
+                        <li><a href="/front/HTML/services.html">Услуги</a></li>
+                        <li><a href="#">Доставка</a></li>
+                        <li><a href="#">Прайс-лист</a></li>
+                        <li><a href="/front/HTML/contact.html">Контакты</a></li>
+                    </ul>
+                    <div class="header-actions mobile-header-actions">
+                        <a href="/cart/" class="cart-link"><i class="fas fa-shopping-cart"></i> Корзина</a>
+                        <a href="#" class="login-link"><i class="fas fa-user"></i> Войти</a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <section class="catalog">
+        <div class="container">
+            <h2 class="section-title">{{CATEGORY_TITLE}}</h2>
+            <div id="subcatRow" style="display:flex; gap:8px; flex-wrap:wrap; margin:12px 0 4px 0;"></div>
+            <div class="catalog-controls" style="margin-bottom: 16px; display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+                <button class="btn" id="sortPriceAsc">Сначала дешевле</button>
+                <button class="btn" id="sortPriceDesc">Сначала дороже</button>
+                <span style="opacity:.7">Найдено: <span id="foundCount">0</span></span>
+            </div>
+            <div class="mobile-filters-header">
+                <div class="filter-toggle">
+                    <span>Фильтры</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="catalog-toggle">
+                    <span>Категории</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+            </div>
+            <div style="display:flex; gap:24px; align-items:flex-start;">
+                <aside style="min-width:260px; max-width:320px; width:28%;">
+
+<div class="filter-card">
+    <h4>Фильтр</h4>
+    
+    <div class="filter-group">
+        <label for="searchInput">Поиск</label>
+        <input id="searchInput" type="text" placeholder="Размер, марка...">
+    </div>
+    
+    <div class="filter-group">
+        <label for="inStockToggle" class="checkbox-label">
+            <input id="inStockToggle" type="checkbox">
+            <span>Только в наличии</span>
+        </label>
+    </div>
+    
+    <div id="profileFilters" class="filter-group hidden">
+        <div class="filter-subgroup">
+            <div class="filter-title"><i class="fas fa-shapes"></i>Вид профиля</div>
+            <div id="profileShapeGroup" class="checkbox-grid"></div>
+        </div>
+        <div class="filter-subgroup">
+            <div class="filter-title"><i class="fas fa-ruler"></i>Размер</div>
+            <div id="dimensionGroup" class="checkbox-list"></div>
+        </div>
+    </div>
+    
+    <div id="advFilters" class="filter-group">
+        <div class="filter-subgroup">
+            <div class="filter-title"><i class="fas fa-ruler-vertical"></i>Толщина</div>
+            <div id="thicknessGroup" class="checkbox-grid"></div>
+        </div>
+        <div class="filter-subgroup">
+            <div class="filter-title"><i class="fas fa-ruler-horizontal"></i>Длина</div>
+            <div id="lengthGroup" class="checkbox-grid"></div>
+        </div>
+        <div class="filter-subgroup">
+            <div class="filter-title"><i class="fas fa-texture"></i>Фактура</div>
+            <div id="facturaGroup" class="checkbox-grid"></div>
+        </div>
+        <div id="genericDimensionWrap" class="filter-subgroup hidden">
+            <div class="filter-title"><i class="fas fa-expand"></i>Размер</div>
+            <div id="genericDimensionGroup" class="checkbox-list"></div>
+        </div>
+    </div>
+
+    <div class="filter-actions">
+        <button id="applyFilters" class="btn btn-primary">Применить</button>
+        <button id="clearFilters" class="btn btn-secondary">Очистить</button>
+    </div>
+</div>
+
+        <div class="mini-catalog" style="margin-top:12px; border:1px solid #e5e7eb; border-radius:12px; background:#fff;">
+            <div style="padding:12px; font-weight:600;">Каталог</div>
+            <ul id="miniCatList" style="list-style:none; margin:0; padding:0;">
+                <li><a data-slug="armatura" href="/catalog/armatura/" style="display:flex; align-items:center; gap:10px; padding:10px 12px; border-top:1px solid #f1f5f9; text-decoration:none; color:#111827;"><i class="fas fa-bars-staggered"></i><span>Арматура</span></a></li>
+                <li><a data-slug="truba-profilnaya" href="/catalog/truba-profilnaya/" style="display:flex; align-items:center; gap:10px; padding:10px 12px; border-top:1px solid #f1f5f9; text-decoration:none; color:#111827;"><i class="fas fa-cube"></i><span>Труба профильная</span></a></li>
+                <li><a data-slug="sortovoy-prokat" href="/catalog/sortovoy-prokat/" style="display:flex; align-items:center; gap:10px; padding:10px 12px; border-top:1px solid #f1f5f9; text-decoration:none; color:#111827;"><i class="fas fa-shapes"></i><span>Сортовой прокат</span></a></li>
+                <li><a data-slug="truba-kruglaya" href="/catalog/truba-kruglaya/" style="display:flex; align-items:center; gap:10px; padding:10px 12px; border-top:1px solid #f1f5f9; text-decoration:none; color:#111827;"><i class="fas fa-dot-circle"></i><span>Труба круглая</span></a></li>
+                <li><a data-slug="listovoy-prokat" href="/catalog/listovoy-prokat/" style="display:flex; align-items:center; gap:10px; padding:10px 12px; border-top:1px solid #f1f5f9; text-decoration:none; color:#111827;"><i class="fas fa-border-all"></i><span>Листовой прокат</span></a></li>
+                <li><a data-slug="profnastil" href="/catalog/profnastil/" style="display:flex; align-items:center; gap:10px; padding:10px 12px; border-top:1px solid #f1f5f9; text-decoration:none; color:#111827;"><i class="fas fa-wave-square"></i><span>Профнастил</span></a></li>
+                <li><a data-slug="kovanye-izdeliya" href="/catalog/kovanye-izdeliya/" style="display:flex; align-items:center; gap:10px; padding:10px 12px; border-top:1px solid #f1f5f9; text-decoration:none; color:#111827;"><i class="fas fa-hammer"></i><span>Кованые изделия</span></a></li>
+                <li><a data-slug="shtaketnik-metallicheskiy" href="/catalog/shtaketnik-metallicheskiy/" style="display:flex; align-items:center; gap:10px; padding:10px 12px; border-top:1px solid #f1f5f9; text-decoration:none; color:#111827;"><i class="fas fa-grip-lines-vertical"></i><span>Штакетник</span></a></li>
+                <li><a data-slug="setka-metallicheskaia" href="/catalog/setka-metallicheskaia/" style="display:flex; align-items:center; gap:10px; padding:10px 12px; border-top:1px solid #f1f5f9; text-decoration:none; color:#111827;"><i class="fas fa-th-large"></i><span>Сетка металлическая</span></a></li>
+                <li><a data-slug="stroymaterialy" href="/catalog/stroymaterialy/" style="display:flex; align-items:center; gap:10px; padding:10px 12px; border-top:1px solid #f1f5f9; text-decoration:none; color:#111827;"><i class="fas fa-tools"></i><span>Стройматериалы</span></a></li>
+                <li><a data-slug="zabory" href="/catalog/zabory/" style="display:flex; align-items:center; gap:10px; padding:10px 12px; border-top:1px solid #f1f5f9; text-decoration:none; color:#111827;"><i class="fas fa-border-style"></i><span>Заборы</span></a></li>
+                <li><a data-slug="fitingi" href="/catalog/fitingi/" style="display:flex; align-items:center; gap:10px; padding:10px 12px; border-top:1px solid #f1f5f9; text-decoration:none; color:#111827;"><i class="fas fa-puzzle-piece"></i><span>Фитинги</span></a></li>
+                <li><a data-slug="krepezh" href="/catalog/krepezh/" style="display:flex; align-items:center; gap:10px; padding:10px 12px; border-top:1px solid #f1f5f9; text-decoration:none; color:#111827;"><i class="fas fa-screwdriver"></i><span>Крепёж</span></a></li>
+                <li><a data-slug="vintovye-svai" href="/catalog/vintovye-svai/" style="display:flex; align-items:center; gap:10px; padding:10px 12px; border-top:1px solid #f1f5f9; text-decoration:none; color:#111827;"><i class="fas fa-archive"></i><span>Винтовые сваи</span></a></li>
+            </ul>
+        </div>
+    </aside>
+                <main style="flex:1;">
+                    <div id="productList" class="product-list" style="display:grid; grid-template-columns:repeat(1, minmax(0, 1fr)); gap:12px;"></div>
+                </main>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-column">
+                    <div class="footer-divider"></div>
+                    <h3>Информация</h3>
+                    <div class="info-links">
+                        <a href="/front/HTML/gost.html">ГОСТ и ТУ</a>
+                        <a href="/front/HTML/news.html">Новости</a>
+                        <a href="/front/HTML/articles.html">Статьи</a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <div class="footer-divider"></div>
+                    <h3>Контакты</h3>
+                    <p class="phone-number">+7 (981) 720-10-10</p>
+                    <div class="email-container">
+                        <p>info@metall.ru</p>
+                    </div>
+                    <p class="address">Адрес: г. СПб, ул. Московское шоссе 46Б, офис 310</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-vk"></i></a>
+                        <a href="#"><i class="fab fa-telegram"></i></a>
+                        <a href="#"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2021 - 2025 Межрегионсталь. Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+    (function(){
+        const slug = "{{CATEGORY_SLUG}}";
+        const subSlug = "{{SUBCATEGORY_SLUG}}";
+        const listEl = document.getElementById('productList');
+        const foundEl = document.getElementById('foundCount');
+        const searchInput = document.getElementById('searchInput');
+        const inStockToggle = document.getElementById('inStockToggle');
+        const sortAscBtn = document.getElementById('sortPriceAsc');
+        const sortDescBtn = document.getElementById('sortPriceDesc');
+        const subcatRow = document.getElementById('subcatRow');
+        const titleEl = document.querySelector('.section-title');
+        const thicknessGroup = document.getElementById('thicknessGroup');
+        const lengthGroup = document.getElementById('lengthGroup');
+        const facturaGroup = document.getElementById('facturaGroup');
+        const profileFilters = document.getElementById('profileFilters');
+        const profileShapeGroup = document.getElementById('profileShapeGroup');
+        const dimensionGroup = document.getElementById('dimensionGroup');
+        const genericDimensionWrap = document.getElementById('genericDimensionWrap');
+        const genericDimensionGroup = document.getElementById('genericDimensionGroup');
+        // highlight active category in mini-catalog
+        (function(){
+            const list = document.getElementById('miniCatList'); if(!list) return;
+            const a = list.querySelector(`a[data-slug="${slug}"]`); if(a){ a.style.background='#f3f4f6'; a.style.fontWeight='600'; }
+        })();
+        const selected = { thickness: new Set(), length: new Set(), factura: new Set(), profile: new Set(), dimension: new Set() };
+
+        let data = [];
+        let filtered = [];
+
+        // Subcategories definitions per category
+        const subcatsByCategory = {
+            'truba-profilnaya': [
+                { slug: 'kvadratnaya', label: 'Труба квадратная' },
+                { slug: 'otsinkovannaya', label: 'Труба оцинкованная' },
+                { slug: 'pryamougolnaya', label: 'Труба прямоугольная' }
+            ],
+            'armatura': [
+                { slug: 'a500c', label: 'Арматура А500C' },
+                { slug: 'a1', label: 'Гладкая арматура A1' },
+                { slug: 'a400', label: 'Арматура A400' },
+                { slug: 'fixatory', label: 'Фиксаторы для арматуры' },
+                { slug: 'stekloplastikovaya', label: 'Арматура стеклопластиковая' }
+            ],
+            'sortovoy-prokat': [
+                { slug: 'dvutavrovaya-balka', label: 'Балка двутавровая' },
+                { slug: 'ugolok', label: 'Уголок' },
+                { slug: 'polosa', label: 'Полоса' },
+                { slug: 'shveller', label: 'Швеллер' },
+                { slug: 'kvadrat-stalnoy', label: 'Квадрат стальной' },
+                { slug: 'provoloka-vyazalnaya', label: 'Проволока вязальная' }
+            ],
+            'truba-kruglaya': [
+                { slug: 'besshovnaya', label: 'Бесшовные трубы' },
+                { slug: 'vgp', label: 'Труба водогазопроводная' },
+                { slug: 'ocinkovannaya', label: 'Труба оцинкованная' },
+                { slug: 'elektrosvarka', label: 'Труба электросварная' }
+            ],
+            'listovoy-prokat': [
+                { slug: 'ocinkovanniy', label: 'Лист оцинкованный' },
+                { slug: 'st_goryachekatanyi', label: 'Лист стальной горячекатаный' },
+                { slug: 'st_holodnokatanyi', label: 'Лист стальной холоднокатаный' },
+                { slug: 'rifleniy_romb', label: 'Лист рифленый ромб' },
+                { slug: 'riflenaya_chechevica', label: 'Лист рифленый чечевица' },
+                { slug: 'prosechno-vytyazhnoy', label: 'Лист просечно-вытяжной' }
+            ],
+            'profnastil': [
+                { slug: 'krashennyy', label: 'Профнастил крашеный' },
+                { slug: 'ocinkovannyy', label: 'Профнастил оцинкованный' },
+                { slug: 'dlya-zabora', label: 'Профнастил для забора' }
+            ],
+            'kovanye-izdeliya': [
+                { slug: 'balyasiny-poruchni', label: 'Балясины, поручни' },
+                { slug: 'vinograd', label: 'Виноград' },
+                { slug: 'vstavka-v-balyasiny', label: 'Вставка в балясины' },
+                { slug: 'dekorativnye-kolpaki', label: 'Декоративные колпаки' },
+                { slug: 'korzinki', label: 'Кorzинки' },
+                { slug: 'listya', label: 'Листья' },
+                { slug: 'osnovaniya-balyasin', label: 'Основания балясин' },
+                { slug: 'piki', label: 'Пики' },
+                { slug: 'polusfera', label: 'Полусфера металлическая' },
+                { slug: 'ruchki-i-petli', label: 'Ручки и петли' },
+                { slug: 'slozhnaya-kovka', label: 'Сложная ковка' },
+                { slug: 'hudozh-prokat', label: 'Художественный прокат' },
+                { slug: 'cvety-nakladki', label: 'Цветы, накладки' },
+                { slug: 'shary', label: 'Шары' },
+                { slug: 'elementy-ornamenta', label: 'Элементы орнамента' }
+            ],
+            'shtaketnik-metallicheskiy': [
+                { slug: 'm-obraznyj', label: 'Штакетник М-образный' },
+                { slug: 'p-obraznyj', label: 'Штакетник П-образный' },
+                { slug: 'polukruglyj', label: 'Штакетник Полукруглый' },
+                { slug: 'zolotoy-dub', label: 'Золотой дуб евроштакетник' },
+                { slug: 'seryy', label: 'Серый евроштакетник' },
+                { slug: 'zelenyy', label: 'Зеленый евроштакетник' }
+            ],
+            'setka-metallicheskaia': [
+                { slug: 'rabica', label: 'Сетка рабица' },
+                { slug: 'svark-v-kartah', label: 'Сетка сварная в картах' },
+                { slug: 'svark-v-rulonah', label: 'Сетка сварная в рулонах' },
+                { slug: 'kladichnaya', label: 'Сетка кладочная' },
+                { slug: 'pvkh', label: 'Сетка сварная ПВХ' }
+            ],
+            'stroymaterialy': [
+                { slug: 'bloki', label: 'Блоки строительные' },
+                { slug: 'diski-otreznye', label: 'Диски отрезные' },
+                { slug: 'izolyacionnye', label: 'Изоляционные материалы' },
+                { slug: 'gipsokarton', label: 'Профиль и комплектующие для гипсокартона' },
+                { slug: 'fanera', label: 'Фанера' },
+                { slug: 'elektrody', label: 'Электроды' },
+                { slug: 'suhie-smesi', label: 'Сухие смеси и грунтовки' },
+                { slug: 'listovye-materialy', label: 'Листовые материалы' }
+            ],
+            'zabory': [
+                { slug: 'setka-dlya-zabora', label: 'Сетка сварная для забора' },
+                { slug: 'setka-rabica', label: 'Сетка рабица для забора' },
+                { slug: 'lagi', label: 'Лаги для забора' },
+                { slug: 'stolby', label: 'Столбы для забора' },
+                { slug: 'komplektuyushchie', label: 'Комплектующие для забора' }
+            ],
+            'krepezh': [
+                { slug: 'ankery', label: 'Анкеры' },
+                { slug: 'gvozdi', label: 'Гвозди строительные' },
+                { slug: 'dyubeli', label: 'Дюбели' },
+                { slug: 'samorezy', label: 'Саморезы' },
+                { slug: 'santehnicheskij', label: 'Сантехнический крепеж' },
+                { slug: 'metricheskij', label: 'Метрический крепеж' }
+            ],
+            'fitingi': [
+                { slug: 'bochata', label: 'Бочата' },
+                { slug: 'gayki-chugunnye', label: 'Гайки чугунные' },
+                { slug: 'mufty', label: 'Муфты' },
+                { slug: 'rezba', label: 'Резьба' },
+                { slug: 'sgony', label: 'Сгоны' },
+                { slug: 'otvody', label: 'Отводы' }
+            ],
+            'vintovye-svai': [
+                { slug: '57mm', label: 'Винтовые сваи 57 мм' },
+                { slug: '76mm', label: 'Винтовые сваи 76 мм' },
+                { slug: '89mm', label: 'Винтовые сваи 89 мм' },
+                { slug: '108mm', label: 'Винтовые сваи 108 мм' },
+                { slug: '133mm', label: 'Винтовые сваи 133 мм' },
+                { slug: '159mm', label: 'Винтовые сваи 159 мм' },
+                { slug: 'ogolovki', label: 'Оголовки для свай' }
+            ],
+            'zaglushki-dlya-profilnyh-trub': [
+                { slug: 'metallicheskie', label: 'Заглушки металлические' },
+                { slug: 'plastikovye', label: 'Заглушки пластиковые' }
+            ]
+        };
+
+        // Render subcategory tiles
+        const subcats = subcatsByCategory[slug] || [];
+        if (subcats.length){
+            for (const sc of subcats){
+                const a = document.createElement('a');
+                a.href = `/catalog/${slug}/${sc.slug}/`;
+                a.textContent = sc.label;
+                a.style.cssText = 'display:flex; align-items:center; gap:10px; padding:12px 14px; border:1px solid #e5e7eb; border-radius:10px; background:#fff; font-size:14px; min-width:220px;';
+                if (subSlug === sc.slug){
+                    a.style.background = '#f3f4f6';
+                    a.style.borderColor = '#d1d5db';
+                    a.style.fontWeight = '600';
+                }
+                const icon = document.createElement('div');
+                icon.style.cssText = 'width:28px; height:28px; background:#e5e7eb; border-radius:6px;';
+                a.prepend(icon);
+                subcatRow.appendChild(a);
+            }
+        }
+        // Update title if subcategory selected
+        if (subSlug && subcats.length){
+            const active = subcats.find(s => s.slug === subSlug);
+            if (active){ titleEl.textContent = `${active.label}`; }
+        }
+
+        function render(){
+            listEl.innerHTML = '';
+            foundEl.textContent = filtered.length.toString();
+            if (filtered.length === 0){
+                listEl.innerHTML = '<div style="opacity:.7; padding:12px 0;">Ничего не найдено</div>';
+                return;
+            }
+            for (const item of filtered){
+                const row = document.createElement('div');
+                row.className = 'product-row';
+                row.style.cssText = 'display:grid; grid-template-columns: 72px 1fr 140px 160px; gap:12px; align-items:center; border:1px solid #e5e7eb; border-radius:12px; padding:12px; background:#fff; position:relative;';
+                const linkHref = `/catalog/${slug}/${subSlug||''}/${encodeURIComponent(item.rawName)}/${encodeURIComponent(item.size||'')}/`.replace(/\/+$/, '/');
+                row.innerHTML = `
+                    <a href="${linkHref}" class="row-link"></a>
+                    <div class="product-image">
+                        <img src="${item.image}" alt="${item.title}">
+                    </div>
+                    <div class="product-info">
+                        <h4>${item.title}</h4>
+                        <div class="stock">В наличии: ${item.inStock ? 'Да' : 'Нет'}</div>
+                    </div>
+                    <div class="price">${item.price} ₽</div>
+                    <div class="controls">
+                        <button class="btn" data-inc>+</button>
+                        <input type="number" min="1" value="1">
+                        <button class="cart-icon-btn" data-add>
+                            <i class="fas fa-shopping-cart"></i>
+                        </button>
+                    </div>`;
+                listEl.appendChild(row);
+                // stop link overlay when clicking inside controls area
+                row.querySelector('.row-link').addEventListener('click', (e)=>{
+                    const rect = row.getBoundingClientRect();
+                    const controls = row.querySelector('[style*="z-index:2"]');
+                    if (controls) {
+                        const cr = controls.getBoundingClientRect();
+                        const x = e.clientX, y = e.clientY;
+                        if (x >= cr.left && x <= cr.right && y >= cr.top && y <= cr.bottom) {
+                            e.preventDefault();
+                        }
+                    }
+                });
+                // quantity increment
+                (function(){
+                    const incBtn = row.querySelector('[data-inc]');
+                    const qtyInp = row.querySelector('input[type="number"]');
+                    const addBtn = row.querySelector('[data-add]');
+                    if (incBtn && qtyInp){
+                        incBtn.addEventListener('click', function(ev){
+                            ev.preventDefault(); ev.stopPropagation();
+                            const cur = parseInt(qtyInp.value)||1; qtyInp.value = String(cur+1);
+                        });
+                    }
+                    if (qtyInp){
+                        qtyInp.addEventListener('change', function(){
+                            const v = parseInt(qtyInp.value)||1; qtyInp.value = String(Math.max(1, v));
+                        });
+                    }
+                    if (addBtn && qtyInp){
+                        addBtn.addEventListener('click', function(ev){
+                            ev.preventDefault(); ev.stopPropagation();
+                            const q = Math.max(1, parseInt(qtyInp.value)||1);
+                            const cartItem = {
+                                id: String(item.id || (item.title+'|'+item.image)).toLowerCase(),
+                                title: item.title,
+                                price: item.price||0,
+                                image: item.image,
+                                qty: q
+                            };
+                            try { if (typeof addToCart === 'function') addToCart(cartItem); } catch{}
+                            try { if (typeof updateCartCounter === 'function') updateCartCounter(); } catch{}
+                        });
+                    }
+                })();
+            }
+        }
+
+        function applyFilters(){
+            const q = (searchInput.value || '').trim().toLowerCase();
+            filtered = data.filter(p => {
+                const okText = q === '' || p.title.toLowerCase().includes(q);
+                const okStock = !inStockToggle.checked || p.inStock;
+                // advanced filters compare by normalized numeric strings
+                const thKey = (p.thickness!==undefined && p.thickness!==null && !isNaN(p.thickness)) ? String(p.thickness) : '';
+                const lenKey = (p.length!==undefined && p.length!==null && !isNaN(p.length)) ? String(p.length) : '';
+                const okTh = selected.thickness.size===0 || (thKey && selected.thickness.has(thKey));
+                const okLen = selected.length.size===0 || (lenKey && selected.length.has(lenKey));
+                const okFac = selected.factura.size===0 || (p.factura && selected.factura.has(String(p.factura)));
+                const okProf = selected.profile.size===0 || (p.profile && selected.profile.has(p.profile));
+                const okDim = selected.dimension.size===0 || (p.dimension && selected.dimension.has(p.dimension));
+                return okText && okStock && okTh && okLen && okFac && okProf && okDim;
+            });
+            render();
+        }
+
+        function clearFilters() {
+            searchInput.value = '';
+            inStockToggle.checked = false;
+            Object.values(selected).forEach(set => set.clear());
+            // Clear checkboxes
+            document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+            applyFilters();
+        }
+
+        sortAscBtn.addEventListener('click', () => {
+            filtered.sort((a,b) => a.price - b.price); render();
+        });
+        sortDescBtn.addEventListener('click', () => {
+            filtered.sort((a,b) => b.price - a.price); render();
+        });
+        searchInput.addEventListener('input', applyFilters);
+        inStockToggle.addEventListener('change', applyFilters);
+
+        // helpers
+        const normalizeLabel = (s)=>{
+            if(!s) return '';
+            return s
+                .replace(/А/g,'A').replace(/а/g,'a')
+                .replace(/С/g,'C').replace(/с/g,'c')
+                .toLowerCase().trim().replace(/\s+/g,' ');
+        };
+
+        // Fetch products from API and map to UI model
+        const apiURL = new URL('/api/catalog/products', window.location.origin);
+        apiURL.searchParams.set('category', mapSlugToCategory(slug));
+        if (subSlug) apiURL.searchParams.set('sub', subSlug);
+        fetch(apiURL.toString())
+            .then(r => r.json())
+            .then(items => {
+                const toLabel = (x) => (x || '').toString().trim();
+                const hasCyr = (s)=> /[А-Яа-яЁё]/.test(s||'');
+                const subtypeLabelRu = (catSlug, val)=>{
+                    const v = (val||'').toString().trim();
+                    if (!v) return '';
+                    if (hasCyr(v)) return v;
+                    const x = v.toLowerCase();
+                    switch(catSlug){
+                        case 'truba-profilnaya':
+                            if (x==='kvadratnaya' || x==='truba kvadratnaya' || x==='truba-kvadratnaya') return 'Труба квадратная';
+                            if (x==='pryamougolnaya' || x==='truba pryamougolnaya' || x==='truba-pryamougolnaya') return 'Труба прямоугольная';
+                            if (x==='otsinkovannaya' || x==='ocinkovannaya' || x==='truba otsinkovannaya' || x==='truba-otsinkovannaya') return 'Труба оцинкованная';
+                            return v;
+                        case 'truba-kruglaya':
+                            if (x==='ocinkovannaya') return 'Труба оцинкованная';
+                            if (x==='besshovnaya') return 'Бесшовные трубы';
+                            if (x==='vgp') return 'Труба водогазопроводная';
+                            if (x==='elektrosvarka') return 'Труба электросварная';
+                            return v;
+                        case 'armatura':
+                            if (x==='a500c') return 'Арматура А500C';
+                            if (x==='a1') return 'Гладкая арматура A1';
+                            if (x==='a400') return 'Арматура A400';
+                            if (x==='fixatory') return 'Фиксаторы для арматуры';
+                            if (x==='stekloplastikovaya') return 'Арматура стеклопластиковая';
+                            return v;
+                        case 'listovoy-prokat':
+                            if (x==='ocinkovanniy' || x==='ocinkovannyy') return 'Лист оцинкованный';
+                            if (x==='st_goryachekatanyi') return 'Лист стальной горячекатаный';
+                            if (x==='st_holodnokatanyi') return 'Лист стальной холоднокатаный';
+                            if (x==='rifleniy_romb') return 'Лист рифленый ромб';
+                            if (x==='riflenaya_chechevica') return 'Лист рифленый чечевица';
+                            if (x==='prosechno-vytyazhnoy') return 'Лист просечно-вытяжной';
+                            return v;
+                        case 'profnastil':
+                            if (x==='ocinkovannyy' || x==='ocinkovanniy') return 'Профнастил оцинкованный';
+                            if (x==='krashennyy') return 'Профнастил крашеный';
+                            if (x==='dlya-zabora') return 'Профнастил для забора';
+                            return v;
+                        default:
+                            return v;
+                    }
+                };
+                data = (items || []).map((p, i) => {
+                    const baseName = toLabel(p.name || p.title || 'Позиция');
+                    const subtype = toLabel(p.subtype);
+                    const subtypeRu = subtypeLabelRu(slug, subtype);
+                    const size = toLabel(p.size || p.description);
+                    const composedTitle = `${subtypeRu ? subtypeRu + ' ' : ''}${baseName}${size ? ' ' + size : ''}`.trim();
+                    const priceRaw = (p.price !== undefined ? p.price : '');
+                    const priceNum = Number.isFinite(priceRaw)
+                      ? Number(priceRaw)
+                      : parseFloat(String(priceRaw).toString().replace(',', '.'));
+                    // extra fields for profile pipe
+                    let profileShape = '';
+                    if (slug==='truba-profilnaya'){
+                        const sub = (subtype||'').toLowerCase();
+                        if (sub.includes('kvadrat')) profileShape = 'Квадратный';
+                        else if (sub.includes('pryamougol')) profileShape = 'Прямоугольный';
+                    }
+                    // dimension extracted from size: for profile pipe use WxH, for others keep full (e.g., 10x10x10)
+                    let dimension = '';
+                    if (size){
+                        const nums = size.replace(/[,]/g,'.').split(/x|×/i).map(s=>s.trim().replace(/[^0-9.]/g,''));
+                        const valid = nums.filter(v=>v!=='');
+                        if (valid.length>=2){
+                            if (slug==='truba-profilnaya') dimension = valid.slice(0,2).join('x'); else dimension = valid.join('x');
+                        }
+                    }
+                    // factura (galvanized)
+                    let factura = '';
+                    if (slug==='truba-profilnaya'){
+                        const sub = (subtype||'').toLowerCase();
+                        if (sub.includes('otsink') || sub.includes('ocink')) factura = 'оцинкованная';
+                    }
+                    return {
+                        id: p.id || ('p' + i),
+                        title: composedTitle,
+                        rawName: baseName,
+                        subtype,
+                        size,
+                        image: p.image || p.img || '/img/catalog/catalog1.jpeg',
+                        price: (isNaN(priceNum) ? 0 : priceNum),
+                        inStock: typeof p.in_stock==='boolean' ? p.in_stock : (Math.random() > 0.2),
+                        thickness: (typeof p.thickness_mm==='number') ? p.thickness_mm : parseFloat(String(p.thickness_mm||'').replace(',','.')),
+                        length: (typeof p.length_m==='number') ? p.length_m : parseFloat(String(p.length_m||'').replace(',','.')),
+                        factura,
+                        profile: profileShape,
+                        dimension
+                    };
+                });
+
+                filtered = data.slice();
+                // Show profile-specific filters when category is truba-profilnaya
+                if (slug==='truba-profilnaya'){
+                    profileFilters.style.display='grid';
+                    // profile shapes
+                    const profileVals = Array.from(new Set(data.map(d=>d.profile).filter(Boolean)));
+                    profileShapeGroup.innerHTML='';
+                    selected.profile.clear();
+                    profileVals.forEach(val=>{
+                        const label=document.createElement('label');
+                        label.style.cssText='display:flex; align-items:center; gap:8px;';
+                        const inp=document.createElement('input'); inp.type='checkbox'; inp.setAttribute('data-val', val);
+                        const span=document.createElement('span'); span.textContent=val;
+                        label.appendChild(inp); label.appendChild(span);
+                        profileShapeGroup.appendChild(label);
+                        inp.addEventListener('change', function(){
+                            const v=this.getAttribute('data-val');
+                            if(this.checked) selected.profile.add(v); else selected.profile.delete(v);
+                            applyFilters();
+                        });
+                    });
+                    // dimensions
+                    const dimVals = Array.from(new Set(data.map(d=>d.dimension).filter(Boolean))).sort((a,b)=>{
+                        const [a1,a2]=a.split('x').map(Number); const [b1,b2]=b.split('x').map(Number);
+                        return (a1-a2)-(b1-b2) || a1-b1 || a2-b2;
+                    });
+                    dimensionGroup.innerHTML='';
+                    selected.dimension.clear();
+                    dimVals.forEach(val=>{
+                        const label=document.createElement('label'); label.style.cssText='display:flex; align-items:center; gap:8px;';
+                        const inp=document.createElement('input'); inp.type='checkbox'; inp.setAttribute('data-val', val);
+                        const span=document.createElement('span'); span.textContent=val+' мм';
+                        label.appendChild(inp); label.appendChild(span); dimensionGroup.appendChild(label);
+                        inp.addEventListener('change', function(){
+                            const v=this.getAttribute('data-val'); if(this.checked) selected.dimension.add(v); else selected.dimension.delete(v); applyFilters();
+                        });
+                    });
+                } else {
+                    profileFilters.style.display='none';
+                }
+                // generic dimension filter for categories like sortovoy-prokat
+                const dimValsGeneric = Array.from(new Set(data.map(d=>d.dimension).filter(Boolean))).sort((a,b)=>{
+                    const aa=a.split('x').map(Number); const bb=b.split('x').map(Number);
+                    for(let i=0;i<Math.max(aa.length,bb.length);i++){ if((aa[i]||0)!==(bb[i]||0)) return (aa[i]||0)-(bb[i]||0); }
+                    return 0;
+                });
+                if (dimValsGeneric.length>0 && slug!=='truba-profilnaya'){
+                    genericDimensionWrap.style.display='block'; genericDimensionGroup.innerHTML=''; selected.dimension.clear();
+                    dimValsGeneric.forEach(val=>{
+                        const lab=document.createElement('label'); lab.style.cssText='display:flex; align-items:center; gap:8px;';
+                        const inp=document.createElement('input'); inp.type='checkbox'; inp.setAttribute('data-val', val);
+                        const sp=document.createElement('span'); sp.textContent=val;
+                        lab.appendChild(inp); lab.appendChild(sp); genericDimensionGroup.appendChild(lab);
+                        inp.addEventListener('change', function(){ const v=this.getAttribute('data-val'); if(this.checked) selected.dimension.add(v); else selected.dimension.delete(v); applyFilters(); });
+                    });
+                } else { genericDimensionWrap.style.display='none'; }
+                // Build filter options from current dataset (only for armatura category now)
+                function buildCheckboxes(container, values, key, unit){
+                    container.innerHTML = '';
+                    // reset chosen values when rebuilding
+                    selected[key].clear();
+                    values.forEach(val => {
+                        const numericKey = String(val);
+                        const id = key+'-'+numericKey.replace(/\./g,'_');
+                        const row = document.createElement('div');
+                        const label = document.createElement('label');
+                        label.style.cssText = 'display:flex; align-items:center; gap:8px;';
+                        const input = document.createElement('input');
+                        input.type = 'checkbox';
+                        input.setAttribute('data-val', numericKey);
+                        const span = document.createElement('span');
+                        span.textContent = numericKey + (unit||'');
+                        label.appendChild(input); label.appendChild(span);
+                        row.appendChild(label);
+                        container.appendChild(row);
+                        input.addEventListener('change', function(){
+                            const v = this.getAttribute('data-val');
+                            if(this.checked){ selected[key].add(v); } else { selected[key].delete(v); }
+                            applyFilters();
+                        });
+                    });
+                }
+                const thicknessVals = Array.from(new Set(data.map(d => d.thickness).filter(v=>v!==undefined && v!==null && !isNaN(v)))).sort((a,b)=>a-b);
+                const lengthVals = Array.from(new Set(data.map(d => d.length).filter(v=>v!==undefined && v!==null && !isNaN(v)))).sort((a,b)=>a-b);
+                buildCheckboxes(thicknessGroup, thicknessVals, 'thickness', ' мм');
+                buildCheckboxes(lengthGroup, lengthVals, 'length', ' м');
+                // factura placeholder (if appears later)
+                facturaGroup.innerHTML = '';
+
+                // Если сервер вернул пусто при подтипе — пробуем подгрузить все товары категории и фильтровать на клиенте
+                if ((items||[]).length === 0 && subSlug) {
+                    const url2 = new URL('/api/catalog/products', window.location.origin);
+                    url2.searchParams.set('category', mapSlugToCategory(slug));
+                    fetch(url2.toString()).then(rr=>rr.json()).then(items2=>{
+                        const mapped = (items2||[]).map((p, i) => {
+                            const baseName = toLabel(p.name || p.title || 'Позиция');
+                            const subtype = toLabel(p.subtype);
+                            const subtypeRu = subtypeLabelRu(slug, subtype);
+                            const size = toLabel(p.size || p.description);
+                            const composedTitle = `${subtypeRu ? subtypeRu + ' ' : ''}${baseName}${size ? ' ' + size : ''}`.trim();
+                            const priceRaw = (p.price !== undefined ? p.price : '');
+                            const priceNum = Number.isFinite(priceRaw) ? Number(priceRaw) : parseFloat(String(priceRaw).toString().replace(',', '.'));
+                            // extra fields for profile pipe
+                            let profileShape = '';
+                            if (slug==='truba-profilnaya'){
+                                const sub = (subtype||'').toLowerCase();
+                                if (sub.includes('kvadrat')) profileShape = 'Квадратный';
+                                else if (sub.includes('pryamougol')) profileShape = 'Прямоугольный';
+                            }
+                            // dimension extracted from size: for profile pipe use WxH, for others keep full (e.g., 10x10x10)
+                            let dimension = '';
+                            if (size){
+                                const nums = size.replace(/[,]/g,'.').split(/x|×/i).map(s=>s.trim().replace(/[^0-9.]/g,''));
+                                const valid = nums.filter(v=>v!=='');
+                                if (valid.length>=2){
+                                    if (slug==='truba-profilnaya') dimension = valid.slice(0,2).join('x'); else dimension = valid.join('x');
+                                }
+                            }
+                            // factura (galvanized)
+                            let factura = '';
+                            if (slug==='truba-profilnaya'){
+                                const sub = (subtype||'').toLowerCase();
+                                if (sub.includes('otsink') || sub.includes('ocink')) factura = 'оцинкованная';
+                            }
+                            return {
+                                id: p.id || ('p' + i),
+                                title: composedTitle,
+                                rawName: baseName,
+                                subtype,
+                                size,
+                                image: p.image || p.img || '/img/catalog/catalog1.jpeg',
+                                price: (isNaN(priceNum) ? 0 : priceNum),
+                                inStock: typeof p.in_stock==='boolean' ? p.in_stock : true,
+                                thickness: (typeof p.thickness_mm==='number') ? p.thickness_mm : parseFloat(String(p.thickness_mm||'').replace(',','.')),
+                                length: (typeof p.length_m==='number') ? p.length_m : parseFloat(String(p.length_m||'').replace(',','.')),
+                                factura,
+                                profile: profileShape,
+                                dimension
+                            };
+                        });
+                        const subcats = subcatsByCategory[slug] || [];
+                        const active = subcats.find(s => s.slug === subSlug);
+                        const want = active ? normalizeLabel(active.label) : '';
+                        data = mapped;
+                        filtered = want ? data.filter(d => normalizeLabel(d.subtype||'') === want) : data.slice();
+                        render();
+                    }).catch(()=>{ render(); });
+                    return;
+                }
+                render();
+            })
+            .catch(() => { filtered = []; render(); });
+
+        function mapSlugToCategory(s){
+            switch(s){
+                case 'armatura': return 'rebar';
+                case 'truba-profilnaya': return 'profile-pipe';
+                case 'truba-kruglaya': return 'round-pipe';
+                case 'listovoy-prokat': return 'sheet';
+                case 'profnastil': return 'profnastil';
+                case 'sortovoy-prokat': return 'beam';
+                // New categories
+                case 'kovanye-izdeliya': return 'kovanye-izdeliya';
+                case 'shtaketnik-metallicheskiy': return 'shtaketnik-metallicheskiy';
+                case 'setka-metallicheskaia': return 'setka-metallicheskaia';
+                case 'zaglushki-dlya-profilnyh-trub': return 'zaglushki-dlya-profilnyh-trub';
+                case 'zabory': return 'zabory';
+                case 'krepezh': return 'krepezh';
+                case 'fitingi': return 'fitingi';
+                case 'vintovye-svai': return 'vintovye-svai';
+                case 'stroymaterialy': return 'stroymaterialy';
+                default: return '';
+            }
+        }
+
+        // Client-side keyword filter is no longer required because backend supports `sub` predicate.
+    })();
+
+        // Добавьте этот код в конец вашего скрипта
+    document.addEventListener('DOMContentLoaded', function() {
+        // Тoggle для фильтров
+        const filterToggle = document.querySelector('.filter-toggle');
+        const filterCard = document.querySelector('.filter-card');
+        const applyFiltersBtn = document.getElementById('applyFilters');
+        const clearFiltersBtn = document.getElementById('clearFilters');
+        
+        if (filterToggle && filterCard) {
+            filterToggle.addEventListener('click', function() {
+                this.classList.toggle('active');
+                filterCard.classList.toggle('active');
+            });
+        }
+        
+        if (applyFiltersBtn && filterCard && filterToggle) {
+            applyFiltersBtn.addEventListener('click', function() {
+                if (typeof applyFilters === 'function') {
+                    applyFilters();
+                }
+                // Закрыть сайдбар
+                filterCard.classList.remove('active');
+                filterToggle.classList.remove('active');
+            });
+        }
+
+        if (clearFiltersBtn) {
+            clearFiltersBtn.addEventListener('click', function() {
+                if (typeof clearFilters === 'function') {
+                    clearFilters();
+                }
+                // Закрыть сайдбар
+                if (filterCard && filterToggle) {
+                    filterCard.classList.remove('active');
+                    filterToggle.classList.remove('active');
+                }
+            });
+        }
+        
+        // Toggle для мини-каталога
+        const catalogToggle = document.querySelector('.catalog-toggle');
+        const miniCatalog = document.querySelector('.mini-catalog');
+        
+        if (catalogToggle && miniCatalog) {
+            catalogToggle.addEventListener('click', function() {
+                this.classList.toggle('active');
+                miniCatalog.classList.toggle('active');
+            });
+        }
+        
+        // Закрытие при клике вне области
+        document.addEventListener('click', function(e) {
+            if (window.innerWidth <= 1200) {
+                if (filterToggle && filterCard && 
+                    !filterToggle.contains(e.target) && 
+                    !filterCard.contains(e.target)) {
+                    filterToggle.classList.remove('active');
+                    filterCard.classList.remove('active');
+                }
+                
+                if (catalogToggle && miniCatalog && 
+                    !catalogToggle.contains(e.target) && 
+                    !miniCatalog.contains(e.target)) {
+                    catalogToggle.classList.remove('active');
+                    miniCatalog.classList.remove('active');
+                }
+            }
+        });
+    });
+
+    </script>
+    <script src="/front/JS/auth.js"></script>
+    <script src="/front/JS/script.js"></script>
+</body>
+</html>

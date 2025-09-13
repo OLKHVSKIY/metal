@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{TITLE}}</title>
+  <link rel="icon" href="/img/icon.ico" type="image/x-icon" />
+  <link rel="stylesheet" href="/front/CSS/style.css" />
+  <link rel="stylesheet" href="/front/CSS/news.css" />
+  <style>
+    .news-article{max-width:900px;margin:40px auto;padding:0 16px}
+    .news-article h1{margin:0 0 12px}
+    .news-article .date{color:#666;margin-bottom:16px}
+    .news-article img{max-width:100%;border-radius:8px;margin:8px 0 16px}
+    .back-link{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid #e5e7eb;border-radius:10px;background:#f3f4f6;color:#111827;text-decoration:none;font-weight:500;margin-bottom:12px;transition:all .2s ease}
+    .back-link i{font-size:14px;color:#6b7280}
+    .back-link:hover{background:#e5e7eb;border-color:#d1d5db;transform:translateY(-1px)}
+    .back-link:active{transform:translateY(0)}
+  </style>
+  <script>window.addEventListener('DOMContentLoaded',function(){var b=document.querySelector('.back-link');if(b){b.addEventListener('click',function(e){e.preventDefault();window.history.length>1?history.back():location.href='/front/HTML/news.html';});}});</script>
+  <script>document.addEventListener('DOMContentLoaded',function(){var i=document.querySelector('.news-article img');if(i){var u=i.getAttribute('src');if(u){i.setAttribute('src',u+(u.indexOf('?')>-1?'&':'?')+'v='+(Date.now()));}}});</script>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  </head>
+<body>
+  <header class="header">
+    <div class="container header-container">
+      <div class="logo">
+        <a href="/front/HTML/main.html"><img src="/img/logo.png" alt="Металл" /></a>
+      </div>
+      <button class="burger-btn"><i class="fas fa-bars"></i></button>
+      <nav class="nav-menu">
+        <div class="nav-menu-inner">
+          <ul>
+            <li><a href="/front/HTML/catalog.html">Каталог</a></li>
+            <li><a href="/front/HTML/services.html">Услуги</a></li>
+            <li><a href="#">Доставка</a></li>
+            <li><a href="#">Прайс-лист</a></li>
+            <li><a href="/front/HTML/contact.html">Контакты</a></li>
+          </ul>
+          <div class="header-actions mobile-header-actions">
+            <a href="/cart/" class="cart-link"><i class="fas fa-shopping-cart"></i> Корзина</a>
+            <a href="#" class="login-link"><i class="fas fa-user"></i> Войти</a>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </header>
+  <main class="news-article">
+    <a href="#" class="back-link"><i class="fas fa-arrow-left"></i><span>Назад к новостям</span></a>
+    <h1>{{TITLE}}</h1>
+    <div class="date">{{DATE}}</div>
+    {{IMG_HTML}}
+    <div class="content">{{CONTENT_HTML}}</div>
+  </main>
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-column">
+          <div class="footer-divider"></div>
+          <h3>Информация</h3>
+          <div class="info-links">
+            <a href="/front/HTML/gost.html">ГОСТ и ТУ</a>
+            <a href="/front/HTML/news.html">Новости</a>
+            <a href="/front/HTML/articles.html">Статьи</a>
+          </div>
+        </div>
+        <div class="footer-column">
+          <div class="footer-divider"></div>
+          <h3>Контакты</h3>
+          <p class="phone-number">+7 (981) 720-10-10</p>
+          <div class="email-container"><p>info@metall.ru</p></div>
+          <p class="address">Адрес: г. СПб, ул. Московское шоссе 46Б, офис 310</p>
+          <div class="social-links">
+            <a href="#"><i class="fab fa-vk"></i></a>
+            <a href="#"><i class="fab fa-telegram"></i></a>
+            <a href="#"><i class="fab fa-whatsapp"></i></a>
+          </div>
+        </div>
+      </div>
+      <div class="copyright"><p>&copy; 2021 - 2025 Межрегионсталь. Все права защищены.</p></div>
+    </div>
+  </footer>
+  <script src="/front/JS/auth.js"></script>
+  <script src="/front/JS/script.js"></script>
+</body>
+</html>
+
+
