@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Доставка металлопроката - Межрегионсталь</title>
+    <link rel="icon" href="/img/icon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="/img/icon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/front/CSS/style.css">
+    <link rel="stylesheet" href="/front/CSS/delivery.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+     <!-- Яндекс.Карты API -->
+    <script src="https://api-maps.yandex.ru/2.1.79/?lang=ru_RU&apikey=e72e91bf-e966-4ffa-975b-57a5571ab5a8" defer></script>
+</head>
+<body>
+    <header class="header">
+        <div class="container header-container">
+            <div class="logo">
+                <a href="/front/HTML/main.html">
+                    <img src="/img/logo.png" alt="Металл">
+                </a>
+            </div>
+            <button class="burger-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+            <nav class="nav-menu">
+                <div class="nav-menu-inner">
+                    <ul>
+                        <li><a href="/front/HTML/catalog.html">Каталог</a></li>
+                        <li><a href="/front/HTML/services.html">Услуги</a></li>
+                        <li><a href="/front/HTML/delivery.html">Доставка</a></li>
+                        <li><a href="#">Прайс-лист</a></li>
+                        <li><a href="/front/HTML/contact.html">Контакты</a></li>
+                    </ul>
+                    <div class="header-actions mobile-header-actions">
+
+                        <a href="/cart/" class="cart-link"><i class="fas fa-shopping-cart"></i> Корзина</a>
+                        <a href="#" class="login-link"><i class="fas fa-user"></i> Войти</a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <section class="delivery-page">
+        <div class="delivery-container">
+            <h1 class="section-title">Условия доставки металлопроката</h1>
+
+            <div class="delivery-top">
+                <!-- Карта -->
+                <div class="map-container">
+                    <div class="map-instruction" id="mapInstruction">
+                        📍 Выберите тип машины, затем кликните на карте для построения маршрута
+                    </div>
+                    <div id="delivery-map"></div>
+                </div>
+
+                <!-- Виды автомобилей -->
+                <div class="vehicles-section">
+                    <h2>Наш автопарк</h2>
+                    <div class="vehicles-grid">
+                        <div class="vehicle-card" data-capacity="1.5" data-price="1500">
+                            <div class="vehicle-icon">
+                                <i class="fas fa-truck"></i>
+                            </div>
+                            <h3 class="vehicle-title">Газель</h3>
+                            <p class="vehicle-capacity">до 1.5 тонн</p>
+                        </div>
+                        <div class="vehicle-card" data-capacity="5" data-price="3000">
+                            <div class="vehicle-icon">
+                                <i class="fas fa-truck-moving"></i>
+                            </div>
+                            <h3 class="vehicle-title">Камаз</h3>
+                            <p class="vehicle-capacity">до 5 тонн</p>
+                        </div>
+                        <div class="vehicle-card" data-capacity="10" data-price="5000">
+                            <div class="vehicle-icon">
+                                <i class="fas fa-truck-pickup"></i>
+                            </div>
+                            <h3 class="vehicle-title">Фура 10т</h3>
+                            <p class="vehicle-capacity">до 10 тонн</p>
+                        </div>
+                        <div class="vehicle-card" data-capacity="20" data-price="8000">
+                            <div class="vehicle-icon">
+                                <i class="fas fa-truck-loading"></i>
+                            </div>
+                            <h3 class="vehicle-title">Фура 20т</h3>
+                            <p class="vehicle-capacity">до 20 тонн</p>
+                        </div>
+                        <div class="vehicle-card" data-capacity="30" data-price="12000">
+                            <div class="vehicle-icon">
+                                <i class="fas fa-truck-monster"></i>
+                            </div>
+                            <h3 class="vehicle-title">Автопоезд</h3>
+                            <p class="vehicle-capacity">до 30 тонн</p>
+                        </div>
+                        <div class="vehicle-card" data-capacity="50" data-price="20000">
+                            <div class="vehicle-icon">
+                                <i class="fas fa-trailer"></i>
+                            </div>
+                            <h3 class="vehicle-title">Спецтранспорт</h3>
+                            <p class="vehicle-capacity">свыше 20 тонн</p>
+                        </div>
+                    </div>
+
+                    <!-- УБИРАЕМ ДУБЛИРУЮЩИЙ БЛОК С РЕЗУЛЬТАТАМИ -->
+                </div>
+            </div>
+
+            <!-- Блок с результатами доставки -->
+            <div class="delivery-result" id="deliveryResult" style="display: none;">
+                <h2>Расчет доставки</h2>
+                <div class="result-grid">
+                    <div class="result-item">
+                        <div class="result-label">Транспорт</div>
+                        <div class="result-value" id="resultVehicle">—</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label">Расстояние</div>
+                        <div class="result-value" id="resultDistance">—</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label">Грузоподъемность</div>
+                        <div class="result-value" id="resultCapacity">—</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label">Регион</div>
+                        <div class="result-value" id="resultRegion">—</div>
+                    </div>
+                </div>
+                <div class="result-price" id="resultPrice">—</div>
+                <div class="result-note" id="resultNote">Окончательная стоимость может отличаться</div>
+            </div>
+
+            <!-- Условия доставки -->
+            <div class="delivery-conditions">
+                <h2 style="font-size: 28px; font-weight: 600; color: #1f2937; margin-bottom: 30px; text-align: center;">
+                    Условия доставки
+                </h2>
+                <div class="conditions-grid">
+                    <div class="condition-item">
+                        <div class="condition-icon">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <div class="condition-content">
+                            <h3>Круглосуточная связь</h3>
+                            <p>Отдел продаж и колл-центр работает с 08:00 до 22:00 ежедневно по номеру +7 (981) 720-10-10</p>
+                        </div>
+                    </div>
+                    <div class="condition-item">
+                        <div class="condition-icon">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <div class="condition-content">
+                            <h3>Удобное оформление</h3>
+                            <p>Заказы могут быть оформлены любым удобным для вас способом</p>
+                        </div>
+                    </div>
+                    <div class="condition-item">
+                        <div class="condition-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="condition-content">
+                            <h3>Круглосуточная доставка</h3>
+                            <p>Доставка металлопроката осуществляется ежедневно, КРУГЛОСУТОЧНО (24 часа)</p>
+                        </div>
+                    </div>
+                    <div class="condition-item">
+                        <div class="condition-icon">
+                            <i class="fas fa-moon"></i>
+                        </div>
+                        <div class="condition-content">
+                            <h3>Ночная доставка</h3>
+                            <p>Вы можете воспользоваться услугой "ночная доставка"</p>
+                        </div>
+                    </div>
+                    <div class="condition-item">
+                        <div class="condition-icon">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        <div class="condition-content">
+                            <h3>Срочная доставка</h3>
+                            <p>Так же Вы можете воспользоваться услугой "срочная доставка" - в день обращения</p>
+                        </div>
+                    </div>
+                    <div class="condition-item">
+                        <div class="condition-icon">
+                            <i class="fas fa-ruble-sign"></i>
+                        </div>
+                        <div class="condition-content">
+                            <h3>Индивидуальные условия</h3>
+                            <p>Стоимость и сроки доставки обговаривается с менеджером</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Способы оплаты -->
+            <div class="payment-methods">
+                <h2 style="font-size: 28px; font-weight: 600; color: #1f2937; margin-bottom: 30px; text-align: center;">
+                    Способы оплаты
+                </h2>
+                <div class="payment-grid">
+                    <div class="payment-card">
+                        <div class="payment-icon">
+                            <i class="fas fa-money-bill-wave"></i>
+                        </div>
+                        <h3 class="payment-title">Наличными</h3>
+                        <p class="payment-desc">Оплата наличными при получении (оплата водителю) или в любом нашем офисе</p>
+                    </div>
+                    <div class="payment-card">
+                        <div class="payment-icon">
+                            <i class="fas fa-credit-card"></i>
+                        </div>
+                        <h3 class="payment-title">Банковской картой</h3>
+                        <p class="payment-desc">Оплата банковской картой в нашем офисе (уточняйте у менеджера)</p>
+                    </div>
+                    <div class="payment-card">
+                        <div class="payment-icon">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        <h3 class="payment-title">Банковский перевод</h3>
+                            <p class="payment-desc">Оплата по безналичному расчету для юридических лиц</p>
+                    </div>
+                    <div class="payment-card">
+                        <div class="payment-icon">
+                            <i class="fas fa-mobile-alt"></i>
+                        </div>
+                        <h3 class="payment-title">Онлайн-оплата</h3>
+                        <p class="payment-desc">Оплата через онлайн-сервисы и платежные системы</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Дополнительная информация -->
+            <div class="additional-info">
+                <div class="info-card">
+                    <h3>
+                        <i class="fas fa-exclamation-triangle"></i>
+                        Ограничения
+                    </h3>
+                    <p>Десяти тонный КМУ возит двенадцати метровый металлопрокат весом не более пяти тонн. 
+                       Для негабаритных грузов предусмотрены специальные транспортные средства.</p>
+                </div>
+                
+                <div class="info-card">
+                    <h3>
+                        <i class="fas fa-store"></i>
+                        Самовывоз
+                    </h3>
+                    <p>Вы можете забрать выбранный Вами металлопрокат на любой из наших торговых точек продаж. 
+                       Предварительно обговорив с Вашим менеджером о наличии выбранного материала на интересной 
+                       Вам торговой точке. Посмотреть адреса, время работы наших складов вы сможете в разделе 
+                       <a href="/front/HTML/contact.html" style="color: #d32f2f; text-decoration: none;">Контакты</a>.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-column">
+                    <div class="footer-divider"></div>
+                    <h3>Информация</h3>
+                    <div class="info-links">
+                        <a href="/front/HTML/gost.html">ГОСТ и ТУ</a>
+                        <a href="/front/HTML/news.html">Новости</a>
+                        <a href="/front/HTML/articles.html">Статьи</a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <div class="footer-divider"></div>
+                    <h3>Контакты</h3>
+                    <p class="phone-number">+7 (981) 720-10-10</p>
+                    <div class="email-container">
+                        <p>info@metall.ru</p>
+                    </div>
+                    <p class="address">Адрес: г. СПб, ул. Московское шоссе 46Б, офис 310</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-vk"></i></a>
+                        <a href="#"><i class="fab fa-telegram"></i></a>
+                        <a href="#"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2021 - 2025 Межрегионсталь. Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/front/JS/delivery.js"></script>
+    <script src="/front/JS/script.js"></script>
+</body>
+</html>

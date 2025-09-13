@@ -220,3 +220,68 @@
         right: 10px;
     }
 }
+
+/* Скрытие/показ слайдера продуктов - ДОБАВЬТЕ !important */
+@media (max-width: 870px) {
+    .product-slider {
+        display: none !important;
+        margin: 0 !important; /* Добавьте это */
+    }
+    
+    .product-slider-container {
+        display: none !important;
+        height: 0 !important;
+    }
+    
+    .prev-product-slide,
+    .next-product-slide {
+        display: none !important;
+    }
+}
+
+@media (min-width: 871px) {
+    .product-slider {
+        display: block !important;
+    }
+}
+
+/* Дополнительные адаптивные стили для слайдера */
+@media (max-width: 1300px) {
+    .product-slider-container {
+        width: 100%;
+        max-width: 1200px;
+    }
+    
+    .product-slide {
+        flex: 0 0 25%;
+        width: 25%;
+    }
+}
+
+@media (max-width: 1024px) {
+    .product-slide {
+        flex: 0 0 33.333%;
+        width: 33.333%;
+    }
+    
+    .product-card {
+        width: 250px;
+        height: 120px;
+    }
+    
+    .product-card img {
+        width: 120px;
+        height: 90px;
+    }
+}
+
+/* ИЗМЕНИТЕ этот медиа-запрос - добавьте проверку на min-width */
+@media (max-width: 768px) and (min-width: 871px) {
+    .product-slider {
+        margin: 15px 0;
+    }
+    
+    .product-slider-container {
+        height: 120px;
+    }
+}

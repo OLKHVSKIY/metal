@@ -950,7 +950,7 @@ html {
   line-height: 40px;
   transition: var(--transition);
   color: rgba(255, 255, 255, 0.6);
-  margin-bottom: 6px;
+  margin-bottom: 3px;
 }
 
 .social-links a:hover {

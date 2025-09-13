@@ -49,11 +49,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     startAutoSlide();
-});
 
-/* product-slider */
+    /* product-slider */
 
-document.addEventListener('DOMContentLoaded', () => {
     const productSlides = document.querySelector('.product-slides');
     const productSlideElements = document.querySelectorAll('.product-slide');
     const prevProductButton = document.querySelector('.prev-product-slide');
@@ -114,4 +112,28 @@ document.addEventListener('DOMContentLoaded', () => {
             updateProductSlide(currentProductIndex - 1);
         }
     });
+
+    // Функция для скрытия/показа слайдера продуктов
+    function handleProductSliderVisibility() {
+        const productSlider = document.querySelector('.product-slider');
+        if (!productSlider) return;
+        
+        function checkVisibility() {
+            const width = window.innerWidth;
+            if (width <= 870) {
+                productSlider.style.display = 'none';
+            } else {
+                productSlider.style.display = 'block';
+            }
+        }
+        
+        // Проверяем при загрузке
+        checkVisibility();
+        
+        // И при изменении размера окна
+        window.addEventListener('resize', checkVisibility);
+    }
+
+    // Вызываем функцию для управления видимостью слайдера
+    handleProductSliderVisibility();
 });

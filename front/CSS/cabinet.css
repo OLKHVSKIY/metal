@@ -256,7 +256,7 @@
 }
 
 .btn-secondary {
-  color: var(--text-color);
+  color: #fff;
   text-decoration: none;
   font-weight: 500;
   font-size: 19px;
