@@ -11,6 +11,7 @@ import (
     "net/url"
     "os"
     "path/filepath"
+    "sort"
     "strconv"
     "strings"
     "time"
@@ -78,6 +79,9 @@ var db *sql.DB
 var userDB *sql.DB
 var newsDB *sql.DB
 var articlesDB *sql.DB
+var productsDB *sql.DB
+var cartDB *sql.DB
+var itemOrdersDB *sql.DB
 
 func initDB() error {
     var err error
@@ -148,6 +152,13 @@ func initDB() error {
             phone TEXT,
             is_admin INTEGER NOT NULL DEFAULT 0
         );
+        CREATE TABLE IF NOT EXISTS social_links (
+            id INTEGER PRIMARY KEY CHECK (id=1),
+            telegram_link TEXT,
+            vk_link TEXT,
+            wp_link TEXT
+        );
+        INSERT OR IGNORE INTO social_links(id, telegram_link, vk_link, wp_link) VALUES(1, '', '', '');
     `)
     if err != nil { return err }
     // seed admin if not exists
@@ -159,6 +170,99 @@ func initDB() error {
             "admin", string(hash), "admin@example.com", "+70000000000")
         log.Printf("Seeded default admin user: admin/admin")
     }
+
+    // products database
+    productsDB, err = sql.Open("sqlite", "file:products.db?_pragma=journal_mode(WAL)")
+    if err != nil { return err }
+    _, err = productsDB.Exec(`
+        CREATE TABLE IF NOT EXISTS products (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            type TEXT NOT NULL,
+            name TEXT NOT NULL,
+            size TEXT,
+            subtype TEXT,
+            img TEXT,
+            price REAL NOT NULL DEFAULT 0,
+            price_per_ton REAL,
+            thickness_mm REAL,
+            weight_kg REAL,
+            length_m REAL,
+            in_stock INTEGER NOT NULL DEFAULT 1,
+            created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            featured INTEGER NOT NULL DEFAULT 0
+        );
+        CREATE INDEX IF NOT EXISTS idx_products_type ON products(type);
+        CREATE INDEX IF NOT EXISTS idx_products_price ON products(price);
+        CREATE INDEX IF NOT EXISTS idx_products_created ON products(created_at DESC);
+    `)
+    if err != nil { return err }
+    // Try to add new columns for older DBs; ignore errors if they exist
+    _, _ = productsDB.Exec("ALTER TABLE products ADD COLUMN in_stock INTEGER NOT NULL DEFAULT 1")
+    _, _ = productsDB.Exec("ALTER TABLE products ADD COLUMN subtype TEXT")
+    _, _ = productsDB.Exec("ALTER TABLE products ADD COLUMN price_per_ton REAL")
+    _, _ = productsDB.Exec("ALTER TABLE products ADD COLUMN thickness_mm REAL")
+    _, _ = productsDB.Exec("ALTER TABLE products ADD COLUMN weight_kg REAL")
+    _, _ = productsDB.Exec("ALTER TABLE products ADD COLUMN length_m REAL")
+    _, _ = productsDB.Exec("ALTER TABLE products ADD COLUMN featured INTEGER NOT NULL DEFAULT 0")
+    // ensure subtype index exists after potential migration
+    _, _ = productsDB.Exec("CREATE INDEX IF NOT EXISTS idx_products_subtype ON products(subtype)")
+    // ensure featured index exists (after column may be added above)
+    _, _ = productsDB.Exec("CREATE INDEX IF NOT EXISTS idx_products_featured ON products(featured)")
+    // descriptions table
+    _, _ = productsDB.Exec(`CREATE TABLE IF NOT EXISTS product_descriptions (type TEXT PRIMARY KEY, description TEXT)`)
+
+    // Seed initial sample products from in-memory list if table is empty
+    var pcnt int
+    _ = productsDB.QueryRow("SELECT COUNT(1) FROM products").Scan(&pcnt)
+    if pcnt == 0 {
+        for _, p := range products {
+            tp := categoryToTypeSlug(p.CategoryID)
+            name := p.Title
+            size := p.Description
+            img := p.Image
+            _, _ = productsDB.Exec("INSERT INTO products(type, name, size, img, price, in_stock) VALUES(?,?,?,?,?,1)", tp, name, size, img, 0)
+        }
+        log.Printf("Seeded %d sample products into products.db", len(products))
+    }
+
+    // cart database
+    cartDB, err = sql.Open("sqlite", "file:cart.db?_pragma=journal_mode(WAL)")
+    if err != nil { return err }
+    _, err = cartDB.Exec(`
+        CREATE TABLE IF NOT EXISTS cart_items (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            cart_id TEXT NOT NULL,
+            item_id TEXT NOT NULL,
+            title TEXT,
+            price REAL NOT NULL DEFAULT 0,
+            image TEXT,
+            qty INTEGER NOT NULL DEFAULT 1,
+            created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+        );
+        CREATE INDEX IF NOT EXISTS idx_cart_items_cart ON cart_items(cart_id);
+        CREATE UNIQUE INDEX IF NOT EXISTS idx_cart_items_unique ON cart_items(cart_id, item_id);
+    `)
+    if err != nil { return err }
+    // item orders database
+    // item orders stored in orders-item.db to match requirement
+    itemOrdersDB, err = sql.Open("sqlite", "file:orders-item.db?_pragma=journal_mode(WAL)")
+    if err != nil { return err }
+    _, err = itemOrdersDB.Exec(`
+        CREATE TABLE IF NOT EXISTS item_orders (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            item_id TEXT,
+            title TEXT,
+            qty INTEGER NOT NULL DEFAULT 1,
+            price REAL NOT NULL DEFAULT 0,
+            total REAL NOT NULL DEFAULT 0,
+            phone TEXT,
+            user_login TEXT,
+            status TEXT NOT NULL DEFAULT 'Ожидает подтверждения',
+            created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+        );
+        CREATE INDEX IF NOT EXISTS idx_item_orders_created ON item_orders(created_at DESC);
+    `)
+    if err != nil { return err }
     return nil
 }
 
@@ -193,11 +297,16 @@ func main() {
     mux := http.NewServeMux()
 
     // API endpoints
+    // Catalog routes (public)
+    registerCatalogRoutes(mux)
+    
+    // API endpoints
     mux.HandleFunc("/api/catalog/categories", withCORS(handleGetCategories))
     mux.HandleFunc("/api/catalog/products", withCORS(handleGetProducts))
     mux.HandleFunc("/api/search", withCORS(handleSearch))
     mux.HandleFunc("/api/gost", withCORS(handleGostList))
     mux.HandleFunc("/api/news", withCORS(handleNewsList))
+    mux.HandleFunc("/api/social", withCORS(handleSocialPublic))
     // Public auth
     mux.HandleFunc("/api/register", withCORS(publicRegister))
     mux.HandleFunc("/api/login", withCORS(publicLogin))
@@ -225,6 +334,9 @@ func main() {
         writeJSON(w, map[string]string{"status":"ok"})
     }))
     mux.HandleFunc("/api/articles", withCORS(handleArticlesList))
+    mux.HandleFunc("/api/catalog/product_description", withCORS(handleGetProductDescription))
+    // Featured products
+    mux.HandleFunc("/api/featured", withCORS(handleFeaturedProducts))
     mux.HandleFunc("/api/health", withCORS(func(w http.ResponseWriter, r *http.Request) {
         if r.Method != http.MethodGet {
             http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
@@ -281,6 +393,19 @@ func main() {
     mux.HandleFunc("/api/admin/users", withCORS(csrfProtect(requireAdmin(adminUsersHandler))))
     mux.HandleFunc("/api/admin/news", withCORS(csrfProtect(requireAdmin(adminNewsHandler))))
     mux.HandleFunc("/api/admin/articles", withCORS(csrfProtect(requireAdmin(adminArticlesHandler))))
+    mux.HandleFunc("/api/admin/products", withCORS(csrfProtect(requireAdmin(adminProductsHandler))))
+    mux.HandleFunc("/api/admin/featured", withCORS(csrfProtect(requireAdmin(adminFeaturedHandler))))
+    mux.HandleFunc("/api/admin/social", withCORS(csrfProtect(requireAdmin(adminSocialHandler))))
+    mux.HandleFunc("/api/admin/social/", withCORS(csrfProtect(requireAdmin(adminSocialHandler))))
+    mux.HandleFunc("/api/admin/item_orders", withCORS(csrfProtect(requireAdmin(adminItemOrdersList))))
+    mux.HandleFunc("/api/admin/item_orders/status", withCORS(csrfProtect(requireAdmin(adminItemOrdersStatus))))
+
+    // Cart API
+    mux.HandleFunc("/api/cart", withCORS(cartHandler))
+    // Quick buy item order (public)
+    mux.HandleFunc("/api/item-order", withCORS(handleCreateItemOrder))
+    mux.HandleFunc("/api/item-order/batch", withCORS(handleCreateItemOrderBatch))
+    mux.HandleFunc("/api/admin/product_descriptions", withCORS(csrfProtect(requireAdmin(adminProductDescriptionsHandler))))
 
     // Simple admin UI
     // auth pages
@@ -446,6 +571,7 @@ func handleGetProducts(w http.ResponseWriter, r *http.Request) {
     }
     q := r.URL.Query()
     category := q.Get("category")
+    sub := strings.Trim(strings.ToLower(q.Get("sub")), " ")
     page, _ := strconv.Atoi(q.Get("page"))
     limit, _ := strconv.Atoi(q.Get("limit"))
     if page <= 0 {
@@ -455,11 +581,78 @@ func handleGetProducts(w http.ResponseWriter, r *http.Request) {
         limit = 12
     }
 
+    // Prefer DB-backed products if table has rows for this type
+    dbType := categoryToTypeSlug(category)
+    if productsDB != nil {
+        if rows, err := queryProductsFromDB(productsDB, dbType); err == nil {
+            // Fallback: если по типу ничего не нашли (расхождение в данных), пробуем без фильтра типа и отфильтруем вручную
+            if len(rows) == 0 && dbType != "" {
+                if allRows, err2 := queryProductsFromDB(productsDB, ""); err2 == nil {
+                    want := strings.ToLower(strings.TrimSpace(dbType))
+                    tmp := make([]ProductRow, 0, len(allRows))
+                    for _, it := range allRows {
+                        // accept exact match or canonicalized match of type slug
+                        if strings.ToLower(strings.TrimSpace(it.Type)) == want || normalizeTypeSlug(it.Type) == want {
+                            tmp = append(tmp, it)
+                        }
+                    }
+                    rows = tmp
+                }
+            }
+            // apply subcategory predicate on name
+            var arr []ProductRow
+            if sub != "" {
+                // Unified predicate for belonging to sub
+                for _, it := range rows { if itemBelongsToSub(category, sub, it) { arr = append(arr, it) } }
+            } else { arr = rows }
+            // stable sort: subtype asc, then price asc to match UI expectations
+            sort.SliceStable(arr, func(i, j int) bool {
+                si := normalizeSubtypeLabel(arr[i].Subtype)
+                sj := normalizeSubtypeLabel(arr[j].Subtype)
+                if si == sj {
+                    return arr[i].Price < arr[j].Price
+                }
+                return si < sj
+            })
+
+            // map to API objects that include price and stock for client rendering
+            type apiItem map[string]any
+            var out []apiItem
+            for _, it := range arr {
+                out = append(out, apiItem{
+                    "id": strconv.FormatInt(it.ID, 10),
+                    "title": it.Name,
+                    "image": it.Img,
+                    "categoryId": category,
+                    "description": it.Size,
+                    "name": it.Name,
+                    "img": it.Img,
+                    "price": it.Price,
+                    "price_per_ton": it.PricePerTon,
+                    "thickness_mm": it.ThicknessMM,
+                    "weight_kg": it.WeightKg,
+                    "length_m": it.LengthM,
+                    "weight_tons": it.WeightKg/1000.0,
+                    "in_stock": it.InStock,
+                    "subtype": it.Subtype,
+                    "size": it.Size,
+                })
+            }
+            // pagination
+            start := (page - 1) * limit
+            if start > len(out) { start = len(out) }
+            end := start + limit
+            if end > len(out) { end = len(out) }
+            writeJSON(w, out[start:end])
+            return
+        }
+    }
+
     var filtered []Product
     for _, p := range products {
-        if category == "" || p.CategoryID == category {
-            filtered = append(filtered, p)
-        }
+        if category != "" && p.CategoryID != category { continue }
+        if sub != "" && !productMatchesSubcategory(p, category, sub) { continue }
+        filtered = append(filtered, p)
     }
 
     // pagination
@@ -472,6 +665,216 @@ func handleGetProducts(w http.ResponseWriter, r *http.Request) {
         end = len(filtered)
     }
     writeJSON(w, filtered[start:end])
+}
+
+// productMatchesSubcategory applies keyword-based matching per category/sub slug
+func productMatchesSubcategory(p Product, category, sub string) bool {
+    if sub == "" { return true }
+    title := strings.ToLower(p.Title + " " + p.Description)
+    hasAny := func(keywords ...string) bool {
+        for _, k := range keywords {
+            if strings.Contains(title, strings.ToLower(k)) { return true }
+        }
+        return false
+    }
+    switch category {
+    case "profile-pipe":
+        switch sub {
+        case "otsinkovannaya":
+            return hasAny("оцинк")
+        case "kvadratnaya":
+            return hasAny("квадрат", "кв")
+        case "pryamougolnaya":
+            return hasAny("прямоуг")
+        }
+    case "round-pipe":
+        switch sub {
+        case "ocinkovannaya":
+            return hasAny("оцинк")
+        case "besshovnaya":
+            return hasAny("бесшов")
+        case "vgp":
+            return hasAny("водогаз", "вгп")
+        case "elektrosvarka":
+            return hasAny("электросвар")
+        }
+    case "sheet":
+        switch sub {
+        case "ocinkovanniy":
+            return hasAny("оцинк")
+        case "st_goryachekatanyi":
+            return hasAny("горячекатан")
+        case "st_holodnokatanyi":
+            return hasAny("холоднокатан")
+        case "rifleniy_romb":
+            return hasAny("рифлен", "ромб")
+        case "riflenaya_chechevica":
+            return hasAny("рифлен", "чечев")
+        case "prosechno-vytyazhnoy":
+            return hasAny("просечно", "вытяж")
+        }
+    case "profnastil":
+        switch sub {
+        case "ocinkovannyy":
+            return hasAny("оцинк")
+        case "krashennyy":
+            return hasAny("крашен")
+        case "dlya-zabora":
+            return hasAny("забор")
+        }
+    case "rebar":
+        switch sub {
+        case "a500c":
+            return hasAny("а500", "a500")
+        case "a1":
+            return hasAny("a1", "а1", "гладкая")
+        case "a400":
+            return hasAny("a400", "а400")
+        case "fixatory":
+            return hasAny("фиксатор", "фиксаторы", "фиксаторы для арматуры")
+        case "stekloplastikovaya":
+            return hasAny("стеклопластик", "стеклопластиковая")
+        }
+    }
+    // default: no strict match -> include
+    return true
+}
+
+// Map (category, subSlug) -> human label used in DB subtype
+func subSlugToLabel(category, sub string) string {
+    switch category {
+    case "profile-pipe":
+        switch sub { case "kvadratnaya": return "Труба квадратная"; case "otsinkovannaya": return "Труба оцинкованная"; case "pryamougolnaya": return "Труба прямоугольная" }
+    case "rebar":
+        switch sub { case "a500c": return "Арматура А500C"; case "a1": return "Гладкая арматура A1"; case "a400": return "Арматура A400"; case "fixatory": return "Фиксаторы для арматуры"; case "stekloplastikovaya": return "Арматура стеклопластиковая" }
+    case "round-pipe":
+        switch sub { case "besshovnaya": return "Бесшовные трубы"; case "vgp": return "Труба водогазопроводная"; case "ocinkovannaya": return "Труба оцинкованная"; case "elektrosvarka": return "Труба электросварная" }
+    case "sheet":
+        switch sub { case "ocinkovanniy": return "Лист оцинкованный"; case "st_goryachekatanyi": return "Лист стальной горячекатаный"; case "st_holodnokatanyi": return "Лист стальной холоднокатаный"; case "rifleniy_romb": return "Лист рифленый ромб"; case "riflenaya_chechevica": return "Лист рифленый чечевица"; case "prosechno-vytyazhnoy": return "Лист просечно-вытяжной" }
+    case "profnastil":
+        switch sub { case "krashennyy": return "Профнастил крашеный"; case "ocinkovannyy": return "Профнастил оцинкованный"; case "dlya-zabora": return "Профнастил для забора" }
+    }
+    return ""
+}
+
+// normalizeSubtypeLabel normalizes minor Cyrillic/Latin variations (A/А, C/С), spaces and case
+func normalizeSubtypeLabel(s string) string {
+    // Replace Cyrillic letters with Latin counterparts for A and C which appear in designations
+    replacer := strings.NewReplacer(
+        "А", "A", "а", "a",
+        "С", "C", "с", "c",
+    )
+    ns := replacer.Replace(s)
+    ns = strings.ToLower(strings.TrimSpace(ns))
+    // collapse multiple spaces
+    for strings.Contains(ns, "  ") { ns = strings.ReplaceAll(ns, "  ", " ") }
+    return ns
+}
+
+// normalizeTypeSlug extracts canonical slug from products.type
+func normalizeTypeSlug(s string) string {
+    ns := strings.ToLower(strings.TrimSpace(s))
+    // Replace long dash and em dash variants with space, then take first token
+    ns = strings.NewReplacer("—", " ", "-", "-", "\u2014", " ").Replace(ns)
+    if i := strings.IndexAny(ns, " \t"); i >= 0 { ns = ns[:i] }
+    return ns
+}
+
+// normalizeCode reduces a string to ascii a-z0-9, mapping common Cyrillic letters to Latin (а->a, с->c)
+func normalizeCode(s string) string {
+    s = strings.ToLower(strings.TrimSpace(s))
+    s = strings.NewReplacer("А", "A", "а", "a", "С", "C", "с", "c").Replace(s)
+    b := make([]rune, 0, len(s))
+    for _, r := range s {
+        if (r >= 'a' && r <= 'z') || (r >= '0' && r <= '9') {
+            b = append(b, r)
+        }
+    }
+    return string(b)
+}
+
+func wantedCodeForSub(category, sub string) string {
+    switch category {
+    case "rebar":
+        switch sub {
+        case "a500c":
+            return "a500c"
+        case "a1":
+            return "a1"
+        case "a400":
+            return "a400"
+        default:
+            return ""
+        }
+    default:
+        return ""
+    }
+}
+
+// optional additional keyword hints for other categories/subs
+func wantedKeywordsForSub(category, sub string) []string {
+    switch category {
+    case "profile-pipe":
+        switch sub {
+        case "kvadratnaya":
+            return []string{"kvadrat"}
+        case "otsinkovannaya":
+            return []string{"ocink"}
+        case "pryamougolnaya":
+            return []string{"pryamougol"}
+        }
+    case "round-pipe":
+        switch sub {
+        case "besshovnaya":
+            return []string{"besshov"}
+        case "vgp":
+            return []string{"vgp", "vodogaz"}
+        case "ocinkovannaya":
+            return []string{"ocink"}
+        case "elektrosvarka":
+            return []string{"elektrosvar"}
+        }
+    case "sheet":
+        switch sub {
+        case "ocinkovanniy":
+            return []string{"ocink"}
+        case "st_goryachekatanyi":
+            return []string{"goryachekat"}
+        case "st_holodnokatanyi":
+            return []string{"holodnokat"}
+        case "rifleniy_romb":
+            return []string{"rifl", "romb"}
+        case "riflenaya_chechevica":
+            return []string{"chechev"}
+        case "prosechno-vytyazhnoy":
+            return []string{"prosech", "vytyazh"}
+        }
+    case "profnastil":
+        switch sub {
+        case "krashennyy":
+            return []string{"krashen", "polimer"}
+        case "ocinkovannyy":
+            return []string{"ocink"}
+        case "dlya-zabora":
+            return []string{"zabor"}
+        }
+    }
+    return nil
+}
+
+func itemBelongsToSub(category, sub string, it ProductRow) bool {
+    if strings.TrimSpace(sub) == "" { return true }
+    // exact subtype label match after normalization
+    wl := normalizeSubtypeLabel(subSlugToLabel(category, sub))
+    if wl != "" && normalizeSubtypeLabel(it.Subtype) == wl { return true }
+    // otherwise, keyword/code match on combined text
+    wantCode := wantedCodeForSub(category, sub)
+    code := normalizeCode(it.Subtype + " " + it.Name + " " + it.Size)
+    if wantCode != "" && strings.Contains(code, wantCode) { return true }
+    if kws := wantedKeywordsForSub(category, sub); len(kws) > 0 {
+        for _, kw := range kws { if strings.Contains(code, kw) { return true } }
+    }
+    return false
 }
 
 func handleSearch(w http.ResponseWriter, r *http.Request) {

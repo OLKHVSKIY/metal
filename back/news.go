@@ -3,10 +3,11 @@ package main
 import (
     "database/sql"
     "encoding/json"
-    "fmt"
     "html"
     "net/http"
     "net/url"
+    "os"
+    "path/filepath"
     "strconv"
     "strings"
     "time"
@@ -145,34 +146,15 @@ func handleNewsPublic(w http.ResponseWriter, r *http.Request) {
     title := html.EscapeString(n.Title)
     date := html.EscapeString(n.PublishedAt)
 
-    // Simple HTML page using existing styles
-    fmt.Fprintf(w, `<!DOCTYPE html>
-<html lang="ru">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>%s</title>
-  <link rel="icon" href="/img/icon.ico" type="image/x-icon" />
-  <link rel="stylesheet" href="/front/CSS/style.css" />
-  <link rel="stylesheet" href="/front/CSS/news.css" />
-  <style>.news-article{max-width:900px;margin:40px auto;padding:0 16px}.news-article h1{margin:0 0 12px}.news-article .date{color:#666;margin-bottom:16px}.news-article img{max-width:100%%;border-radius:8px;margin:8px 0 16px}</style>
-  <script>window.addEventListener('DOMContentLoaded',function(){var b=document.querySelector('.back-link');if(b){b.addEventListener('click',function(e){e.preventDefault();window.history.length>1?history.back():location.href='/front/HTML/news.html';});}});</script>
-  <script>/* cache-bust images */document.addEventListener('DOMContentLoaded',function(){var i=document.querySelector('.news-article img');if(i){var u=i.getAttribute('src');if(u){i.setAttribute('src',u+(u.indexOf('?')>-1?'&':'?')+'v='+(Date.now()));}}});</script>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
-  </head>
-<body>
-  <header class="header"><div class="container header-container"><div class="logo"><a href="/front/HTML/main.html"><img src="/img/logo.png" alt="Металл" /></a></div></div></header>
-  <main class="news-article">
-    <a href="#" class="back-link">← Назад к новостям</a>
-    <h1>%s</h1>
-    <div class="date">%s</div>
-    %s
-    <div class="content">%s</div>
-  </main>
-  <footer class="footer"><div class="container"><div class="copyright"><p>&copy; 2021 - 2025 Межрегионсталь. Все права защищены.</p></div></div></footer>
-</body>
-</html>`, title, title, date, imgHTML, n.FullText)
+    // Serve from external template
+    tpl, err := os.ReadFile(filepath.Join(frontDirPath, "HTML", "news_item.html"))
+    if err != nil { http.Error(w, "template not found", 500); return }
+    htmlStr := string(tpl)
+    htmlStr = strings.ReplaceAll(htmlStr, "{{TITLE}}", title)
+    htmlStr = strings.ReplaceAll(htmlStr, "{{DATE}}", date)
+    htmlStr = strings.ReplaceAll(htmlStr, "{{IMG_HTML}}", imgHTML)
+    htmlStr = strings.ReplaceAll(htmlStr, "{{CONTENT_HTML}}", n.FullText)
+    _, _ = w.Write([]byte(htmlStr))
 }
 
 
